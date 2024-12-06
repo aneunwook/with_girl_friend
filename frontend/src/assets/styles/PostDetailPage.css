@@ -1,0 +1,19 @@
+/* src/assets/styles/PostDetailPage.css */
+.post-detail-page {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.post-detail-page h1 {
+    font-size: 2rem;
+    margin-bottom: 15px;
+}
+
+.post-detail-page p {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: #333;
+}

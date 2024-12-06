@@ -1,0 +1,36 @@
+/* src/assets/styles/HomePage.css */
+.home-page {
+    margin: 20px;
+    padding: 20px;
+}
+
+.post-list {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.post-card {
+    width: 300px;
+    padding: 15px;
+    margin: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.post-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.post-card p {
+    font-size: 1rem;
+    color: #555;
+}
+
+.post-card a {
+    display: block;
+    margin-top: 10px;
+    color: #007bff;
+    text-decoration: none;
+}
