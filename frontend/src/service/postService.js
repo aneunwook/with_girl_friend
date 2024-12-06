@@ -34,6 +34,8 @@ export const createPost = async (title, content) => {
 export const updatePost = async (id, title, content) => {
     try{
         const response = await axios.put(`${api_url}/${id}`, {title,content});
+        console.log(response);
+        
         return response.data;
     }catch(error){
         console.error("Error updating post:", error);
