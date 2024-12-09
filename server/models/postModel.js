@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import sequelize from '../config/db.js';  // 파일 확장자 .js를 명시해야 함
+import sequelize from '../config/db.js';  // .js 확장자를 명시해야 합니다.
 
 const Post = sequelize.define('Post', {
     title: {
@@ -14,7 +14,7 @@ const Post = sequelize.define('Post', {
 }, {
     timestamps: true,
     tableName: 'posts',
-    createdAt: 'created_at',  // DB 칼럼 이름을 'created_at'으로 매핑
+    createdAt: 'created_at',
     updatedAt: 'updated_at',
 });
 
