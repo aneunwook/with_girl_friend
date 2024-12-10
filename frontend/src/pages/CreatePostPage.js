@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { createPost } from '../service/postService';
 
 const CreatePostPage = () => {
     const navigate = useNavigate();
@@ -16,20 +17,19 @@ const CreatePostPage = () => {
         setContent(e.target.value);
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const postData = { title, content };
+        try{
+            const postData = await createPost( title, content );
+            console.log("post created successfully", postData);
+            navigate('/');   
+        }catch(err){
+            console.error('Error creating post:', err);
+            
+        }
 
-        axios
-            .post('http://localhost:5000/api/posts', postData)
-            .then((response) => {
-                // 게시글 작성 성공 시 홈 페이지로 리디렉션
-                navigate('/');
-            })
-            .catch((err) => {
-                console.error('Error creating post:', err);
-            })
+        
     }
 
     return (
