@@ -17,13 +17,41 @@ const createPost = async(req,res) => {
 
 const getAllPosts = async(req, res) => {
     try{
-        const posts = await Post.findAll();
+     // 쿼리 파라미터에서 page와 limit 값을 가져옴, 기본값은 1페이지, 10개씩
+     const {page = 1, limit = 10} = req.query;
+    
+     // 페이지 번호와 한 페이지에 보여줄 개수를 정수로 변환
+     const pageNum = parseInt(page, 10);
+     const limitNum = parseInt(limit, 10);
+  
+      // 유효한 페이지 번호와 limit 체크
+      if (isNaN(pageNum) || isNaN(limitNum) || pageNum < 1 || limitNum < 1) {
+         return res.status(400).json({ message: 'Invalid page or limit value' });
+     }
 
-        return res.status(200).json(posts)
-    } catch(err){
-        console.error("Error creating post:", err);
-        return res.status(500).send('Error creating post');
-    }
+     // findAndCountAll로 posts와 totalPosts를 한 번의 쿼리로 가져옴
+     //count: 전체 게시물 수를 반환 rows: 해당 페이지에 해당하는 게시물들만 반환
+     const { count: totalPosts, rows: posts } = await Post.findAndCountAll({
+      //데이터베이스 쿼리에서 offset은 몇번째 게시물부터 가져올 것인지를 나타냄
+      offset: (pageNum - 1) * limitNum, // 페이지 번호에 맞는 데이터 시작 위치
+      limit: limitNum, // 한 페이지에 가져올 데이터 개수
+  });
+  console.log("totalPosts:", totalPosts); // 실제 데이터 개수 확인
+  console.log("posts:", posts); // 가져온 포스트 데이터 확인
+
+  // 전체 페이지 수 계산
+  const totalPages = Math.ceil(totalPosts / limitNum);
+
+  return res.status(200).json({
+      posts, // 현재 페이지에 해당하는 게시물 데이터
+      totalPosts, // 전체 게시물 수
+      totalPages,  // 전체 페이지 수
+      currentPage: pageNum,  // 현재 페이지
+      });
+  }  catch(err){
+      console.error("Error creating post:", err);
+      return res.status(500).send('Error creating post');
+  }
 }
 
 const updatePost = async (req, res) => {

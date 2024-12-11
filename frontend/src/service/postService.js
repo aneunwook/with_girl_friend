@@ -2,13 +2,16 @@ import axios from "axios";
 
 const api_url = 'http://localhost:5000/api/posts';
 
-export const getPosts = async () => {
+export const getPosts = async (page, limit) => {
     try{
-        const response = await axios.get(api_url);
+        const response = await axios.get(api_url, {
+            params:{page, limit}
+        })
+        console.log("Response data : ", response.data);
         return response.data;
     }catch(err){
-        console.error("Error fetching posts: ",err);
-        return [];
+        console.error("Error fetching posts: " ,err);
+        return{posts:[], totalPages: 1}
     }
 }
 
