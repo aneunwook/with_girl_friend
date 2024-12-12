@@ -1,10 +1,10 @@
-import axios from "axios";
+import axiosInstance from "../axiosInstance";
 
-const api_url = 'http://localhost:5000/api/posts';
+const api_url = '/posts';
 
 export const getPosts = async (page, limit) => {
     try{
-        const response = await axios.get(api_url, {
+        const response = await axiosInstance.get(api_url, {
             params:{page, limit}
         })
         console.log("Response data : ", response.data);
@@ -17,7 +17,7 @@ export const getPosts = async (page, limit) => {
 
 export const createPost = async (title, content) => {
     try{
-        const response = await axios.post(api_url, {title, content})
+        const response = await axiosInstance.post(api_url, {title, content})
         return response.data;
     }catch(err){
         console.error("Error creating post:", err);
@@ -27,7 +27,7 @@ export const createPost = async (title, content) => {
 
 export const getPostsById = async (id) => {
     try{
-        const response = await axios.get(`${api_url}/${id}`);
+        const response = await axiosInstance.get(`${api_url}/${id}`);
         return response.data;
     }catch(err){
         console.error('Error fetching post by ID: ', err);
@@ -37,7 +37,7 @@ export const getPostsById = async (id) => {
 
 export const updatePost = async (id, title, content) => {
     try{
-        const response = await axios.put(`${api_url}/${id}`, {title, content})
+        const response = await axiosInstance.put(`${api_url}/${id}`, {title, content})
         return response.data;
     }catch(err){
         console.error("Error updating post: ", err);
@@ -47,7 +47,7 @@ export const updatePost = async (id, title, content) => {
 
 export const deletePost = async (id) => {
     try{
-        const response = await axios.delete(`${api_url}/${id}`);
+        const response = await axiosInstance.delete(`${api_url}/${id}`);
         return response.data;
     }catch (error) {
         console.error("Error deleting post:", error);

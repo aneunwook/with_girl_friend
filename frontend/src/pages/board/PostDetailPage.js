@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
-import { getPostsById, deletePost} from "../service/postService";
-import "../assets/styles/PostDetailPage.css"
+import { getPostsById, deletePost} from "../../service/borad/postService";
+import "../../assets/styles/PostDetailPage.css"
 
 const PostDetailPage = () => {
     const {id} = useParams();

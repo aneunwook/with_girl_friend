@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom"
-import { updatePost,getPostsById } from "../service/postService";
+import { updatePost,getPostsById } from "../../service/borad/postService";
 
 const EditPostPage = () => {
     const {id} = useParams();

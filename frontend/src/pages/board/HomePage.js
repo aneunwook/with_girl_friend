@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { getPosts } from "../service/postService";
-import PostCard from "../components/PostCard";
-import Pagination from "../components/Pagination"; // Pagination 컴포넌트 임포트
-import "../assets/styles/HomePage.css"
+import { getPosts } from "../../service/borad/postService";
+import PostCard from "../../components/PostCard";
+import Pagination from "../../components/Pagination"; // Pagination 컴포넌트 임포트
+import "../../assets/styles/HomePage.css"
 
 const HomePage = () => {
     const [loading, setLoading] = useState(true);

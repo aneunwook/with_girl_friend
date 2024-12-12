@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { createPost } from '../service/postService';
+import { createPost } from '../../service/borad/postService';
 
 const CreatePostPage = () => {
     const navigate = useNavigate();
