@@ -6,12 +6,12 @@ const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'your-secret-key';
 
 const signUp = async (req, res) => {
     try{
-        console.log("Received body:", req.body); 
         const {email, password, name} = req.body;
-
+        
         if(!email || !password || !name){
             return res.status(400).json({message : '모든 필드를 입력해주세요.'})
         }
+        console.log("Received body:", req.body); 
 
         if(password.length < 8){
             return res.status(400).json({message : '비밀번호가 최소 8자 이상이여야 합니다'})

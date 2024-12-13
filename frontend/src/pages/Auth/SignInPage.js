@@ -24,7 +24,7 @@ const LoginPage = () =>{
             localStorage.setItem('token', token)
             navigate('/');
         }catch(err){
-            console.error('Error creating post:', err);   
+            console.error('로그인 오류:', err);   
         }
     }
 
@@ -50,6 +50,7 @@ const LoginPage = () =>{
                         required
                     />
                 </div>
+                <button type="submit">로그인</button>
             </form>
         </div>
     )
