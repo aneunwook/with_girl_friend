@@ -25,12 +25,19 @@ const SignUpPage = () =>{
         e.preventDefault();
         try{
             const userData = {email, password, name};
-            await signUp(userData); // authService의 signUp을 호출
-            navigate('/login');
-        }catch(err){
-            console.error('회원가입 실패', err);    
-        }
-    }
+            const response = await signUp(userData); // 서버 요청// authService의 signUp을 호출
+            console.log("서버 응답:", response);
+            if (response.success) {
+                alert('회원가입 성공');
+                navigate('/login'); // 로그인 페이지로 리디렉션
+              } else {
+                alert(response.message || '회원가입 실패');
+              }
+            } catch (err) {
+              console.error('회원가입 실패:', err);
+              alert('회원가입 중 오류가 발생했습니다.');
+            }
+        }          
 
     return (
         <div>

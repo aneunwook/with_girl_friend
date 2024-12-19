@@ -17,6 +17,12 @@ const createPost = async(req,res) => {
 
 const getAllPosts = async(req, res) => {
     try{
+        // 권한 로직 추가
+        if (!req.user || req.user.role !== 'admin') {
+            console.log("as:", req.user);
+            console.log("role:", req.user ? req.user.role : "No user");             
+        return res.status(403).json({ message: 'Forbidden: insufficient privileges' });
+    }
      // 쿼리 파라미터에서 page와 limit 값을 가져옴, 기본값은 1페이지, 10개씩
      const {page = 1, limit = 10} = req.query;
     

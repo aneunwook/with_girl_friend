@@ -20,8 +20,14 @@ const LoginPage = () =>{
         e.preventDefault();
         try{
             const userData = {email, password};
-            const {token} = await signIn(userData);
-            localStorage.setItem('token', token)
+            console.log("결과물 :" , userData);
+            
+            const response = await signIn(userData);
+            console.log("서버응답 :" , response);
+            
+            const {token} = response;
+            localStorage.setItem('token', token);
+
             navigate('/');
         }catch(err){
             console.error('로그인 오류:', err);   

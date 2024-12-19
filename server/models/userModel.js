@@ -22,6 +22,11 @@ const User = sequelize.define('User', {
     profile_picture:{
         type: DataTypes.STRING,
     },
+    role: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'user',
+    }
 },{
     timestamps: true, //createdAt, updatedAt 컬럼 자동생성
     tableName: 'users', // 데이블 이름 명시적으로 지정
