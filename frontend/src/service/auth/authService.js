@@ -24,11 +24,11 @@ export const signUp = async(userData) => {
 
             const { accessToken, refreshToken } = response.data;
             
+            localStorage.setItem('authToken', accessToken);
+            localStorage.setItem('refreshToken', refreshToken);
             console.log('Access Token이 저장되었습니다:', accessToken);
             console.log('Refresh Token이 저장되었습니다:', refreshToken);
             // 로컬 스토리지에 저장
-            localStorage.setItem('authToken', accessToken);
-            localStorage.setItem('refreshToken', refreshToken);
     
             alert('로그인 성공');
             return { accessToken, refreshToken };

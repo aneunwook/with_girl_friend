@@ -95,7 +95,7 @@ const signIn = async (req, res) => {
 };
 
 // 리프레시 토큰 컨트롤러
-const refreshTokens = (req, res) => {
+const refreshTokens = async (req, res) => {
     try {
         const { refreshToken } = req.body;
 
@@ -104,31 +104,31 @@ const refreshTokens = (req, res) => {
         }
 
         // 리프레시 토큰 검증
-        jwt.verify(refreshToken, JWT_REFRESH_SECRET_KEY, (err, decoded) => {
-            if (err) {
-                console.error('리프레시 토큰 검증 실패:', err.message);
-                return res.status(403).json({ message: '유효하지 않은 리프레시 토큰입니다.' });
-            }
+        const decoded = jwt.verify(refreshToken, JWT_REFRESH_SECRET_KEY);
 
-            // 새로운 액세스 토큰 및 리프레시 토큰 발급
-            const newAccessToken = jwt.sign(
-                { userId: decoded.userId, role: decoded.role },
-                JWT_SECRET_KEY,
-                { expiresIn: '1h', algorithm: 'HS256' }
-            );
+        if (!decoded) {
+            return res.status(403).json({ message: '유효하지 않은 리프레시 토큰입니다.' });
+        }
 
-            const newRefreshToken = jwt.sign(
-                { userId: decoded.userId, role: decoded.role },
-                JWT_REFRESH_SECRET_KEY,
-                { expiresIn: '7d', algorithm: 'HS256' }
-            );
+        // 새로운 액세스 토큰 및 리프레시 토큰 발급
+        const newAccessToken = jwt.sign(
+            { userId: decoded.userId, role: decoded.role },
+            JWT_SECRET_KEY,
+            { expiresIn: '1h' }
+        );
 
-            return res.json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
-        });
+        const newRefreshToken = jwt.sign(
+            { userId: decoded.userId, role: decoded.role },
+            JWT_REFRESH_SECRET_KEY,
+            { expiresIn: '7d' }
+        );
+
+        return res.json({ accessToken: newAccessToken, refreshToken: newRefreshToken });
     } catch (err) {
-        console.error('토큰 갱신 오류:', err.message);
+        if (err.name === 'TokenExpiredError') {
+            return res.status(403).json({ message: '리프레시 토큰이 만료되었습니다.' });
+        }
         return res.status(500).json({ message: '서버 오류가 발생했습니다.' });
     }
 }
-
 export{signIn, signUp, refreshTokens};
