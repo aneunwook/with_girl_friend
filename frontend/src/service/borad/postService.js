@@ -26,41 +26,34 @@ export const getPosts = async (page, limit) => {
         console.log('Server response data: ', response.data);
         return response.data;
     }catch (err) {
-        if (err.response?.status === 403) {
-            console.log("403 Forbidden: Trying to refresh token...");
-            try {
-                // 리프레시 토큰으로 새 액세스 토큰 요청
-                const refreshToken = localStorage.getItem('refreshToken');
-                if (!refreshToken) {
-                    throw new Error('No refresh token found');
+            // 403 오류 시 토큰 갱신 시도
+            if (err.response?.status === 403) {
+                console.log("403 Forbidden: Trying to refresh token...");
+                try {
+                    const newToken = await refreshAccessToken();
+                    console.log('새로 갱신된 토큰: ', newToken);
+
+                    // 새 토큰 저장
+                    localStorage.setItem('authToken', newToken);
+
+                    // 새 토큰으로 요청 재시도
+                    const retryResponse = await axiosInstance.get(api_url, {
+                        headers: {
+                            Authorization: `Bearer ${newToken}`,
+                        },
+                        params: { page, limit },
+                    });
+
+                    console.log('Retry server response data: ', retryResponse.data);
+                    return retryResponse.data;
+
+                } catch (refreshError) {
+                    console.error("Token refresh failed: ", refreshError);
+                    throw refreshError; // 필요하면 로그아웃 처리
                 }
-
-                const { accessToken: newToken } = await refreshAccessToken(refreshToken);
-                console.log('새로 갱신된 토큰: ', newToken);
-
-                // 새 토큰 저장
-                localStorage.setItem('authToken', newToken);
-
-                // 새 토큰으로 요청 재시도
-                const retryResponse = await axiosInstance.get(api_url, {
-                    headers: {
-                        Authorization: `Bearer ${newToken}`,
-                    },
-                    params: { page, limit },
-                });
-
-                console.log('재시도 서버 응답 데이터: ', retryResponse.data);
-                return retryResponse.data;
-
-            } catch (refreshError) {
-                console.error("토큰 갱신 실패: ", refreshError);
-                throw refreshError; // 필요하면 로그아웃 처리
             }
-        }
-
-        console.error('요청 실패:', err);
-        throw err; // 다른 에러의 경우 다시 던지기
-    }
+        } 
+        return { posts: [], totalPages: 1 }; // 기본 반환 값
 };
 
 export const createPost = async (title, content) => {

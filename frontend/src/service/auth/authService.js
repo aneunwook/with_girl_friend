@@ -1,45 +1,59 @@
+// Auth 서비스
 import axiosInstance from "../axiosInstance";
 
-export const signUp = async(userData) => {
-    try{
+export const signUp = async (userData) => {
+    try {
+        console.log('[signUp] 요청 데이터:', userData);
+
         const response = await axiosInstance.post('/auth/signUp', userData);
-        console.log("data:", response.data);
-        return response.data;
-    }catch (err) {
-        if (err.response) {
-          console.error('회원가입 오류:', err.response.data); // 서버 응답 오류 내용
-        } else {
-          console.error('회원가입 요청 실패:', err.message); // 네트워크 오류 등
-        }
-        throw err;
-      }
-    }
+        console.log('[signUp] 서버 응답 데이터:', response.data);
 
-    export const signIn = async (userData) => {
-        try {
-            console.log('서버로 전달된 데이터:', userData);
-        
-            const response = await axiosInstance.post('/auth/signIn', userData);
-            console.log('응답 전체:', response);
+        const { accessToken, refreshToken } = response.data;
 
-            const { accessToken, refreshToken } = response.data;
-            
-            localStorage.setItem('authToken', accessToken);
+        if (accessToken && refreshToken) {
+            console.log('[signUp] Access Token 저장:', accessToken);
+            console.log('[signUp] Refresh Token 저장:', refreshToken);
+
+            localStorage.setItem('accessToken', accessToken);
             localStorage.setItem('refreshToken', refreshToken);
-            console.log('Access Token이 저장되었습니다:', accessToken);
-            console.log('Refresh Token이 저장되었습니다:', refreshToken);
-            // 로컬 스토리지에 저장
-    
-            alert('로그인 성공');
-            return { accessToken, refreshToken };
-
-        } catch (err) {
-            if (err.response) {
-                console.error('로그인 오류:', err.response.data);
-            } else {
-                console.error('로그인 요청 실패:', err.message);
-            }
-            throw err;
+        } else {
+            console.warn('[signUp] 토큰이 응답에 포함되지 않음. 별도 로그인 필요.');
+            alert('회원가입이 완료되었습니다. 로그인하세요.');
+            return response.data; // 토큰 없는 상태로 진행
         }
-    };
-    
+
+        console.log('[signUp] 회원가입 성공');
+        return response.data;
+    } catch (err) {
+        console.error('[signUp] 요청 실패:', err.response ? err.response.data : err.message);
+        throw err;
+    }
+};
+
+
+export const signIn = async (userData) => {
+    try {
+        console.log('[signIn] 요청 데이터:', userData);
+
+        const response = await axiosInstance.post('/auth/signIn', userData);
+        console.log('[signIn] 서버 응답:', response);
+
+        const { accessToken, refreshToken } = response.data;
+
+        if (accessToken && refreshToken) {
+            localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('refreshToken', refreshToken);
+            console.log('[signIn] Access Token:', accessToken);
+            console.log('[signIn] Refresh Token:', refreshToken);
+        } else {
+            console.error('[signIn] 서버 응답에 토큰 누락:', response.data);
+            throw new Error('Token(s) missing!');
+        }
+
+        alert('로그인 성공');
+        return { accessToken, refreshToken };
+    } catch (err) {
+        console.error('[signIn] 로그인 요청 실패:', err.response ? err.response.data : err.message);
+        throw err;
+    }
+};
