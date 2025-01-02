@@ -1,19 +1,19 @@
 import dotenv from 'dotenv'; // require 대신 import 사용
 dotenv.config();
-
 import express from 'express';
 import cors from 'cors';
-import jwt from 'jsonwebtoken'; // Refresh Token 검증 및 Access Token 발급에 필요
-import postRoutes from './routes/postRoutes.js';
+// import jwt from 'jsonwebtoken'; // JWT 주석 처리
 import sequelize from './config/db.js'; // sequelize import
 import userRoutes from './routes/userRoutes.js';
+import postRoutes from './routes/postRoutes.js';
+import anniversaryRoutes from './routes/anniversaryRoutes.js'
 
 const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(
   cors({
-    origin: 'http://localhost:3000', // 클라이언트 URL
+    origin: ['http://localhost:3000', 'http://localhost:3001'],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // OPTIONS 포함
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true, // 쿠키 포함 요청을 허용
@@ -24,26 +24,22 @@ app.options('*', cors()); // OPTIONS 요청 허용
 app.use(express.json());
 app.use('/api/posts', postRoutes); // 여기에 CRUD 관련 라우트를 설정할 수 있습니다.
 app.use('/api/auth', userRoutes);
+app.use('/api/anniversaries', anniversaryRoutes);
 
-// Refresh Token을 받아 새로운 Access Token 발급
+// JWT 관련 라우트 주석 처리
+/*
 app.post('/api/refresh-token', (req, res) => {
   const { refreshToken } = req.body;
 
-  // Refresh Token 검증
   if (!refreshToken || !refreshTokens[refreshToken]) {
-    return res
-      .status(403)
-      .json({ message: 'Forbidden: Invalid refresh token' });
+    return res.status(403).json({ message: 'Forbidden: Invalid refresh token' });
   }
 
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
     if (err) {
-      return res
-        .status(403)
-        .json({ message: 'Forbidden: Invalid refresh token' });
+      return res.status(403).json({ message: 'Forbidden: Invalid refresh token' });
     }
 
-    // 새로운 Access Token 발급
     const newAccessToken = jwt.sign(
       { userId: user.userId, role: user.role },
       process.env.ACCESS_TOKEN_SECRET,
@@ -53,6 +49,7 @@ app.post('/api/refresh-token', (req, res) => {
     res.json({ accessToken: newAccessToken });
   });
 });
+*/
 
 // 로그용 미들웨어
 app.use((req, res, next) => {

@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import sequelize from '../config/db.js';  // .js 확장자를 명시해야 합니다.
+import sequelize from '../config/db.js';
 
 const Post = sequelize.define('Post', {
     title: {
