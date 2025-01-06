@@ -7,6 +7,7 @@ import PostDetailPage from "./pages/board/PostDetailPage.js";
 import Header from "./components/Header.js";
 import LoginPage from "./pages/Auth/SignInPage.js";
 import SignUpPage from "./pages/Auth/SignUpPage.js";
+import AnniversaryPage from "./pages/anniversary/AnniversaryPage.js";
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                     <Route path="/edit-post/:id" element={<EditPostPage/>}/>
                     <Route path="/login" element={<LoginPage/>}/>
                     <Route path="/signUp" element={<SignUpPage/>}/>
+                    <Route path="/anniversary" element={<AnniversaryPage />}/>
                 </Routes>
             </div>
         </Router>

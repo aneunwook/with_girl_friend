@@ -1,3 +1,4 @@
+import { Op } from "sequelize";
 import Anniversary from "../models/anniversaryModel.js";
 
 export const createAnniversary = async(req, res) => {
