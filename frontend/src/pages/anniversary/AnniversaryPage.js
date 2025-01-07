@@ -1,135 +1,113 @@
-import React, { useState, useEffect } from "react";
-import { createAnniversary, getAnniversariesByDateRange } from "../../service/anniversary/anniversaryService";
+import React, { useState, useEffect } from 'react';
+import {
+  createAnniversary,
+  getAnniversariesByDateRange,
+} from '../../service/anniversary/anniversaryService';
+import Calendar from '../../components/Calendar.js'
+import CalendarDay from '../../components/CalendarDay.js'
+import Modal from '../../components/Modal.js'
 import '../../assets/styles/Anniversary.css';
 
 const AnniversaryPage = () => {
     const [selectedDate, setSelectedDate] = useState(null);
     const [modalVisible, setModalVisible] = useState(false);
     const [anniversaries, setAnniversaries] = useState([]);
-    const [formData, setFormData] = useState({
-        name: "",
-        description: "",
-    });
-
-    // 기념일 데이터 가져오기
+    const [formData, setFormData] = useState({ name: '', description: '' });
+    const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+    const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1);
+  
     const fetchAnniversaries = async () => {
-        const today = new Date();
-        const startDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-01`;
-        const endDate = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-31`;
-
-        try {
-            const data = await getAnniversariesByDateRange(startDate, endDate);
-            setAnniversaries(data);
-        } catch (err) {
-            console.error("Failed to fetch anniversaries", err);
-        }
+      const startDate = `${currentYear}-${String(currentMonth).padStart(2, '0')}-01`;
+      const endDate = `${currentYear}-${String(currentMonth).padStart(
+        2,
+        '0'
+      )}-${new Date(currentYear, currentMonth, 0).getDate()}`;
+  
+      try {
+        const data = await getAnniversariesByDateRange(startDate, endDate);
+        setAnniversaries(data);
+      } catch (err) {
+        console.error('Failed to fetch anniversaries', err);
+      }
     };
-
-    // 컴포넌트 로드 시 기념일 데이터 가져오기
+  
     useEffect(() => {
-        fetchAnniversaries();
-    }, []);
-
-    // 날짜 클릭 핸들러
-    const handleDateClick = (date) => {
-        setSelectedDate(date);
-        setModalVisible(true);
-    };
-
-    // 폼 제출 핸들러
+      fetchAnniversaries();
+    }, [currentYear, currentMonth]);
+  
     const handleSubmit = async (e) => {
-        e.preventDefault();
-
-        if (!selectedDate) {
-            alert("날짜를 선택해 주세요.");
-            return;
-        }
-
-        try {
-            const data = {
-                userId: 1, // 임시 사용자 ID
-                name: formData.name,
-                description: formData.description,
-                anniversaryDate: selectedDate,
-            };
-            await createAnniversary(data);
-            alert("기념일이 성공적으로 추가되었습니다!");
-            setModalVisible(false);// 모달 닫기
-            setFormData({ name: "", description: "" }); // 폼 데이터 초기화
-            fetchAnniversaries(); // 새로 추가된 데이터 반영
-        } catch (err) {
-            alert("기념일 추가 실패!");
-        }
+      e.preventDefault();
+      if (!selectedDate) {
+        alert('날짜를 선택해 주세요.');
+        return;
+      }
+  
+      try {
+        const data = {
+          userId: 1,
+          name: formData.name,
+          description: formData.description,
+          anniversaryDate: selectedDate,
+        };
+  
+        await createAnniversary(data);
+        setModalVisible(false);
+        setFormData({ name: '', description: '' });
+        fetchAnniversaries();
+      } catch (err) {
+        alert('기념일 추가 실패!');
+      }
     };
-
+  
+    const handlePreviousMonth = () => {
+      if (currentMonth === 1) {
+        setCurrentMonth(12);
+        setCurrentYear((prev) => prev - 1);
+      } else {
+        setCurrentMonth((prev) => prev - 1);
+      }
+    };
+  
+    const handleNextMonth = () => {
+      if (currentMonth === 12) {
+        setCurrentMonth(1);
+        setCurrentYear((prev) => prev + 1);
+      } else {
+        setCurrentMonth((prev) => prev + 1);
+      }
+    };
+  
     return (
+      <>
         <div>
-            <h1>기념일 캘린더</h1>
-            <div className="calendar">
-                {Array.from({ length: 31 }, (_, index) => {
-                    const date = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}-${String(
-                        index + 1
-                    ).padStart(2, "0")}`;
-                    return (
-                        <div key={index} onClick={() => handleDateClick(date)}>
-                            {date}
-                        </div>
-                    );
-                })}
-            </div>
-
-            {/* 모달 창 */}
-            <div>
-        {/* <button onClick={() => setModalVisible(true)}>기념일 추가</button> */}
-        {modalVisible && (
-            <div className={`fullscreen-modal ${modalVisible ? "show" : ""}`}>
-                <h2>기념일 추가</h2>
-                <form onSubmit={handleSubmit}>
-                    <div>
-                        <label>기념일 이름:</label>
-                        <input
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            required
-                        />
-                    </div>
-                    <div>
-                        <label>설명:</label>
-                        <textarea
-                            name="description"
-                            value={formData.description}
-                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        ></textarea>
-                    </div>
-                    <button type="submit">추가</button>
-                    <button type="button" onClick={() => setModalVisible(false)}>
-                        닫기
-                    </button>
-                </form>
-            </div>
-        )}
+          <h1>기념일 캘린더</h1>
+          <div>
+            <button onClick={handlePreviousMonth}>이전 달</button>
+            <span>
+              {currentYear}년 {currentMonth}월
+            </span>
+            <button onClick={handleNextMonth}>다음 달</button>
+          </div>
+          <Calendar
+            currentYear={currentYear}
+            currentMonth={currentMonth}
+            anniversaries={anniversaries}
+            onDateClick={(date) => {
+              setSelectedDate(date);
+              setModalVisible(true);
+            }}
+          />
         </div>
-
-
-            {/* 이달의 기념일 */}
-            <div>
-                <h2>이달의 기념일</h2>
-                <ul>
-        {anniversaries && anniversaries.length > 0 ? (
-            anniversaries.map((anniversary) => (
-                <li key={anniversary.id}>
-                    {anniversary.anniversary_date} - {anniversary.name}
-                </li>
-            ))
-        ) : (
-            <li>기념일이 없습니다.</li>
-        )}
-    </ul>
-            </div>
-        </div>
+        <Modal
+          visible={modalVisible}
+          formData={formData}
+          onChange={setFormData}
+          onSubmit={handleSubmit}
+          onClose={() => setModalVisible(false)}
+        />
+      </>
     );
-};
-
-export default AnniversaryPage;
+  };
+  
+  export default AnniversaryPage;
+  

@@ -28,8 +28,6 @@ const CreatePostPage = () => {
             console.error('Error creating post:', err);
             
         }
-
-        
     }
 
     return (
