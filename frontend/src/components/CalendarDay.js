@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useImperativeHandle } from "react";
 import '../assets/styles/Anniversary.css';
 
 const CalendarDay = ({date, day, anniversaries, onClick}) => (

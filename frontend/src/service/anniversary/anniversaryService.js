@@ -23,3 +23,16 @@ export const getAnniversariesByDateRange = async (startDate, endDate) => {
         throw err;
     }
 }
+
+export const updateAnniversary = async (id, name, description) =>{
+    try{
+        const response = await axiosInstance.put(`${api_url}/${id}`, {
+            name,
+            description,
+        });
+        return response.data; 
+    }catch (err) {
+        console.error('Error updating post: ', err);
+        throw err;
+      }
+}
