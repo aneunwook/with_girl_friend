@@ -1,18 +1,20 @@
-const Modal = ({ visible, formData, onChange, onSubmit, data, onSelectAnniversary, onAddNew, onClose }) => {
+const Modal = ({ visible, formData, onChange, onSubmit, data, onSelectAnniversary, onAddNew, onClose, onDelete }) => {
   if (!visible) return null;
 
-  return (
+   return (
     <div className="fullscreen-modal show">
       <button onClick={onClose}>닫기</button>
       {data && data.length > 0 ? (
         <>
           <h2>기념일 목록</h2>
           <ul>
+          {console.log('Data:', data)}
             {data.map((item) => (
-              <li key={item.id}>
+              <li key={item.id} >
                 <button onClick={() => onSelectAnniversary(item)}>
                   {item.name} ({item.anniversary_date})
                 </button>
+                <button onClick={() => onDelete(item.id)}>삭제</button>
               </li>
             ))}
           </ul>

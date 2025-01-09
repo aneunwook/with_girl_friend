@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import {
   createAnniversary,
   getAnniversariesByDateRange,
-  updateAnniversary
+  updateAnniversary,
+  deleteAnniversary
 } from '../../service/anniversary/anniversaryService';
 import Calendar from '../../components/Calendar.js'
 import CalendarDay from '../../components/CalendarDay.js'
 import Modal from '../../components/Modal.js'
 import '../../assets/styles/Anniversary.css';
+import DDayList from '../../components/DDayList.js';
 
 const AnniversaryPage = () => {
     const [selectedDate, setSelectedDate] = useState(null); //사용자가 선택한 날짜
@@ -16,7 +18,7 @@ const AnniversaryPage = () => {
     const [formData, setFormData] = useState({ name: '', description: '' }); // 기념일 입력 데이터
     const [currentYear, setCurrentYear] = useState(new Date().getFullYear()); // 현재 연도
     const [currentMonth, setCurrentMonth] = useState(new Date().getMonth() + 1); // 현재 월
-    const [selectedAnniversary, setSelectedAnniversary] = useState(null); // 선택된 기념일 정보
+    const [selectedAnniversary, setSelectedAnniversary] = useState([]); // 선택된 기념일 정보
   
     const fetchAnniversaries = async () => {
       const startDate = `${currentYear}-${String(currentMonth).padStart(2, '0')}-01`;
@@ -118,6 +120,20 @@ const AnniversaryPage = () => {
       setSelectedAnniversary([]);
       setFormData({name: '', description: ''});
     }
+
+    const handleDelete = async (id) => {
+      if (!window.confirm('정말로 삭제하시겠습니까?')) return;
+    
+      try {
+        await deleteAnniversary(id); // 서비스 호출
+        alert('기념일이 삭제되었습니다.');
+        setModalVisible(false);
+        fetchAnniversaries(); // 목록 갱신
+      } catch (err) {
+        console.error('기념일 삭제 실패:', err);
+        alert('기념일 삭제에 실패했습니다.');
+      }
+    };    
   
     return (
       <>
@@ -137,6 +153,9 @@ const AnniversaryPage = () => {
             onDateClick={handleDateClick}
           />
         </div>
+        
+        <DDayList anniversaries={anniversaries}/>
+
         {modalVisible && (
        <Modal
        visible={modalVisible}
@@ -159,9 +178,10 @@ const AnniversaryPage = () => {
          setSelectedAnniversary([anniversary]); // 선택된 기념일 저장
        }}
        onAddNew={handleAddNew}
+       onDelete={handleDelete}
        onClose={() => {
          setModalVisible(false);
-         setSelectedAnniversary(null);
+         setSelectedAnniversary([]);
          setFormData({ name: '', description: '' }); // 폼 초기화
        }}
      />

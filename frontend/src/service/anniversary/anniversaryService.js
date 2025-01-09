@@ -32,7 +32,17 @@ export const updateAnniversary = async (id, name, description) =>{
         });
         return response.data; 
     }catch (err) {
-        console.error('Error updating post: ', err);
+        console.error('Error updating anniversary: ', err);
         throw err;
       }
+}
+
+export const deleteAnniversary = async (id) => {
+    try{
+        const response = await axiosInstance.delete(`${api_url}/${id}`);
+        return response.data;
+    }catch(err){
+        console.error('Error delete anniversary', err);
+        throw err;
+    }
 }
