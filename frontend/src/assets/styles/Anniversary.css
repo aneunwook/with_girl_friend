@@ -1,161 +1,180 @@
-/* 캘린더 전체 */
 .calendar {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr); /* 7개의 열로 분할 (요일별로) */
-    grid-gap: 1px; /* 셀 간의 간격 */
-    border: 1px solid #ccc; /* 전체 캘린더 외부에 테두리 */
-    width: 100%; /* 캘린더가 부모 요소에 맞게 확장 */
-  }
-  
-  .calendar-day {
-    display: flex;
-    flex-direction: column; /* 새로방향으로 정렬 */
-    justify-content: flex-start; /* 위쪽 정렬 */
-    align-items: center;
-    box-sizing: border-box; /* 패딩, 테두리 포함 */
-    height: 130px;
-    padding: 10px;
-    border: 1px solid #ddd; /* 각 날짜에 테두리 추가 */
-    background-color: #f9f9f9;
-    overflow: hidden;
-  }
+  border: 1px solid #ccc;
+  width: 100%;
+}
 
-  .anniversary-list{
-    list-style-type: disc; /* 목록에 불릿 추가 */
-    margin-top: 5px; /* 날짜와 목록 사이 간격 */
-    width: 100%; /* 목록이 날짜와 정렬되도록 전체 너비 사용 */
-    max-height: 130px; /* 최대 높이 설정 */
-    overflow-y: hidden; /* 세로 스크롤 추가 */
-    text-align: center; /* 텍스트 왼쪽 정렬 */
-    word-wrap: break-word; /* 단어가 길 경우 줄바꿈 */
-    transition: overflow 0.3s; /* 스크롤바 전환 효과 */
-  }
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-column: span 7;
+}
 
-  .anniversary-item{
-    display: flex;  /* 점과 텍스트를 가로로 배치 */
-    align-items: center; /* 점과 텍스트 수직 정렬 */
-    margin-bottom: 5px;
-    font-size: 14px; /* 기념일 텍스트 크기 */
-    color: #d61212; /* 텍스트 색상 */
-    white-space: nowrap; /* 텍스트가 한 줄로 유지되도록 설정 */
-    overflow: hidden; /* 넘치는 텍스트 숨기기 */
-    text-overflow: ellipsis; /* 넘치는 텍스트 생략 (...) */
-  }
+.weekday {
+  text-align: center;
+  padding: 10px;
+  background-color: #f0f0f0;
+  font-weight: bold;
+  border: 1px solid #ddd;
+}
 
-  .dot{
-    width: 8px;
-    height: 8px;
-    background-color: #007bff; /* 점 색상 */
-    border-radius: 50%; /* 원형 */
-    margin-right: 8px; /* 점과 텍스트 간격 */
-  }
+.days {
+  /* 이 부분을 수정 */
+  display: flex;
+  flex-wrap: wrap; /* 날짜가 넘치면 다음 줄로 */
+  width: 100%;
+}
+
+.calendar-day {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+  box-sizing: border-box;
+  padding: 10px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  overflow: hidden;
+  width: calc(100% / 7); /* 각 날짜의 너비를 1/7로 설정 */
+  height: 130px;
+}
+
+.anniversary-list {
+  list-style-type: disc; /* 목록에 불릿 추가 */
+  margin-top: 5px; /* 날짜와 목록 사이 간격 */
+  width: 100%; /* 목록이 날짜와 정렬되도록 전체 너비 사용 */
+  max-height: 130px; /* 최대 높이 설정 */
+  overflow-y: hidden; /* 세로 스크롤 추가 */
+  text-align: center; /* 텍스트 왼쪽 정렬 */
+  word-wrap: break-word; /* 단어가 길 경우 줄바꿈 */
+  transition: overflow 0.3s; /* 스크롤바 전환 효과 */
+}
+
+.anniversary-item {
+  display: flex; /* 점과 텍스트를 가로로 배치 */
+  align-items: center; /* 점과 텍스트 수직 정렬 */
+  margin-bottom: 5px;
+  font-size: 14px; /* 기념일 텍스트 크기 */
+  color: #d61212; /* 텍스트 색상 */
+  white-space: nowrap; /* 텍스트가 한 줄로 유지되도록 설정 */
+  overflow: hidden; /* 넘치는 텍스트 숨기기 */
+  text-overflow: ellipsis; /* 넘치는 텍스트 생략 (...) */
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background-color: #007bff; /* 점 색상 */
+  border-radius: 50%; /* 원형 */
+  margin-right: 8px; /* 점과 텍스트 간격 */
+}
 /* 마우스를 올리면 스크롤바 활성화 */
 .anniversary-list:hover {
-    overflow-y: auto; /* 스크롤 활성화 */
-  }
-  
+  overflow-y: auto; /* 스크롤 활성화 */
+}
+
 /* Webkit 기반 브라우저용 스크롤바 스타일 */
 .anniversary-list::-webkit-scrollbar {
-    width: 8px; /* 스크롤바의 너비 */
-    height: 8px; /* 가로 스크롤바의 높이 */
-  }
-  
-  /* 스크롤바 트랙 (배경) */
-  .anniversary-list::-webkit-scrollbar-track {
-    background: #f1f1f1; /* 트랙 배경색 */
-    border-radius: 10px; /* 트랙의 둥근 모서리 */
-  }
-  
-  /* 스크롤바 핸들 (움직이는 부분) */
-  .anniversary-list::-webkit-scrollbar-thumb {
-    background: #007bff; /* 핸들의 배경색 */
-    border-radius: 10px; /* 핸들의 둥근 모서리 */
-  }
-  
-  /* 스크롤바 핸들 위에 마우스를 올렸을 때 */
-  .anniversary-list::-webkit-scrollbar-thumb:hover {
-    background: gray; /* 핸들의 호버 색상 */
-  }
+  width: 8px; /* 스크롤바의 너비 */
+  height: 8px; /* 가로 스크롤바의 높이 */
+}
 
-  /* 반응형 - 작은 화면에서 박스 크기 조정 */
-    @media (max-width: 768px) {
-        .calendar-day {
-        height: 80px; /* 높이 축소 */
-        font-size: 10px; /* 텍스트 크기 축소 */
-        }
-        .anniversary-item{
-            font-size: 10px;
-        }
-    }
-  
-  .fullscreen-modal {
-    position: fixed;
-    top: 100%;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: white;
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    transition: top 0.4s ease-in-out;
-  }
-  
-  .fullscreen-modal.show {
-    top: 0;
-  }
-  
-  .hidden {
-    display: none;
-  }
+/* 스크롤바 트랙 (배경) */
+.anniversary-list::-webkit-scrollbar-track {
+  background: #f1f1f1; /* 트랙 배경색 */
+  border-radius: 10px; /* 트랙의 둥근 모서리 */
+}
 
-  button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    background-color: #007bff;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    margin-right: 10px;
+/* 스크롤바 핸들 (움직이는 부분) */
+.anniversary-list::-webkit-scrollbar-thumb {
+  background: #007bff; /* 핸들의 배경색 */
+  border-radius: 10px; /* 핸들의 둥근 모서리 */
+}
+
+/* 스크롤바 핸들 위에 마우스를 올렸을 때 */
+.anniversary-list::-webkit-scrollbar-thumb:hover {
+  background: gray; /* 핸들의 호버 색상 */
+}
+
+/* 반응형 - 작은 화면에서 박스 크기 조정 */
+@media (max-width: 768px) {
+  .calendar-day {
+    height: 80px;
+    font-size: 10px;
+    width: calc(100% / 7); /* 너비도 함께 조정 */
   }
-  
-  button:hover {
-    background-color: #0056b3;
+  .anniversary-item {
+    font-size: 10px;
   }
-  
-  button.close-btn {
-    background-color: #dc3545;
-  }
-  
-  button.close-btn:hover {
-    background-color: #a71d2a;
-  }
-  
-  .dday-list {
-    margin-top: 20px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f9f9f9;
-  }
-  
-  .dday-list h2 {
-    margin-bottom: 10px;
-    font-size: 1.2em;
-  }
-  
-  .dday-list ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .dday-list li {
-    margin: 5px 0;
-    font-size: 1em;
-  }
-  
+}
+
+.fullscreen-modal {
+  position: fixed;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transition: top 0.4s ease-in-out;
+}
+
+.fullscreen-modal.show {
+  top: 0;
+}
+
+.hidden {
+  display: none;
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button.close-btn {
+  background-color: #dc3545;
+}
+
+button.close-btn:hover {
+  background-color: #a71d2a;
+}
+
+.dday-list {
+  margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.dday-list h2 {
+  margin-bottom: 10px;
+  font-size: 1.2em;
+}
+
+.dday-list ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.dday-list li {
+  margin: 5px 0;
+  font-size: 1em;
+}
