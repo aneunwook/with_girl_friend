@@ -18,10 +18,24 @@
 }
 
 .days {
-  /* 이 부분을 수정 */
   display: flex;
   flex-wrap: wrap; /* 날짜가 넘치면 다음 줄로 */
   width: 100%;
+}
+
+.days > * {
+  display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    text-align: center;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #ddd; /* 모든 칸에 테두리 적용 */
+    background-color: #f9f9f9;
+    overflow: hidden;
+    width: calc(100% / 7);
+    height: 130px;
 }
 
 .calendar-day {
@@ -55,10 +69,14 @@
   align-items: center; /* 점과 텍스트 수직 정렬 */
   margin-bottom: 5px;
   font-size: 14px; /* 기념일 텍스트 크기 */
-  color: #d61212; /* 텍스트 색상 */
+  background-color: #ea4df0;/* 텍스트 색상 */
   white-space: nowrap; /* 텍스트가 한 줄로 유지되도록 설정 */
   overflow: hidden; /* 넘치는 텍스트 숨기기 */
   text-overflow: ellipsis; /* 넘치는 텍스트 생략 (...) */
+  border-radius: 10px;
+  border: none;
+  outline: none; /* 포커스 시 생기는 외곽선 제거 */
+  cursor: pointer;
 }
 
 .dot {
@@ -110,11 +128,14 @@
 
 .fullscreen-modal {
   position: fixed;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0); /* 초기 상태: 축소된 상태 */
+  width: 80%;
+  max-width: 600px; /* 최대 너비를 600px로 제한 */
+  height: 70%;
   background: white;
+  max-height: 500px; /* 최대 높이를 500px로 제한 */
   z-index: 1000;
   display: flex;
   flex-direction: column;
@@ -122,38 +143,104 @@
   align-items: center;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  transition: top 0.4s ease-in-out;
+  opacity: 0; /* 처음에 투명 */
+  transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out; /* 크기와 투명도를 동시에 변화 */  visibility: hidden; /* 숨겨진 상태 유지 */
 }
 
 .fullscreen-modal.show {
+  opacity: 1; /* 완전히 나타남 */
+  visibility: visible; /* 보이도록 변경 */
+  transform: translate(-50%, -50%) scale(1); /* 정면으로 확대 */
+}
+
+.close-button {
+  position: absolute;
+  top: 10px; /* 상단으로부터 10px */
+  right: 10px; /* 오른쪽으로부터 10px */
+  background: none;
+  border: none;
+  font-size: 30px;
+  color: #333;
+  cursor: pointer;
+  padding: 5px;
+  transition: transform 0.3s ease, color 0.3s ease; /* 부드러운 변화를 위한 transition */
+}
+
+.close-button:hover{
+  color: #ff0000; /* 호버 시 빨간색 */
+  transform: scale(1.5); /* 텍스트 크기 확대 */
+}
+/* 공통 버튼 스타일 */
+.btnFloat {
+  position: relative;
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  border: none;
+  background: none;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 5px;
+  transition: all 0.2s ease-in-out;
+}
+
+.btnFloat:before {
+  content: '';
+  display: block;
+  position: absolute;
   top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.4);
+  z-index: -1; /* 배경을 텍스트 뒤로 */
+}
+
+/* 수정 버튼 색상 */
+.edit-button.btnFloat:before {
+  background: #00AE68; /* 초록색 */
+}
+
+.edit-button.btnFloat:hover:before {
+  transform: scale(1.5);
+  box-shadow: 0px 5px 5px -2px rgba(0, 0, 0, 0.25);
+}
+
+/* 추가 버튼 색상 */
+.add-button.btnFloat:before {
+  background: #FFAA40; /* 주황색 */
+}
+
+.add-button.btnFloat:hover:before {
+  transform: scale(1.5);
+  box-shadow: 0px 5px 5px -2px rgba(0, 0, 0, 0.25);
 }
 
 .hidden {
   display: none;
 }
 
-button {
-  padding: 10px 20px;
+.fullscreen-modal form{
+  display: flex;
+  flex-direction: column; /* 수직 정렬 */
+  gap: 15px; /* 요소 간 간격 추가 */
+  
+}
+
+.anniversaryName,
+.anniversaryDescription{
+  margin-top: 20px;
   border: none;
-  border-radius: 4px;
-  background-color: #007bff;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  margin-right: 10px;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-button.close-btn {
-  background-color: #dc3545;
-}
-
-button.close-btn:hover {
-  background-color: #a71d2a;
+  border-bottom: 1px solid rgba(0,0,0,0.1);
+  border-radius: 0;
+  padding-left: 0;
+  box-shadow: none;
+  -webkit-transition: all 0.1s ease-out;
+  transition: all 0.1s ease-out;
 }
 
 .dday-list {

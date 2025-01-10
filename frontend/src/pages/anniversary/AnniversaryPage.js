@@ -100,26 +100,23 @@ const AnniversaryPage = () => {
   const handleDateClick = (date) => {
     if (!date) return; // 빈 칸(null) 클릭 방지
 
-    const anniversary = anniversaries.filter(
-      (item) => item.anniversary_date === date
-    );
-
     // 날짜를 설정
     setSelectedDate(date);
-
-    if (anniversary.length > 0) {
-      setSelectedAnniversary(anniversary);
-      setFormData({
-        name: anniversary[0]?.name || '',
-        description: anniversary[0]?.description || '',
-      });
-      setModalVisible(true);
-    } else {
-      setSelectedAnniversary([]); // 선택된 기념일 초기화
-      setFormData({ name: '', description: '' });
-      setModalVisible(true);
-    }
+    setSelectedAnniversary([])
+    setFormData({name: '', description: ''});
+    setModalVisible(true);
   };
+
+  const openModalWithAnniversary = (anniversary) => {
+    setSelectedDate(anniversary.anniversary_date); // 선택된 날짜 설정
+    setSelectedAnniversary([anniversary]);
+    setFormData({
+      name: anniversary.name,
+      description: anniversary.description,
+    });
+    setModalVisible(true);
+  };
+  
 
   const handleAddNew = () => {
     setSelectedAnniversary([]);
@@ -140,6 +137,7 @@ const AnniversaryPage = () => {
     }
   };
 
+
   return (
     <>
       <div>
@@ -156,6 +154,14 @@ const AnniversaryPage = () => {
           currentMonth={currentMonth}
           anniversaries={anniversaries}
           onDateClick={handleDateClick}
+          onSelectAnniversary={(anniversary) => {
+            setFormData({
+              name: anniversary.name,
+              description: anniversary.description,
+            });
+            setSelectedAnniversary([anniversary]); // 선택된 기념일 저장
+          }}
+          openModalWithAnniversary={openModalWithAnniversary}
         />
       </div>
 
@@ -178,13 +184,13 @@ const AnniversaryPage = () => {
             }
           }}
           data={selectedAnniversary}
-          onSelectAnniversary={(anniversary) => {
-            setFormData({
-              name: anniversary.name,
-              description: anniversary.description,
-            });
-            setSelectedAnniversary([anniversary]); // 선택된 기념일 저장
-          }}
+          // onSelectAnniversary={(anniversary) => {
+          //   setFormData({
+          //     name: anniversary.name,
+          //     description: anniversary.description,
+          //   });
+          //   setSelectedAnniversary([anniversary]); // 선택된 기념일 저장
+          // }}
           onAddNew={handleAddNew}
           onDelete={handleDelete}
           onClose={() => {
