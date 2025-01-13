@@ -15,19 +15,35 @@ const HomePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    let isMounted = true; // 컴포넌트가 마운트 상태인지 확인
+    console.log("useEffect triggered, currentPage:", currentPage);
+    
     const fetchPost = async () => {
       try {
         const data = await getPosts(currentPage, 10);
-        setPosts(data.posts || []);
-        setTotalPages(data.totalPages);
-        setLoading(false);
+        if (isMounted) {
+          console.log("Fetched posts:", data.posts);
+          setPosts(data.posts || []);
+          setTotalPages(data.totalPages);
+        }
       } catch (err) {
-        setError('Error fetching posts');
-        setLoading(false);
+        if (isMounted) {
+          setError("Error fetching posts");
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
     };
+  
     fetchPost();
+  
+    return () => {
+      isMounted = false; // 언마운트 시 상태 업데이트 방지
+    };
   }, [currentPage]);
+  
 
   if (loading) {
     return <p>Loading posts...</p>;

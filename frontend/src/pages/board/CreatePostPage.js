@@ -20,8 +20,16 @@ const CreatePostPage = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // 올바른 데이터 객체 생성
+    const data = {
+        user_id: 1, // 실제 사용자 ID를 동적으로 넣어야 함
+        title: title, // 입력받은 제목
+        description: content, // 입력받은 내용
+        tags: "example,tag", // 태그는 필요한 경우 추가
+      };
+
         try{
-            const postData = await createPost( title, content );
+            const postData = await createPost( data );
             console.log("post created successfully", postData);
             navigate('/');   
         }catch(err){

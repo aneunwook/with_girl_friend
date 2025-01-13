@@ -28,9 +28,10 @@ export const getPosts = async (page, limit) => {
 };
 
 
-export const createPost = async (title, content) => {
+export const createPost = async (data) => {
   try {
-    const response = await axiosInstance.post(api_url, { title, content });
+    console.log("Data being sent:", data); // 전달 데이터 확인
+    const response = await axiosInstance.post(api_url, data);
     return response.data;
   } catch (err) {
     console.error('Error creating post:', err);

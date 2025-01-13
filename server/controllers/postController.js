@@ -2,11 +2,10 @@ import Post from '../models/postModel.js';
 
 const createPost = async (req, res) => {
   try {
-    const { title, content } = req.body;
+    const { user_id, title, description, tags } = req.body;
 
     const newPost = await Post.create({
-      title,
-      content,
+      user_id, title, description, tags
     });
     return res.status(200).json(newPost);
   } catch (err) {

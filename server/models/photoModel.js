@@ -21,38 +21,8 @@ const Photo = sequelize.define(
     },
 
     photo_url: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-    },
-
-    title: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-
-    description: {
       type: DataTypes.TEXT,
-      allowNull: true,
-    },
-
-    tags: {
-      type: DataTypes.STRING, // 콤마로 구분된 태그
-      allowNull: true,
-    },
-
-    is_private: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
-
-    likes: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-    },
-
-    views: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
+      allowNull: false,
     },
   },
   {

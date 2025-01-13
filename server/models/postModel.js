@@ -9,7 +9,6 @@ const Post = sequelize.define(
       primaryKey: true,
       autoIncrement: true, // 자동 증가
     },
-
     user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
@@ -33,6 +32,20 @@ const Post = sequelize.define(
     tags: {
       type: DataTypes.STRING(255),
       allowNull: true, // 태그는 선택사항으로 설정
+    },
+    is_private: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+
+    likes: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
+    },
+
+    views: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0,
     },
   },
   {
