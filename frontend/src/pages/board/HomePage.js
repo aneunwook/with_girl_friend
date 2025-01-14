@@ -17,7 +17,7 @@ const HomePage = () =>{
       setError(null);
       
       try{
-        const data = getAllPosts(currentPage, 10);
+        const data = await getAllPosts(currentPage, 10);
         setPosts(data.posts || []);
         setTotalPages(data.totalPages);
       }catch(err){
@@ -39,9 +39,9 @@ const HomePage = () =>{
         {posts.length === 0 ? (
           <p>게시물이 없습니다</p>
         ) : (
-          posts.map((post) => {
+          posts.map((post) => (
             <PostCard key={post.id} post={post} /> // 게시물 렌더링
-          })
+          ))
         )}
       </div>
       <Pagination 
