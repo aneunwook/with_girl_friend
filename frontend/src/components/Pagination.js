@@ -31,21 +31,8 @@ const Pagination = ({ posts, currentPage, setCurrentPage, totalPages }) => {
         ));
     };
 
-    return (
-        <div>
-            <div>
-                {posts.length === 0 ? (
-                    <p>No posts available.</p>
-                ) : (
-                    posts.map((post) => <PostCard key={post.id} post={post} />)
-                )}
-            </div>
+    return <div className="pagination"> {renderPageNumbers()} </div> //페이지 번호 버튼 렌더링 
 
-            <div className="pagination">
-                {renderPageNumbers()} {/* 페이지 번호 버튼 렌더링 */}
-            </div>
-        </div>
-    );
 };
 
 export default Pagination;

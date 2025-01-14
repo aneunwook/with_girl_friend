@@ -10,7 +10,7 @@ import express from 'express';
 const router = express.Router();
 
 // 모든 게시물 조회 (인증된 사용자만 가능)
-router.get('/', getAllPosts);
+// router.get('/', getAllPosts);
 
 //게시물 작성(관리자만)
 router.post('/', createPost);

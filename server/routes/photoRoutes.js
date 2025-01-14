@@ -1,6 +1,6 @@
 import {
   createPostWithPhotos,
-  // getAllPosts,
+  getAllPosts,
   getPostDetails,
   updatePostWithPhotos,
   deletePostWithPhotos
@@ -11,7 +11,7 @@ import upload from '../middleware/upload.js';
 const router = express.Router();
 
 router.post('/upload', upload.array('photos'), createPostWithPhotos);
-// router.get('/allPost', getAllPosts);
+router.get('/allPost', getAllPosts);
 router.get('/:id', getPostDetails);
 router.put('/:id', upload.array('photos'), updatePostWithPhotos);
 router.delete('/:id', deletePostWithPhotos);

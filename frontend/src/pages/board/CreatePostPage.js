@@ -1,70 +1,100 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { createPost } from '../../service/borad/postService';
+import { createPostWithPhotos } from '../../service/photo/photoService';
 
 const CreatePostPage = () => {
     const navigate = useNavigate();
 
-    const [title, setTitle] = useState('');
-    const [content, setContent] = useState('');
+    const [formData, setFormData] = useState({
+        title : "",
+        description : "",
+        tags : "",
+    });
+    const [files, setFiles] = useState([]);
+    const [message, setMessage] = useState("");
 
-    const handleTitleChange = (e) => {
-        setTitle(e.target.value);
+    // 폼 데이터 변경 핸들러
+    const handleInputChange = (e) => {
+        const {name, value} = e.target;
+        setFormData({...formData, [name]: value });
     }
 
-    const handleContentChange = (e) => {
-        setContent(e.target.value);
+    //파일 선택 핸들러
+    const handleFileChange = (e) => {
+        setFiles(Array.from(e.target.files)) //여러 파일을 배열로 저장
     }
 
+    // 폼 제출 핸들러
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // 올바른 데이터 객체 생성
-    const data = {
-        user_id: 1, // 실제 사용자 ID를 동적으로 넣어야 함
-        title: title, // 입력받은 제목
-        description: content, // 입력받은 내용
-        tags: "example,tag", // 태그는 필요한 경우 추가
-      };
-
+        const data = {
+            user_id: 1, // 실제 사용자 ID
+            title: formData.title,
+            description: formData.description,
+            tags: formData.tags,
+        };
+        console.log("FormData to send:", data);
+        
         try{
-            const postData = await createPost( data );
-            console.log("post created successfully", postData);
+            const response = await createPostWithPhotos(data, files);
+            setMessage("게시물 등록을 완료했습니다");
+            console.log(response);
             navigate('/');   
-        }catch(err){
-            console.error('Error creating post:', err);
-            
+        }catch (err) {
+            console.error('Error creating post:', err.response?.data || err.message);
+            setMessage(err.response?.data?.error || 'An error occurred while creating the post.');
         }
     }
 
     return (
         <div>
-            <h1>Create a New Post</h1>
+            <h1>게시물 등록하기</h1>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="title">Title</label>
                     <input
                         type="text"
-                        id="title"
-                        value={title}
-                        onChange={handleTitleChange}
+                        name="title"
+                        value={formData.title}
+                        onChange={handleInputChange}
                         required
                     />
                 </div>
                 <div>
-                    <label htmlFor="content">Content</label>
-                    <textarea
-                        id="content"
-                        value={content}
-                        onChange={handleContentChange}
+                    <label htmlFor="description">Description:</label>
+                    <input
+                        type='text'
+                        name="description"
+                        value={formData.description}
+                        onChange={handleInputChange}
                         required
                     />
                 </div>
                 <div>
-                    <button type="submit">Create Post</button>
+                    <label htmlFor='tags'>Tags:</label>
+                    <input 
+                        type='text'
+                        name='tags'
+                        value={formData.tags}
+                        onChange={handleInputChange}
+                    />
+                </div>
+                <div>
+                    <label htmlFor='photos'>Photos:</label>
+                    <input 
+                        type='file'
+                        name='photos'
+                        multiple
+                        onChange={handleFileChange}
+                    />
+                </div>
+                <div>
+                    <button type="submit">등록</button>
                 </div>
             </form>
+            {message && <p>{message}</p>}
         </div>
     )
 }

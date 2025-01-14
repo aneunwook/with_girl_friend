@@ -15,7 +15,7 @@ function App() {
             <Header/>
             <div className="content">
                 <Routes>
-                    <Route path="/create" element={<CreatePostPage />}/>
+                    <Route path="/upload" element={<CreatePostPage />}/>
                     <Route path="/" element={<HomePage />}/>
                     <Route path="/posts/:id" element={<PostDetailPage/>}/>
                     <Route path="/edit-post/:id" element={<EditPostPage/>}/>
