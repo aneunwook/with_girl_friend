@@ -3,7 +3,8 @@ import path from 'path';
 import fs from 'fs'; // ES6 모듈 방식
 
 // 저장 경로 확인 및 생성
-const uploadDir = '../uploads';
+const uploadDir = path.join(process.cwd(), '../uploads');
+
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true }); // 폴더 생성
 }
@@ -11,11 +12,15 @@ if (!fs.existsSync(uploadDir)) {
 // 파일 저장 경로와 이름 설정
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    console.log('Uploading to:', uploadDir); // 업로드 경로 확인
     cb(null, uploadDir); // 업로드 파일 저장 경로
+
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.random(Math.random() * 1e9);
     cb(null, `${uniqueSuffix}-${file.originalname}`);
+    console.log(req.file);
+
   },
 });
 
@@ -32,9 +37,10 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 파일 크기 제한 (5MB)
+    fileSize: 10 * 1024 * 1024, // 파일 크기 제한 (5MB)
   },
   fileFilter,
 });
+
 
 export default upload;

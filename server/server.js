@@ -3,6 +3,8 @@ dotenv.config();
 import express from 'express';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import { fileURLToPath } from 'url';
+import path from 'path';
 // import jwt from 'jsonwebtoken'; // JWT 주석 처리
 import sequelize from './config/db.js'; // sequelize import
 import userRoutes from './routes/userRoutes.js';
@@ -13,6 +15,8 @@ import { Post, Photo } from './models/index.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 app.use(
   cors({
@@ -25,16 +29,50 @@ app.use(
 app.options('*', cors()); // OPTIONS 요청 허용
 // JSON 파싱 미들웨어
 app.use(bodyParser.json());
-
 app.use(express.json());
+
 app.use('/api/posts', postRoutes); // 여기에 CRUD 관련 라우트를 설정할 수 있습니다.
 app.use('/api/auth', userRoutes);
 app.use('/api/anniversaries', anniversaryRoutes);
-// 정적 파일 경로 설정
-app.use('/uploads', express.static('uploads')); // 업로드된 파일 접근 경로
 app.use('/api/photos', photoRoutes);
 
-// JWT 관련 라우트 주석 처리
+// 정적 파일 제공: `/uploads` 요청에 대해 처리
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// // React의 빌드된 정적 파일 제공
+// app.use(express.static(path.join(__dirname, '../client/build')));
+
+// // React 라우터와 정적 파일 처리
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, '../client/build/index.html'));
+// });
+
+// 로그용 미들웨어
+app.use((req, res, next) => {
+  console.log(
+    `[${new Date().toISOString()}] Incoming Request: ${req.method} ${req.url}`
+  );
+  console.log('Request Headers:', req.headers);
+  next();
+});
+
+// 서버 실행 전에 Sequelize 연결 확인
+sequelize
+  .sync({ force: false })
+  .then(() => {
+    console.log('Database synchronized successfully');
+    app.listen(port, () => {
+      console.log(`Server running on port ${port}`);
+    });
+  })
+  .catch((err) => {
+    console.error('Unable to connect to the database:', err);
+  });
+
+
+
+
+  // JWT 관련 라우트 주석 처리
 /*
 app.post('/api/refresh-token', (req, res) => {
   const { refreshToken } = req.body;
@@ -58,25 +96,3 @@ app.post('/api/refresh-token', (req, res) => {
   });
 });
 */
-
-// 로그용 미들웨어
-app.use((req, res, next) => {
-  console.log(
-    `[${new Date().toISOString()}] Incoming Request: ${req.method} ${req.url}`
-  );
-  console.log('Request Headers:', req.headers);
-  next();
-});
-
-// 서버 실행 전에 Sequelize 연결 확인
-sequelize
-  .sync({ force: false })
-  .then(() => {
-    console.log('Database synchronized successfully');
-    app.listen(port, () => {
-      console.log(`Server running on port ${port}`);
-    });
-  })
-  .catch((err) => {
-    console.error('Unable to connect to the database:', err);
-  });

@@ -1,3 +1,4 @@
+import { response } from "express";
 import axiosInstance from "../axiosInstance";
 
 const api_url = '/photos'
@@ -35,4 +36,26 @@ export const createPostWithPhotos = async (data, files) => {
         headers: {'Content-Type' : 'multipart/form-data'},
     })
     return response.data;
+}
+
+export const getPostDetails = async(postId) => {
+    try{
+        const response = await axiosInstance.get(`${api_url}/${postId}`)
+        return response.data;
+    }catch(error){
+        console.error('게시물 상세 조회 오류', error);
+        throw error;
+    }
+}
+
+export const updatePostWithPhotos = async (id, formData) => {
+    try{
+        const response = await axiosInstance.put(`${api_url}/${id}`, formData, {
+            headers: {'Content-Type' : 'multipart/form-data'},
+        })
+        return response.data;
+    }catch(error){
+        console.error('수정 실패',error);
+        throw error;
+    }
 }

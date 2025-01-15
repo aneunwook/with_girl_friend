@@ -6,9 +6,9 @@ const PostCard = ({post}) => {
         <div className="post-card">
             <h3>{post.title}</h3>
             <p>{post.content}</p>
-            <p><strong>작성일: </strong> {new Date(post.createAt).toLocaleDateString()}</p>
-            <img src={post.photos[0].photo_url} alt={post.title}/>
-            <button><Link to={`/posts/${post.id}`}>Go to Post</Link></button>
+            <p><strong>작성일: </strong> {new Date(post.created_at).toLocaleDateString()}</p>
+            <img src={`http://localhost:5000${post.photos[0].photo_url}`} style={{width : '200px'}} alt={post.title}/>
+            <button><Link to={`/photos/${post.id}`}>Go to Post</Link></button>
         </div>
     )
 }
