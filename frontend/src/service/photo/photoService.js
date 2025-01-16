@@ -1,4 +1,3 @@
-import { response } from "express";
 import axiosInstance from "../axiosInstance";
 
 const api_url = '/photos'
@@ -32,6 +31,11 @@ export const createPostWithPhotos = async (data, files) => {
         });
     }
 
+     // FormData 확인
+     for (let pair of formData.entries()) {
+        console.log(pair[0], pair[1]); // 확인용 로그
+    }
+    
     const response = await axiosInstance.post(`${api_url}/upload`, formData, {
         headers: {'Content-Type' : 'multipart/form-data'},
     })
@@ -56,6 +60,16 @@ export const updatePostWithPhotos = async (id, formData) => {
         return response.data;
     }catch(error){
         console.error('수정 실패',error);
+        throw error;
+    }
+}
+
+export const deletePostWithPhotos = async (postId) => {
+    try{
+        const response = await axiosInstance.delete(`${api_url}/${postId}`)
+        return response.data;
+    }catch(error){
+        console.error('게시글 삭제 실패', error);
         throw error;
     }
 }

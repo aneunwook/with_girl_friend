@@ -36,12 +36,15 @@ const EditPostPage = () => {
         formData.append('description', description);
         formData.append('tags', tags);
         formData.append('is_private', isPrivate);
+        
+       // 새로 추가된 사진 추가
+        newPhotos.forEach((id) => formData.append('photos', id));
+      
+        // 삭제할 사진 ID 추가
         photosToDelete.forEach((photoId) => formData.append('photosToDelete[]', photoId));
-        newPhotos.forEach((file) => formData.append('newFiles', file));
 
         try{
-            await updatePostWithPhotos(id, FormData)
-            alert('게시물이 수정되었습니다');
+            await updatePostWithPhotos(id, formData)
             navigate('/')
         }catch(err){
             console.error('Error updating post:', err);

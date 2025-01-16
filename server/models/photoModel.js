@@ -22,7 +22,7 @@ const Photo = sequelize.define(
 
     photo_url: {
       type: DataTypes.TEXT,
-      allowNull: false,
+      allowNull: true,
     },
   },
   {

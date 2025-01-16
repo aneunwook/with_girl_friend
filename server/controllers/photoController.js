@@ -1,18 +1,20 @@
+import { fileURLToPath } from 'url';
 import sequelize from '../config/db.js';
 import Post from '../models/postModel.js';
 import Photo from '../models/photoModel.js';
 import fs from 'fs';
 import path from 'path';
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 export const createPostWithPhotos = async (req, res) => {
   const t = await sequelize.transaction(); // 트랜잭션 시작
   try {
-    const { user_id, title, description, tags } = req.body;
 
-    // 파일이 업로드되지 않았을 경우 에러 처리
-    if (!req.files || req.files.length === 0) {
-      return res.status(400).json({ error: '파일이 업로드 되지 않았습니다.' });
-    }
+    console.log('Received files:', req.files); // 파일 배열 확인
+
+    const { user_id, title, description, tags } = req.body;
 
     // 1. 게시물 생성
     const newPost = await Post.create(
@@ -121,6 +123,8 @@ export const updatePostWithPhotos = async (req, res) => {
   try {
     const { id } = req.params;
     const { photosToDelete, title, description, tags, is_private } = req.body;
+    console.log("삭제할 사진 들 :" , req.body.photosToDelete);
+
     const newFiles = req.files;
 
     // 1. 게시물 수정
@@ -176,6 +180,8 @@ export const updatePostWithPhotos = async (req, res) => {
     await Photo.bulkCreate(newPhotoData, {transaction: t});
     }
     await t.commit(); // 트랜잭션 커밋
+    console.log('수정 데이터 ', post );
+  
     res.status(200).json({ message: '게시물이 성공적으로 수정되었습니다.', post });
   } catch (err) {
     await t.rollback(); // 트랜잭션 롤백
