@@ -1,44 +1,33 @@
-import React from 'react';
-import { Link } from 'react-router-dom'; // react-router-dom을 사용하여 라우팅
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom'; // 라우팅을 위한 Link
+import Sidebar from './Sidebar'; // Sidebar 컴포넌트
+import '../assets/styles/Header.css'; // 헤더 스타일
+
 const Header = () => {
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!isSidebarOpen); // 사이드바 상태 토글
+  };
+
   return (
-    <header style={headerStyle}>
-      <div style={logoStyle}>
-        <h1>My Board</h1> {/* 사이트 로고 */}
-      </div>
-      <nav style={navStyle}>
-        <ul style={ulStyle}>
-          <li><Link to="/" style={linkStyle}>Home</Link></li> {/* 홈 링크 */}
-          <li><Link to="/create" style={linkStyle}>Create Post</Link></li> {/* 게시글 작성 페이지 링크 */}
-        </ul>
-      </nav>
-    </header>
+    <>
+      <header className="header">
+        {/* 사이드바 토글 버튼 */}
+        <button className="toggle-button" onClick={toggleSidebar}>
+          <i className="fa-solid fa-bars"></i>
+        </button>
+
+        {/* 로고 */}
+        <div className="logo">
+          <h1>My Board</h1>
+        </div>
+      </header>
+
+      {/* Sidebar 컴포넌트 */}
+      <Sidebar isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+    </>
   );
 };
-// 스타일을 객체로 정의 (이건 스타일을 외부 파일로 분리할 수도 있지만, 간단하게 여기서 처리)
-const headerStyle = {
-  padding: '20px',
-  backgroundColor: '#333',
-  color: '#fff',
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-};
-const logoStyle = {
-  fontSize: '24px',
-};
-const navStyle = {
-  fontSize: '18px',
-};
-const ulStyle = {
-  listStyleType: 'none',
-  margin: '0',
-  padding: '0',
-  display: 'flex',
-};
-const linkStyle = {
-  color: '#fff',
-  textDecoration: 'none',
-  margin: '0 10px',
-};
+
 export default Header;

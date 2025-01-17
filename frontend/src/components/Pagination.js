@@ -1,5 +1,6 @@
 import React from "react";
 import PostCard from "../components/PostCard";
+import '../assets/styles/Pagination.css';
 
 const Pagination = ({ posts, currentPage, setCurrentPage, totalPages }) => {
 
@@ -11,28 +12,23 @@ const Pagination = ({ posts, currentPage, setCurrentPage, totalPages }) => {
     }
 
     // 페이지 번호 버튼 렌더링
-    const renderPageNumbers = () => {
-        console.log("Rendering pages with totalPages:", totalPages); // 디버깅
-        const pageNumbers = [];
-        for (let i = 1; i <= totalPages; i++) {
-            pageNumbers.push(i);
-        }
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
 
-        return pageNumbers.map((number) => (
-            <button
-                key={number}
-                onClick={() => handlePageChange(number)}
-                style={{
-                    fontWeight: currentPage === number ? "bold" : "normal", // 현재 페이지 강조
-                }}
-            >
-                {number}
-            </button>
-        ));
-    };
-
-    return <div className="pagination"> {renderPageNumbers()} </div> //페이지 번호 버튼 렌더링 
-
+  return (
+    <div className="pagination-container">
+      {pageNumbers.map((number) => (
+        <button
+          className={`pagination-btn ${
+            currentPage === number ? "active" : ""
+          }`}
+          key={number}
+          onClick={() => handlePageChange(number)}
+        >
+          {number}
+        </button>
+      ))}
+    </div>
+  );
 };
 
 export default Pagination;

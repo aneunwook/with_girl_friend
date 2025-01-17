@@ -45,11 +45,11 @@ export const createPostWithPhotos = async (req, res) => {
 export const getAllPosts = async (req, res) => {
   try {
     // 쿼리 파라미터에서 page와 limit 값을 가져옴, 기본값은 1페이지, 10개씩
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 12 } = req.query;
 
     // 페이지 번호와 한 페이지에 보여줄 개수를 정수로 변환
-    const pageNum = parseInt(page, 10);
-    const limitNum = parseInt(limit, 10);
+    const pageNum = parseInt(page, 12);
+    const limitNum = parseInt(limit, 12);
 
     // 유효한 페이지 번호와 limit 체크
     if (isNaN(pageNum) || isNaN(limitNum) || pageNum < 1 || limitNum < 1) {

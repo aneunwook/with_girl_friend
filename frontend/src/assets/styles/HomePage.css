@@ -1,12 +1,15 @@
 /* src/assets/styles/HomePage.css */
 .home-page {
-    margin: 20px;
-    padding: 20px;
+    max-width: 1200px; /* 최대 너비 설정 */
+  margin: 0 auto; /* 가운데 정렬 */
+  padding: 0 20px; /* 내부 여백 */
+    
 }
 
 .post-list {
-    display: flex;
-    flex-wrap: wrap;
+    display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 한 줄에 3개의 컬럼 */
+    
 }
 
 .post-card {
