@@ -14,13 +14,11 @@ const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     console.log('Uploading to:', uploadDir); // 업로드 경로 확인
     cb(null, uploadDir); // 업로드 파일 저장 경로
-
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.random(Math.random() * 1e9);
     cb(null, `${uniqueSuffix}-${file.originalname}`);
     console.log(req.file);
-
   },
 });
 
@@ -37,10 +35,10 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   limits: {
-    fileSize: 10 * 1024 * 1024, // 파일 크기 제한 (5MB)
+    fileSize: 50 * 1024 * 1024, // 파일 크기 제한 (50MB)
+    fieldSize: 50 * 1024 * 1024, // 텍스트 필드 크기 제한 (50MB)
   },
   fileFilter,
 });
-
 
 export default upload;

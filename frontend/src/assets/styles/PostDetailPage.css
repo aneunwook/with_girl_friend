@@ -1,19 +1,57 @@
 /* src/assets/styles/PostDetailPage.css */
 .post-detail-page {
-    margin: 20px;
-    padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 500px;
+  padding: 15px;
+  margin: 60px auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
 .post-detail-page h1 {
-    font-size: 2rem;
-    margin-bottom: 15px;
+  padding: 10px;
+  margin: 10px auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+
+.photo {
+  padding: 10px;
+  margin-top: 30px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.photo img {
+  width: 400px; /* 원하는 너비 */
+  height: auto; /* 원하는 높이 */
+  object-fit: contain; /* 이미지 비율 유지하며 내용이 잘리지 않도록 */
 }
 
 .post-detail-page p {
-    font-size: 1.2rem;
-    line-height: 1.6;
-    color: #333;
+  padding: 10px;
+  margin: 20px auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.post-detail-page button {
+  width: 50px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  color: aquamarine;
+  background-color: blue;
+  margin-right: 10px;
+  cursor: pointer;
 }

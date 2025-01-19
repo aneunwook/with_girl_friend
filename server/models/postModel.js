@@ -25,7 +25,7 @@ const Post = sequelize.define(
     },
 
     description: {
-      type: DataTypes.TEXT,
+      type: DataTypes.TEXT('long'),
       allowNull: true, // 설명은 선택사항으로 설정
     },
 

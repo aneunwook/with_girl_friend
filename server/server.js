@@ -69,10 +69,7 @@ sequelize
     console.error('Unable to connect to the database:', err);
   });
 
-
-
-
-  // JWT 관련 라우트 주석 처리
+// JWT 관련 라우트 주석 처리
 /*
 app.post('/api/refresh-token', (req, res) => {
   const { refreshToken } = req.body;

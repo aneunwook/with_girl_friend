@@ -1,0 +1,139 @@
+.post-form {
+  width: 500px;
+  padding: 15px;
+  margin: 60px auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.title-input {
+  padding: 10px;
+  margin: 10px auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+input:focus {
+  outline: none;
+}
+
+.title-input input {
+  width: 480px;
+  height: 50px;
+  border: 0;
+  font-size: 23px;
+}
+
+.photo-input img {
+  width: 400px; /* 원하는 너비 */
+  height: auto; /* 원하는 높이 */
+  object-fit: contain; /* 이미지 비율 유지하며 내용이 잘리지 않도록 */
+}
+
+.des-input {
+  padding: 10px;
+  margin-top: 30px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.tags-input {
+  padding: 10px;
+  margin: 5px auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.tags-input input {
+  width: 480px;
+  border: 0;
+  font-size: 15px;
+}
+
+.post-title {
+  display: flex;
+  align-items: center; /* 세로 방향 정렬 */
+  width: 100%;
+  justify-content: space-between; /* 가로 방향 중앙 정렬 */
+  padding: 10px;
+}
+
+.post-title h1 {
+  margin: 0; /* 기본 여백 제거 */
+}
+
+.post-title button {
+  width: 50px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  color: aquamarine;
+  background-color: blue;
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.img-parent {
+  display: flex; /* 혹은 다른 레이아웃 */
+  align-items: flex-start; /* 세로 방향 위로 */
+  justify-content: flex-start; /* 가로 방향 왼쪽으로 */
+}
+
+.photo-input {
+  display: none; /* 실제 파일 입력 요소 숨김 */
+}
+
+.photo-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 60%;
+  cursor: pointer;
+  font-size: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-left: 0; /* 왼쪽 여백 제거 */
+  margin-bottom: 10px;
+}
+
+.photo-label:hover {
+  background-color: #0056b3;
+}
+
+#editableDiv {
+  border: 1px solid #ddd;
+  padding: 10px;
+  min-height: 300px;
+  margin-bottom: 20px;
+  overflow-y: auto;
+  position: relative;
+  text-align: left; /* 텍스트를 왼쪽 정렬 */
+  display: block; /* 블록 요소로 설정 */
+  line-height: normal; /* 줄 간격을 기본 값으로 */
+  white-space: pre-wrap; /* 줄 바꿈과 공백을 유지 */
+  border-radius: 8px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+#editableDiv:focus {
+  outline: none;
+}
+
+#editableDiv:empty::before {
+  content: attr(data-placeholder); /* data-placeholder 속성에서 텍스트 가져옴 */
+  color: grey; /* placeholder 텍스트 색상 */
+  pointer-events: none; /* 클릭 불가 */
+}

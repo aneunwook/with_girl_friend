@@ -1,44 +1,61 @@
 .sidebar {
-    position: fixed;
-    top: 0;
-    left: -300px;
-    width: 300px;
-    height: 100%;
-    background-color: #222;
-    color: #fff;
-    padding: 20px;
-    transform: translateX(-100%); /* 기본적으로 숨김 */
-    transition: transform 0.3s ease;
-  }
-  
-  .sidebar.open {
-    transform: translateX(300px);
-  }
-  
-  .close-button {
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 24px;
-    cursor: pointer;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-  }
-  
-  .sidebar ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 20px 0;
-  }
-  
-  .sidebar a {
-    color: white;
-    text-decoration: none;
-    display: block;
-    margin: 10px 0;
-  }
-  
-  a:hover{
-    color: red;
-  }
+  position: fixed;
+  top: 0;
+  left: -300px;
+  width: 300px;
+  height: 100%;
+  background-color: #222;
+  color: #fff;
+  padding: 20px;
+  transform: translateX(-100%); /* 기본적으로 숨김 */
+  transition: transform 0.3s ease;
+  z-index: 10; /* 사이드바가 항상 위에 표시되도록 설정 */
+}
+
+.sidebar.open {
+  transform: translateX(300px);
+}
+
+/* 배경 어두워지는 오버레이 */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 어두운 배경 */
+  z-index: 5; /* 사이드바보다 아래로 배치 */
+  display: none; /* 기본적으로 숨김 */
+}
+
+.overlay.visible {
+  display: block; /* 오버레이 보이기 */
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.sidebar a {
+  color: white;
+  text-decoration: none;
+  display: block;
+  margin: 10px 0;
+}
+
+a:hover {
+  color: red;
+}
