@@ -28,34 +28,25 @@ input:focus {
   font-size: 23px;
 }
 
-.photo-input img {
-  width: 400px; /* 원하는 너비 */
-  height: auto; /* 원하는 높이 */
-  object-fit: contain; /* 이미지 비율 유지하며 내용이 잘리지 않도록 */
-}
-
-.des-input {
-  padding: 10px;
-  margin-top: 30px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-.tags-input {
+/* .tags-input {
   padding: 10px;
   margin: 5px auto;
   border: 1px solid #ddd;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   text-align: center;
-}
+} */
 
 .tags-input input {
   width: 480px;
+  padding: 10px;
   border: 0;
+  height: 30px;
   font-size: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-top: 50px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .post-title {
@@ -136,4 +127,9 @@ input:focus {
   content: attr(data-placeholder); /* data-placeholder 속성에서 텍스트 가져옴 */
   color: grey; /* placeholder 텍스트 색상 */
   pointer-events: none; /* 클릭 불가 */
+}
+
+.ReactQuill {
+  height: 400px; /* 적당한 높이 지정 */
+  width: 100%;
 }

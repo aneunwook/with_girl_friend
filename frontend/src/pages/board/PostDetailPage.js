@@ -51,22 +51,17 @@ const PostDetailPage = () => {
     <div className="post-detail-page">
       <h1>{post.title}</h1>
 
-      {/* HTML 내용 렌더링 */}
-      <div
-        className="photo"
-        dangerouslySetInnerHTML={{ __html: post.description }}
-        style={{ whiteSpace: 'pre-line' }} // 줄바꿈 처리
-      ></div>
-      {/* {post.photos &&
+      {post.photos &&
         post.photos.length > 0 &&
         post.photos.map((photo, index) => (
           <img
             key={index}
-            src={`http://localhost:3000${photo.photo_url}`}
+            src={`http://localhost:5000${photo.photo_url}`}
             alt={`Photo ${index + 1}`}
             style={{ width: '300px', marginRight: '10px' }}
           />
-        ))} */}
+        ))}
+        <p>{post.description}</p>
       <p>{post.tags}</p>
       <button onClick={handleEdit}>수정</button>
       <button onClick={deleteHandle}>삭제</button>

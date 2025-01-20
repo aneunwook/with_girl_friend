@@ -9,36 +9,32 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const createPostWithPhotos = async (req, res) => {
-  const t = await sequelize.transaction(); // 트랜잭션 시작
+  const transaction = await Post.sequelize.transaction(); // 트랜잭션 시작
+
   try {
-
-    console.log('Received files:', req.files); // 파일 배열 확인
-
-    const { user_id, title, description, tags } = req.body;
-
-    // 1. 게시물 생성
+    // 게시물 저장
+    const { title, description, user_id } = req.body;
     const newPost = await Post.create(
-      { user_id, title, description, tags },
-      { transaction: t }
+      { title, content : description, user_id },
+      { transaction }
     );
 
-    // 2. 사진 데이터 준비
-    const photoData = req.files.map((file) => ({
-      post_id: newPost.id,
-      photo_url: `/uploads/${file.filename}`,
-    }));
+    // 사진 저장
+    if (req.files && req.files.length > 0) {
+      const photoData = req.files.map((file) => ({
+        post_id: newPost.id,
+        photo_url: `/uploads/${file.filename}`, // 서버 저장 경로
+      }));
 
-    // 3. 사진 저장
-    await Photo.bulkCreate(photoData, { transaction: t });
+      await Photo.bulkCreate(photoData, { transaction });
+    }
 
-    await t.commit(); // 트랜잭션 커밋
-    res
-      .status(201)
-      .json({ message: '게시물이 생성되었습니다.', post: newPost });
+    await transaction.commit(); // 트랜잭션 커밋
+    res.status(201).json({ message: '게시물과 사진이 성공적으로 저장되었습니다.' });
   } catch (err) {
-    await t.rollback(); // 트랜잭션 롤백
-    console.error('사진 업로드 실패:', err);
-    res.status(500).json({ error: '사진 업로드 중 문제가 발생했습니다.' });
+    await transaction.rollback(); // 트랜잭션 롤백
+    console.error(err);
+    res.status(500).json({ message: '게시물 저장 중 오류가 발생했습니다.', error: err.message });
   }
 };
 

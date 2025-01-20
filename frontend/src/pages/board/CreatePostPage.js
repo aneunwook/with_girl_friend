@@ -1,89 +1,103 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
+import axiosInstance from '../../service/axiosInstance';
 import { useNavigate } from 'react-router-dom';
-import { createPostWithPhotos } from '../../service/photo/photoService';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import { createPostWithPhotos } from '../../service/photo/photoService'; // 서비스 함수 임포트
 import '../../assets/styles/CreatePost.css';
 
 const CreatePostPage = () => {
   const navigate = useNavigate();
-
-  const contentRef = useRef(null); // contenteditable div에 접근하기 위한 ref
+  const quillRef = useRef(null);
   const [formData, setFormData] = useState({
     title: '',
+    description: '',
     tags: '',
   });
-  const [files, setFiles] = useState([]); // 파일 객체 저장
-  const [content, setContent] = useState(''); // contenteditable 내용
+  const [content, setContent] = useState('');
   const [message, setMessage] = useState('');
+  const [photoUrls, setPhotoUrls] = useState([]); // 에디터에서 업로드된 사진 URL 저장
 
-  // 파일 선택 핸들러
-  const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    setFiles([...files, ...selectedFiles]);
-
-    selectedFiles.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const div = document.getElementById('editableDiv');
-        const img = document.createElement('img');
-        img.src = reader.result;
-        img.alt = 'uploaded';
-        img.style.margin = '5px';
-        img.contentEditable = false; // 이미지 수정 불가
-        div.appendChild(img);
-      };
-      reader.readAsDataURL(file);
-    });
+  // Quill 에디터 내용 변경 핸들러
+  const handleContentChange = (value) => {
+    setContent(value);
+    console.log('Editor Content:', value);
   };
 
-  // 텍스트 영역 변경 핸들러
-  const handleContentChange = () => {
-    const div = document.getElementById('editableDiv');
-    setContent(div.innerHTML); // div의 HTML 내용을 상태로 저장
+  const imageHandler = () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+  
+    input.onchange = async () => {
+      const file = input.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const imageUrl = reader.result; // base64 URL
+          const editor = quillRef.current.getEditor();
+          const range = editor.getSelection();
+          editor.insertEmbed(range.index, 'image', imageUrl); // 에디터에 이미지 삽입
+  
+          // 상태에 이미지 추가
+          setPhotoUrls((prevUrls) => [...prevUrls, imageUrl]);
+        };
+        reader.readAsDataURL(file); // base64로 변환
+      }
+    };
   };
+  
+  const modules = useMemo(() => ({
+    toolbar: {
+      container: [
+        [{ header: [1, 2, false] }], 
+        ['bold', 'italic', 'underline'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['image'],
+      ],
+      handlers: {
+        image: imageHandler, // 이미지를 선택하면 이 핸들러 실행
+      },
+    },
+  }), []);
+
+  const formats = useMemo(() => [
+    'header', 'bold', 'italic', 'underline', 'list', 'bullet', 'image',
+  ], []);
+
   // 폼 제출 핸들러
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    // Quill 에디터와 상태 값 동기화
+    if (!content || content.trim() === '') {
+      setMessage('내용을 입력해주세요!');
+      return;
+    }
+  
     const data = {
-      user_id: 1, // 실제 사용자 ID
+      user_id: 1, // 예시 사용자 ID
       title: formData.title,
-      description: content,
+      description: content.trim(), // content 값을 description으로 사용
       tags: formData.tags,
+      photoUrls: photoUrls.filter((url) => url), // 유효한 URL만 포함
     };
-    console.log('FormData to send:', data);
-
+  
+    console.log('Form Data to Send:', data); // 데이터 확인
+  
     try {
-      const response = await createPostWithPhotos(data, files);
-      setMessage('게시물 등록을 완료했습니다');
-      console.log(response);
-      navigate('/');
+      const response = await createPostWithPhotos(data); // 서비스 함수 호출
+      setMessage('게시물이 성공적으로 등록되었습니다!');
+      navigate('/'); // 홈으로 이동
     } catch (err) {
       console.error('Error creating post:', err.response?.data || err.message);
       setMessage(
-        err.response?.data?.error ||
-          'An error occurred while creating the post.'
+        err.response?.data?.error || '게시물 등록 중 문제가 발생했습니다.'
       );
     }
   };
-
-  // 커서 초기화 핸들러
-  const setCursorToStart = () => {
-    const element = contentRef.current;
-    if (element) {
-      const range = document.createRange();
-      const selection = window.getSelection();
-
-      range.selectNodeContents(element); // 노드 전체 선택
-      range.collapse(true); // 커서를 시작점으로 설정
-      selection.removeAllRanges();
-      selection.addRange(range);
-    }
-  };
-
-  // 페이지 로드 또는 컴포넌트가 렌더링될 때 커서를 초기화
-  useEffect(() => {
-    setCursorToStart();
-  }, []);
+  
 
   return (
     <div className="post-form">
@@ -104,33 +118,26 @@ const CreatePostPage = () => {
             required
           />
         </div>
-        <div className="img-parent">
-          <input
-            type="file"
-            id="file"
-            className="photo-input"
-            name="photos"
-            multiple
-            accept="image/*"
-            onChange={handleFileChange}
+        <div>
+          <ReactQuill
+            className="ReactQuill"
+            ref={quillRef}
+            value={content}
+            onChange={handleContentChange}
+            placeholder="내용을 입력하거나 이미지를 추가해주세요..."
+            modules={modules}
+            formats={formats}
+            theme="snow"
           />
-          <label htmlFor="file" className="photo-label">
-            <i className="fa-regular fa-image"></i>
-          </label>
         </div>
-        <div
-          id="editableDiv"
-          ref={contentRef} // ref로 연결
-          contentEditable
-          data-placeholder="내용을 입력하거나 이미지를 추가해주세요..."
-          onInput={handleContentChange} // 텍스트 변경 시 호출
-        ></div>
         <div className="tags-input">
           <input
             type="text"
             name="tags"
             value={formData.tags}
-            onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, tags: e.target.value })
+            }
             placeholder="태그를 입력해주세요"
           />
         </div>

@@ -1,135 +1,100 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { updatePostWithPhotos } from '../../service/photo/photoService';
-import { getPostDetails } from '../../service/photo/photoService'; // 게시물 상세 정보 가져오기
+import React, { useState, useRef, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import { createPostWithPhotos } from '../../service/photo/photoService';
 import '../../assets/styles/CreatePost.css';
 
-const UpdatePostPage = () => {
+const CreatePostPage = () => {
   const navigate = useNavigate();
-  const { id } = useParams(); // URL에서 게시물 ID 가져오기
-
-  const contentRef = useRef(null);
+  const quillRef = useRef(null);
   const [formData, setFormData] = useState({
     title: '',
     tags: '',
   });
-  const [files, setFiles] = useState([]);
   const [content, setContent] = useState('');
   const [message, setMessage] = useState('');
-  const [existingPhotos, setExistingPhotos] = useState([]); // 기존 사진 리스트
+  const [files, setFiles] = useState([]); // 파일 객체 저장
 
-  // 게시물 상세 정보 가져오기
-  useEffect(() => {
-    const fetchPostData = async () => {
-      try {
-        const post = await getPostDetails(id); // 게시물 데이터 가져오기
-        setFormData({
-          title: post.title,
-          tags: post.tags,
-        });
-        setContent(post.description);
-        setExistingPhotos(post.photos); // 기존 사진 저장
-      } catch (err) {
-        console.error('Error fetching post data:', err);
-        setMessage('게시물 데이터를 불러오는 데 실패했습니다.');
+  // Quill 에디터 내용 변경 핸들러
+  const handleContentChange = (value) => {
+    setContent(value);
+  };
+
+  // Quill 에디터에서 이미지 삽입 핸들러
+  const imageHandler = async () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    input.onchange = () => {
+      const file = input.files[0];
+      if (file) {
+        // 선택된 파일을 툴바로 삽입
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const editor = quillRef.current.getEditor(); // Quill 에디터 인스턴스
+          const range = editor.getSelection(); // 현재 커서 위치
+          editor.insertEmbed(range.index, 'image', e.target.result); // 이미지 삽입
+        };
+        reader.readAsDataURL(file); // 파일을 Data URL로 변환
+
+        // 파일을 파일 배열에 추가
+        setFiles([...files, file]);
       }
     };
-
-    fetchPostData();
-  }, [id]);
-
-  // 파일 선택 핸들러
-  const handleFileChange = (e) => {
-    const selectedFiles = Array.from(e.target.files);
-    setFiles([...files, ...selectedFiles]);
-
-    selectedFiles.forEach((file) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const div = document.getElementById('editableDiv');
-        const img = document.createElement('img');
-        img.src = reader.result;
-        img.alt = 'uploaded';
-        img.style.margin = '5px';
-        img.contentEditable = false; // 이미지 수정 불가
-        div.appendChild(img); // contenteditable div에 이미지 삽입
-      };
-      reader.readAsDataURL(file);
-    });
   };
 
-  // 텍스트 영역 변경 핸들러
-  const handleContentChange = () => {
-    const div = document.getElementById('editableDiv');
-    setContent(div.innerHTML); // div의 HTML 내용을 상태로 저장
-  };
+  const modules = useMemo(() => ({
+    toolbar: {
+      container: [
+        [{ header: [1, 2, false] }],
+        ['bold', 'italic', 'underline'],
+        [{ list: 'ordered' }, { list: 'bullet' }],
+        ['image'], // 이미지 버튼 추가
+      ],
+      handlers: {
+        image: imageHandler,
+      },
+    },
+  }), []);
+
+  const formats = useMemo(() => [
+    'header', 'bold', 'italic', 'underline', 'list', 'bullet', 'image',
+  ], []);
 
   // 폼 제출 핸들러
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const data = {
+      user_id: 1, // 예시로 하드코딩된 사용자 ID
       title: formData.title,
-      description: content,
+      description: content, // Quill 에디터의 HTML 내용
       tags: formData.tags,
     };
 
-    const photosToDelete = existingPhotos
-      .filter(
-        (photo) => !photo.isSelected // 삭제할 사진들 선택
-      )
-      .map((photo) => photo.id);
-
     try {
-      const response = await updatePostWithPhotos(
-        id,
-        data,
-        files,
-        photosToDelete
-      );
-      setMessage('게시물 수정이 완료되었습니다.');
-      navigate(`/post/${id}`);
+      const response = await createPostWithPhotos(data, files);
+      setMessage('게시물 등록을 완료했습니다.');
+      console.log(response);
+      navigate('/');
     } catch (err) {
-      console.error('Error updating post:', err);
-      setMessage('게시물 수정 중 오류가 발생했습니다.');
+      console.error('Error creating post:', err.response?.data || err.message);
+      setMessage(
+        err.response?.data?.error ||
+        '게시물 생성 중 문제가 발생했습니다.'
+      );
     }
   };
-
-  // 기존 사진 선택/삭제 처리
-  const handlePhotoSelection = (photoId) => {
-    setExistingPhotos(
-      existingPhotos.map((photo) =>
-        photo.id === photoId
-          ? { ...photo, isSelected: !photo.isSelected }
-          : photo
-      )
-    );
-  };
-
-  // 커서 초기화 핸들러
-  const setCursorToStart = () => {
-    const element = contentRef.current;
-    if (element) {
-      const range = document.createRange();
-      const selection = window.getSelection();
-
-      range.selectNodeContents(element);
-      range.collapse(true);
-      selection.removeAllRanges();
-      selection.addRange(range);
-    }
-  };
-
-  useEffect(() => {
-    setCursorToStart();
-  }, []);
 
   return (
     <div className="post-form">
       <form onSubmit={handleSubmit}>
         <div className="post-title">
-          <h1>게시물 수정하기</h1>
-          <button type="submit">수정</button>
+          <h1>게시물 등록하기</h1>
+          <button type="submit">등록</button>
         </div>
         <div className="title-input">
           <input
@@ -143,51 +108,25 @@ const UpdatePostPage = () => {
             required
           />
         </div>
-        <div className="img-parent">
-          <input
-            type="file"
-            id="file"
-            className="photo-input"
-            name="photos"
-            multiple
-            accept="image/*"
-            onChange={handleFileChange}
-          />
-          <label htmlFor="file" className="photo-label">
-            <i className="fa-regular fa-image"></i>
-          </label>
-        </div>
-        <div
-          id="editableDiv"
-          ref={contentRef}
-          contentEditable
-          data-placeholder="내용을 입력하거나 이미지를 추가해주세요..."
-          onInput={handleContentChange}
-          dangerouslySetInnerHTML={{ __html: content }} // content를 div에 반영
-        ></div>
+        <ReactQuill
+          ref={quillRef}
+          value={content}
+          onChange={handleContentChange}
+          placeholder="내용을 입력하거나 이미지를 추가해주세요..."
+          modules={modules}
+          formats={formats}
+          theme="snow"
+        />
         <div className="tags-input">
           <input
             type="text"
             name="tags"
             value={formData.tags}
-            onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, tags: e.target.value })
+            }
             placeholder="태그를 입력해주세요"
           />
-        </div>
-        <div className="existing-photos">
-          {existingPhotos.map((photo) => (
-            <div key={photo.id} className="photo-item">
-              <img
-                src={`http://localhost:5000${photo.photo_url}`} // 서버 주소와 함께 절대 경로로 변환
-                alt="photo"
-              />
-              <input
-                type="checkbox"
-                checked={photo.isSelected || false}
-                onChange={() => handlePhotoSelection(photo.id)}
-              />
-            </div>
-          ))}
         </div>
       </form>
       {message && <p>{message}</p>}
@@ -195,4 +134,4 @@ const UpdatePostPage = () => {
   );
 };
 
-export default UpdatePostPage;
+export default CreatePostPage;
