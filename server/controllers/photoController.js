@@ -13,9 +13,9 @@ export const createPostWithPhotos = async (req, res) => {
 
   try {
     // 게시물 저장
-    const { title, description, user_id } = req.body;
+    const { title, description, user_id, tags } = req.body;
     const newPost = await Post.create(
-      { title, content : description, user_id },
+      { title, description, user_id, tags },
       { transaction }
     );
 
@@ -30,11 +30,16 @@ export const createPostWithPhotos = async (req, res) => {
     }
 
     await transaction.commit(); // 트랜잭션 커밋
-    res.status(201).json({ message: '게시물과 사진이 성공적으로 저장되었습니다.' });
+    res
+      .status(201)
+      .json({ message: '게시물과 사진이 성공적으로 저장되었습니다.' });
   } catch (err) {
     await transaction.rollback(); // 트랜잭션 롤백
     console.error(err);
-    res.status(500).json({ message: '게시물 저장 중 오류가 발생했습니다.', error: err.message });
+    res.status(500).json({
+      message: '게시물 저장 중 오류가 발생했습니다.',
+      error: err.message,
+    });
   }
 };
 
@@ -58,14 +63,14 @@ export const getAllPosts = async (req, res) => {
     const { count: totalPosts, rows: posts } = await Post.findAndCountAll({
       offset: (pageNum - 1) * limitNum, // 페이지 번호에 맞는 데이터 시작 위치
       limit: limitNum, // 한 페이지에 가져올 데이터 개수
-      order:[['created_at', 'DESC']], // 최신 게시물 정렬
-      include:[
+      order: [['created_at', 'DESC']], // 최신 게시물 정렬
+      include: [
         {
-          model : Photo,
-          as : 'photos', // photo 모델과의 관계에서 지정된 별칭
-          attributes : ['id', 'photo_url'] // 필요한 필드만 가져옴
-        }
-      ] 
+          model: Photo,
+          as: 'photos', // photo 모델과의 관계에서 지정된 별칭
+          attributes: ['id', 'photo_url'], // 필요한 필드만 가져옴
+        },
+      ],
     });
     console.log('totalPosts:', totalPosts); // 실제 데이터 개수 확인
     console.log('posts:', posts); // 가져온 포스트 데이터 확인
@@ -115,17 +120,17 @@ export const getPostDetails = async (req, res) => {
 
 export const updatePostWithPhotos = async (req, res) => {
   const t = await sequelize.transaction();
-  
+
   try {
     const { id } = req.params;
     const { photosToDelete, title, description, tags, is_private } = req.body;
-    console.log("삭제할 사진 들 :" , req.body.photosToDelete);
+    console.log('삭제할 사진 들 :', req.body.photosToDelete);
 
     const newFiles = req.files;
 
     // 1. 게시물 수정
     const post = await Post.findByPk(id, {
-      include: {model: Photo, as:'photos'}
+      include: { model: Photo, as: 'photos' },
     });
 
     if (!post) {
@@ -133,12 +138,12 @@ export const updatePostWithPhotos = async (req, res) => {
     }
 
     // 게시물 정보 업데이트
-    post.title = title || post.title;  // title이 있을 경우 수정, 없으면 기존 값 유지
+    post.title = title || post.title; // title이 있을 경우 수정, 없으면 기존 값 유지
     post.description = description || post.description;
     post.tags = tags || post.tags;
     post.is_private = is_private !== undefined ? is_private : post.is_private;
 
-    await post.save({transaction: t});
+    await post.save({ transaction: t });
 
     // 2. 사진 삭제
     if (photosToDelete && Array.isArray(photosToDelete)) {
@@ -155,30 +160,31 @@ export const updatePostWithPhotos = async (req, res) => {
         }
       }
 
-        // DB에서 사진 데이터 삭제
-        await Photo.destroy({
-          where : {
-            id : photosToDelete,
-            post_id : id
-          },
-          transaction : t,
-        })
-      }
-    
+      // DB에서 사진 데이터 삭제
+      await Photo.destroy({
+        where: {
+          id: photosToDelete,
+          post_id: id,
+        },
+        transaction: t,
+      });
+    }
 
     //3. 새 사진 추가
-    if(newFiles && newFiles.length > 0){
+    if (newFiles && newFiles.length > 0) {
       const newPhotoData = newFiles.map((file) => ({
         post_id: id,
-        photo_url:  `/uploads/${file.filename}`,
-      }))
+        photo_url: `/uploads/${file.filename}`,
+      }));
 
-    await Photo.bulkCreate(newPhotoData, {transaction: t});
+      await Photo.bulkCreate(newPhotoData, { transaction: t });
     }
     await t.commit(); // 트랜잭션 커밋
-    console.log('수정 데이터 ', post );
-  
-    res.status(200).json({ message: '게시물이 성공적으로 수정되었습니다.', post });
+    console.log('수정 데이터 ', post);
+
+    res
+      .status(200)
+      .json({ message: '게시물이 성공적으로 수정되었습니다.', post });
   } catch (err) {
     await t.rollback(); // 트랜잭션 롤백
     console.error('게시물 수정 실패:', err);
@@ -187,21 +193,21 @@ export const updatePostWithPhotos = async (req, res) => {
 };
 
 export const deletePostWithPhotos = async (req, res) => {
-  const t  = await sequelize.transaction();
+  const t = await sequelize.transaction();
 
-  try{
-    const {id} = req.params;
+  try {
+    const { id } = req.params;
 
     //1. 게시물 확인
     const post = await Post.findByPk(id, {
-      include : {model : Photo, as:'photos'}
+      include: { model: Photo, as: 'photos' },
     });
-    if(!post){
-      return res.status(404).json({message:'게시물이 존재하지 않습니다'});
+    if (!post) {
+      return res.status(404).json({ message: '게시물이 존재하지 않습니다' });
     }
 
-     // 게시물 삭제 (연결된 사진도 함께 삭제됨, `onDelete: CASCADE` 설정 덕분)
-    await post.destroy({transaction : t});
+    // 게시물 삭제 (연결된 사진도 함께 삭제됨, `onDelete: CASCADE` 설정 덕분)
+    await post.destroy({ transaction: t });
 
     await t.commit(); // 트랜잭션 커밋
     res.status(200).json({ message: '게시물이 삭제되었습니다.' });
