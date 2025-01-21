@@ -133,3 +133,9 @@ input:focus {
   height: 400px; /* 적당한 높이 지정 */
   width: 100%;
 }
+
+.ql-editor img {
+  max-width: 100%;  
+  display: block;
+  margin: 0 auto;
+}

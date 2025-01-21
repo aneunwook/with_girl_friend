@@ -39,14 +39,6 @@ app.use('/api/photos', photoRoutes);
 // 정적 파일 제공: `/uploads` 요청에 대해 처리
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// // React의 빌드된 정적 파일 제공
-// app.use(express.static(path.join(__dirname, '../client/build')));
-
-// // React 라우터와 정적 파일 처리
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, '../client/build/index.html'));
-// });
-
 // 로그용 미들웨어
 app.use((req, res, next) => {
   console.log(

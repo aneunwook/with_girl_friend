@@ -14,27 +14,39 @@ export const getAllPosts = async (page, limit) => {
     }
 }
 
-export const createPostWithPhotos = async (data) => {
-    // 새 게시물을 생성하면서 파일 업로드를 처리해야 하므로 FormData를 사용
-    const formData = new FormData();
-  
-    // 게시물 데이터 추가
-    formData.append('user_id', 1); // 실제 사용자 ID를 추가
-    formData.append('title', data.title);
-    formData.append('description', data.description);
-    formData.append('tags', data.tags);
-  
-    console.log('FormData content:', data.description); // 값 확인
+export const uploadPosts = async (files) => {
+  const formData = new FormData();
+  files.forEach((file, index) => {
+    formData.append('photos', file , `temp-image-${index}.jpg`);
+  });
 
-    // Base64를 Blob으로 변환하고, FormData에 이미지 파일로 추가
-    data.photoUrls.forEach((url, index) => {
-      const imageBlob = dataURItoBlob(url); // Base64 URL을 Blob으로 변환
-      formData.append('photos', imageBlob, `image-${index}.jpg`); // Blob을 FormData에 파일로 추가
+  try{
+    const response = await axiosInstance.post(`${api_url}/upload`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
     });
-  
+    console.log('서버 응답:', response.data); // 응답 확인
+    console.log('서버 응답 데이터:', response.data); // data 속성 확인
+    
+    if (response.data && response.data.urls) {
+      return response.data.urls; // 응답에 urls가 있을 경우 반환
+    } else {
+      throw new Error('URLs not found in the response.');
+    }
+
+  }catch(error){
+    console.error('이미지 임시 업로드 실패:', error);
+    if (error.response) {
+      console.error('서버 오류 응답:', error.response.data); // 서버 에러 메시지 출력
+    }
+    throw error;
+  }
+}
+
+
+export const createPostWithPhotos = async (data) => {
     try {
-      const response = await axiosInstance.post(`${api_url}/upload`, formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
+      const response = await axiosInstance.post(`${api_url}/photo`, data, {
+        headers: { 'Content-Type': 'application/json' },
       });
       return response.data;
     } catch (error) {
@@ -42,32 +54,7 @@ export const createPostWithPhotos = async (data) => {
       throw error;
     }
   };
-  
-  // Base64 URL을 Blob으로 변환하는 함수
-  const dataURItoBlob = (dataURI) => {
-    try {
-      const [header, base64] = dataURI.split(',');
-      const mimeType = header.split(':')[1].split(';')[0];
-  
-      if (!base64) throw new Error('Base64 content is missing');
-  
-      const binaryString = atob(base64);
-      const arrayBuffer = new ArrayBuffer(binaryString.length);
-      const uintArray = new Uint8Array(arrayBuffer);
-  
-      for (let i = 0; i < binaryString.length; i++) {
-        uintArray[i] = binaryString.charCodeAt(i);
-      }
-  
-      return new Blob([arrayBuffer], { type: mimeType || 'text/plain' });
-    } catch (error) {
-      console.error('Failed to convert dataURI to Blob:', error);
-      return null;
-    }
-  };
-    
-
-
+   
 export const getPostDetails = async(postId) => {
     try{
         const response = await axiosInstance.get(`${api_url}/${postId}`)

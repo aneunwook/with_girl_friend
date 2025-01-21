@@ -1,28 +1,27 @@
 import multer from 'multer';
 import path from 'path';
-import fs from 'fs'; // ES6 모듈 방식
+import fs from 'fs';
 
-// 저장 경로 확인 및 생성
+// 업로드 경로 설정
 const uploadDir = path.join(process.cwd(), '../uploads');
 
 if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true }); // 폴더 생성
+  fs.mkdirSync(uploadDir, { recursive: true });
 }
 
-// 파일 저장 경로와 이름 설정
+// 파일 저장 설정
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    console.log('Uploading to:', uploadDir); // 업로드 경로 확인
-    cb(null, uploadDir); // 업로드 파일 저장 경로
+    console.log('Uploading to:', uploadDir);
+    cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.random(Math.random() * 1e9);
+    const uniqueSuffix = Date.now() + '-' + Math.random().toString(36).substr(2, 9);
     cb(null, `${uniqueSuffix}-${file.originalname}`);
-    console.log(req.file);
   },
 });
 
-//파일 필터링
+// 파일 필터링 (이미지 파일만 허용)
 const fileFilter = (req, file, cb) => {
   const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
   if (allowedTypes.includes(file.mimetype)) {
@@ -35,8 +34,7 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({
   storage,
   limits: {
-    fileSize: 50 * 1024 * 1024, // 파일 크기 제한 (50MB)
-    fieldSize: 50 * 1024 * 1024, // 텍스트 필드 크기 제한 (50MB)
+    fileSize: 50 * 1024 * 1024, // 50MB까지 허용
   },
   fileFilter,
 });

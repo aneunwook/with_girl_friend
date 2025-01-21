@@ -8,22 +8,36 @@ import path from 'path';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+export const uploadPhotos = async (req, res) => {
+  try{
+    console.log('요청 파일:', req.files); // 업로드된 파일 확인 로그
+
+    const fileUrls = req.files.map((file) => `/uploads/${file.filename}`);
+    console.log('생성된 파일 URL:', fileUrls); // 확인 로그
+
+    res.status(200).json({urls : fileUrls});
+  }catch(error){
+    console.error('이미지 업로드 오류:', error);
+    res.status(500).json({ message: '이미지 업로드 실패', error: error.message });
+  }
+}
+
 export const createPostWithPhotos = async (req, res) => {
   const transaction = await Post.sequelize.transaction(); // 트랜잭션 시작
 
   try {
     // 게시물 저장
-    const { title, description, user_id, tags } = req.body;
+    const { title, description, user_id, tags, photoUrls} = req.body;
     const newPost = await Post.create(
       { title, description, user_id, tags },
       { transaction }
     );
 
-    // 사진 저장
-    if (req.files && req.files.length > 0) {
-      const photoData = req.files.map((file) => ({
+    // 사진 저장 (photoUrls를 사용)
+    if (photoUrls && photoUrls.length > 0) {
+      const photoData = photoUrls.map((url) => ({
         post_id: newPost.id,
-        photo_url: `/uploads/${file.filename}`, // 서버 저장 경로
+        photo_url: url, // 클라이언트에서 전달받은 URL
       }));
 
       await Photo.bulkCreate(photoData, { transaction });
