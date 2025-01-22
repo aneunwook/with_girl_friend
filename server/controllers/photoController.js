@@ -9,25 +9,28 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export const uploadPhotos = async (req, res) => {
-  try{
+  try {
     console.log('요청 파일:', req.files); // 업로드된 파일 확인 로그
 
     const fileUrls = req.files.map((file) => `/uploads/${file.filename}`);
     console.log('생성된 파일 URL:', fileUrls); // 확인 로그
 
-    res.status(200).json({urls : fileUrls});
-  }catch(error){
+    res.status(200).json({ urls: fileUrls });
+  } catch (error) {
     console.error('이미지 업로드 오류:', error);
-    res.status(500).json({ message: '이미지 업로드 실패', error: error.message });
+    res
+      .status(500)
+      .json({ message: '이미지 업로드 실패', error: error.message });
   }
-}
+};
 
 export const createPostWithPhotos = async (req, res) => {
   const transaction = await Post.sequelize.transaction(); // 트랜잭션 시작
 
   try {
     // 게시물 저장
-    const { title, description, user_id, tags, photoUrls} = req.body;
+    const { title, description, user_id, tags, photoUrls } = req.body;
+    console.log(req.body);
     const newPost = await Post.create(
       { title, description, user_id, tags },
       { transaction }
@@ -138,7 +141,6 @@ export const updatePostWithPhotos = async (req, res) => {
   try {
     const { id } = req.params;
     const { photosToDelete, title, description, tags, is_private } = req.body;
-    console.log('삭제할 사진 들 :', req.body.photosToDelete);
 
     const newFiles = req.files;
 
