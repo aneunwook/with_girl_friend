@@ -12,6 +12,7 @@ import postRoutes from './routes/postRoutes.js';
 import anniversaryRoutes from './routes/anniversaryRoutes.js';
 import photoRoutes from './routes/photoRoutes.js';
 import { Post, Photo } from './models/index.js';
+import { models } from './models/index1.js'; // 모델들 불러오기
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -38,6 +39,7 @@ app.use('/api/photos', photoRoutes);
 
 // 정적 파일 제공: `/uploads` 요청에 대해 처리
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
 
 // 로그용 미들웨어
 app.use((req, res, next) => {
