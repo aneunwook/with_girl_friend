@@ -138,7 +138,6 @@ export const updatePostWithPhotos = async (req, res) => {
   try {
     const { id } = req.params;
     const { photosToDelete, title, description, tags, is_private } = req.body;
-    console.log('삭제할 사진 들 :', req.body.photosToDelete);
 
     const newFiles = req.files;
 

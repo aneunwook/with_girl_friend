@@ -11,8 +11,7 @@ import userRoutes from './routes/userRoutes.js';
 import postRoutes from './routes/postRoutes.js';
 import anniversaryRoutes from './routes/anniversaryRoutes.js';
 import photoRoutes from './routes/photoRoutes.js';
-import { Post, Photo } from './models/index.js';
-import { models } from './models/index1.js'; // 모델들 불러오기
+import tripRoutes from './routes/tripRoutes.js'
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -36,6 +35,7 @@ app.use('/api/posts', postRoutes); // 여기에 CRUD 관련 라우트를 설정�
 app.use('/api/auth', userRoutes);
 app.use('/api/anniversaries', anniversaryRoutes);
 app.use('/api/photos', photoRoutes);
+app.use('/api/trips', tripRoutes);
 
 // 정적 파일 제공: `/uploads` 요청에 대해 처리
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

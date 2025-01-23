@@ -12,7 +12,13 @@ if (!fs.existsSync(uploadDir)) {
 // 파일 저장 설정
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    console.log('Uploading to:', uploadDir);
+    const uniqueDir = Date.now().toString(); // 고유 폴더명 생성
+    const tripDir = path.join(uploadDir, uniqueDir);
+
+    if (!fs.existsSync(tripDir)) {
+      fs.mkdirSync(tripDir, { recursive: true });
+    }
+
     cb(null, uploadDir);
   },
   filename: (req, file, cb) => {
