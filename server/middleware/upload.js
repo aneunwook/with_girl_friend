@@ -4,23 +4,30 @@ import fs from 'fs';
 
 // 업로드 경로 설정
 const uploadDir = path.join(process.cwd(), '../uploads');
+const tripDir = path.join(process.cwd(), '../trip');
 
+// 기본 디렉토리 생성 (없으면 생성)
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
+if (!fs.existsSync(tripDir)) {
+  fs.mkdirSync(tripDir, { recursive: true });
+}
+
 
 // 파일 저장 설정
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uniqueDir = Date.now().toString(); // 고유 폴더명 생성
-    const tripDir = path.join(uploadDir, uniqueDir);
-
-    if (!fs.existsSync(tripDir)) {
-      fs.mkdirSync(tripDir, { recursive: true });
+    // 조건적으로 저장 경로 설정
+    if (file.fieldname === 'trip') {
+      // trip 파일은 trip 폴더에 저장
+      cb(null, tripDir);
+    } else {
+      // 그 외의 파일은 uploads 폴더에 저장
+      cb(null, uploadDir);
     }
-
-    cb(null, uploadDir);
   },
+
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.random().toString(36).substr(2, 9);
     cb(null, `${uniqueSuffix}-${file.originalname}`);

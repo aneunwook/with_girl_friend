@@ -8,6 +8,8 @@ const GOOGLE_MAPS_API_KEY = 'AIzaSyBiiT7sHwRcIsxcRd-H1lQWHdQ9K0ZRZU8';
 
 export const tripUploadPhotos = async (req, res) => {
   try{
+    console.log('Files:', req.files);
+    console.log('Body:', req.body);
     // 대표 사진 (첫 번째 파일)
     const photo_url = req.files && req.files[0] ? `/uploads/${req.files[0].filename}` : null;
 
@@ -29,6 +31,9 @@ export const tripUploadPhotos = async (req, res) => {
 export const addTrip = async (req, res) => {
   const t = await sequelize.transaction(); // 트랜잭션 시작
   const { address, name, photo_url, memo, additionalPhotos, additionalMemos } = req.body;
+  console.log(req.body);
+  console.log(req.files);
+
 
   if (!address || !name) {
     return res.status(400).json({ message: '주소와 이름은 필수입니다.' });
