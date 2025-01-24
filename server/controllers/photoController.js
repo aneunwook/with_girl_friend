@@ -84,7 +84,7 @@ export const getAllPosts = async (req, res) => {
       include: [
         {
           model: Photo,
-          as: 'photos', // photo 모델과의 관계에서 지정된 별칭
+          as: 'postPhotos', // photo 모델과의 관계에서 지정된 별칭
           attributes: ['id', 'photo_url'], // 필요한 필드만 가져옴
         },
       ],
@@ -118,7 +118,7 @@ export const getPostDetails = async (req, res) => {
       include: [
         {
           model: Photo,
-          as: 'photos', // 관계 이름
+          as: 'postPhotos', // 관계 이름
           attributes: ['id', 'photo_url', 'created_at'], // 사진 URL 및 생성일 포함
         },
       ],
@@ -146,7 +146,7 @@ export const updatePostWithPhotos = async (req, res) => {
 
     // 1. 게시물 수정
     const post = await Post.findByPk(id, {
-      include: { model: Photo, as: 'photos' },
+      include: { model: Photo, as: 'postPhotos' },
     });
 
     if (!post) {
@@ -216,7 +216,7 @@ export const deletePostWithPhotos = async (req, res) => {
 
     //1. 게시물 확인
     const post = await Post.findByPk(id, {
-      include: { model: Photo, as: 'photos' },
+      include: { model: Photo, as: 'postPhotos' },
     });
     if (!post) {
       return res.status(404).json({ message: '게시물이 존재하지 않습니다' });

@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import { fileURLToPath } from 'url';
 import path from 'path';
 // import jwt from 'jsonwebtoken'; // JWT 주석 처리
+import defineAssociations from './config/associations.js';
 import sequelize from './config/db.js'; // sequelize import
 import userRoutes from './routes/userRoutes.js';
 import postRoutes from './routes/postRoutes.js';
@@ -17,6 +18,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+defineAssociations();
 
 app.use(
   cors({

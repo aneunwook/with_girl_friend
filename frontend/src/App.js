@@ -8,6 +8,7 @@ import Header from "./components/Header.js";
 import LoginPage from "./pages/Auth/SignInPage.js";
 import SignUpPage from "./pages/Auth/SignUpPage.js";
 import AnniversaryPage from "./pages/anniversary/AnniversaryPage.js";
+import TripPage from "./pages/trip/TripPage.js";
 
 function App() {
     return (
@@ -22,7 +23,7 @@ function App() {
                     <Route path="/login" element={<LoginPage/>}/>
                     <Route path="/signUp" element={<SignUpPage/>}/>
                     <Route path="/anniversary" element={<AnniversaryPage />}/>
-                     
+                    <Route path="/trips" element={<TripPage />}/>
                 </Routes>
             </div>
         </Router>

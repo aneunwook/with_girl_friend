@@ -172,9 +172,56 @@ export const updateTrip = async (req, res) => {
     trip.memo = memo || trip.memo;
 
     await trip.save({ transaction: t }) // 저장
+
+    //4. 추가 사진 수정
+    if(additionalPhotos && additionalPhotos.length > 0 ){
+      await TripPhoto.destroy({where : {trip_id : id}, transaction: t}); // 기존 사진 삭제 
+      const photos = additionalPhotos.map((url) => ({
+        trip_id : id,
+        photo_url : url,
+      }))
+      await TripPhoto.bulkCreate(photos, {transaction : t});
+    }
+
+    //5. 추가 메모 수정
+    if(additionalMemos && additionalMemos.length > 0){
+      await TripMemo.destroy({where : {trip_id : id}, transaction : t});
+      const memos = additionalMemos.map((text) => ({
+        trip_id : id,
+        memo : text,
+      }))
+      await TripMemo.bulkCreate(memos, {transaction : t});
+    }
+
+    await t.commit();
+    res.status(200).json({message : '여행지가 성공적으로 업데이트 되었습니다', trip});
   }catch (error) {
     await t.rollback(); // 실패 시 롤백
     console.error(error);
     res.status(500).json({ message: '여행지 정보를 업데이트하는 중 오류가 발생했습니다.' });
   }
 };
+
+export const deleteTrip = async (req, res) => {
+  const { id } = req.params;
+
+  const t = await sequelize.transaction();
+
+  try{
+    // 1. 여행지 존재 여부 확인
+    const trip = await Trip.findByPk(id , {transaction : t});
+
+    if(!trip){
+      return res.status(404).json({ message : '해당 ID의 여행지를 찾을 수 없습니다.'});
+    }
+
+    // 2. 여행지 삭제 (cascade 가 사진과 메모도 자동으로 처리)
+    await trip.destroy({transaction : t});
+
+    await t.commit();
+    res.status(200).json({message : '여행지가 성공적으로 삭제 되었습니다.'});
+  }catch(error){
+    await t.rollback();
+    res.status(500).json({message : '여행지 삭제 중 오류가 발생했습니다.'});
+  }
+}

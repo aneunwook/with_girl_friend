@@ -24,11 +24,6 @@ const Trip = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    address: {
-        // 주소 필드 추가
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
     latitude: {
       type: DataTypes.DECIMAL(10, 7), // 위도
       allowNull: false,
