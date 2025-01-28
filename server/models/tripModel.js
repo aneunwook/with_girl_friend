@@ -1,7 +1,7 @@
-import { DataTypes } from 'sequelize';
+import { DataTypes, Model } from 'sequelize';
 import sequelize from '../config/db.js';
-import TripPhoto from '../models/tripPhotoModel.js';
-import TripMemo from '../models/tripMemoModel.js';
+import TripPhoto from './tripPhotoModel.js';
+import TripMemo from './tripMemoModel.js';
 
 const Trip = sequelize.define(
   'Trip',
@@ -49,7 +49,7 @@ const Trip = sequelize.define(
 
 Trip.associate = (models) => {
   // 하나의 Trip은 여러 개의 TripPhoto와 TripMemo를 가질 수 있다.
-  Trip.hasMany(models.TripPhoto, { foreignKey: 'trip_id', as: 'photos' });
+  Trip.hasMany(models.TripPhoto, { foreignKey: 'trip_id', as: 'trip_photos' });
   Trip.hasMany(models.TripMemo, { foreignKey: 'trip_id', as: 'memos' });
 };
 

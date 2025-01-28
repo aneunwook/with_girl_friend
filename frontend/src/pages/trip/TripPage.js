@@ -1,19 +1,57 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import MapComponent from '../../components/MapComponent.js';
-import AddTripPage from './AddTripPage.js';
+import TripModal from './TripModal.js';
+import { getAllTrips, getTripDetails } from '../../service/trip/tripService.js';
+import { useActionData, useParams } from 'react-router-dom';
 
 const TripPage = () => {
-  const [trips, setTrips] = useState([]);
+  const { id } = useParams(); // URL의 'id' 파라미터 추출
+  const [trips, setTrips] = useState([]); //모든 여행지
+  const [selectedTrip, setSelectedTrip] = useState(null); // 선택된 여행지
+  const [isLoading, setIsLoading] = useState(false); // 로딩 상태
 
-  const handleTripAdded = (newTrip) => {
-    setTrips((prevTrips) => [...prevTrips, newTrip]);
+  useEffect(() => {
+    const fetchTrips = async () => {
+      try {
+        const response = await getAllTrips();
+        console.log('Fetched trips:', response); // 데이터 확인
+
+        setTrips(response);
+      } catch (error) {
+        console.error('Error fetching trips:', error);
+      }
+    };
+    fetchTrips();
+  }, []);
+
+  const handleMarkerClick = async (trip) => {
+    console.log('Clicked trip:', trip); // trip 객체 확인
+    setIsLoading(true);
+    try {
+      const response = await getTripDetails(trip.id);
+      setSelectedTrip(response); // 마커 클릭 시 선택된 여행지 설정
+      console.log('게시물 정보:', response); // 데이터 확인
+    } catch (error) {
+      console.error('Error fetching trips:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleModalClose = () => {
+    setSelectedTrip(null); // 모달 닫기
   };
 
   return (
     <div>
-      <h1>여행지 관리</h1>
-      <AddTripPage onTripAdded={handleTripAdded} />
-      {/* <MapComponent trips={trips} /> */}
+      <MapComponent trips={trips} onMarkerClick={handleMarkerClick} />
+      {selectedTrip && (
+        <TripModal
+          trip={selectedTrip}
+          onClose={handleModalClose}
+          isLoading={isLoading}
+        />
+      )}
     </div>
   );
 };

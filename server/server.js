@@ -12,7 +12,7 @@ import userRoutes from './routes/userRoutes.js';
 import postRoutes from './routes/postRoutes.js';
 import anniversaryRoutes from './routes/anniversaryRoutes.js';
 import photoRoutes from './routes/photoRoutes.js';
-import tripRoutes from './routes/tripRoutes.js'
+import tripRoutes from './routes/tripRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -41,7 +41,8 @@ app.use('/api/trips', tripRoutes);
 
 // 정적 파일 제공: `/uploads` 요청에 대해 처리
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
-
+// 정적 파일 제공: `/trip` 요청에 대해 처리
+app.use('/trip', express.static(path.join(__dirname, '../trip')));
 
 // 로그용 미들웨어
 app.use((req, res, next) => {
