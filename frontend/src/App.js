@@ -10,6 +10,7 @@ import SignUpPage from './pages/Auth/SignUpPage.js';
 import AnniversaryPage from './pages/anniversary/AnniversaryPage.js';
 import TripPage from './pages/trip/TripPage.js';
 import AddTripPage from './pages/trip/AddTripPage.js';
+import TripEditPage from './pages/trip/TripEditPage.js';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/anniversary" element={<AnniversaryPage />} />
           <Route path="/trips" element={<TripPage />} />
           <Route path="/add" element={<AddTripPage />} />
+          <Route path="/editTrip/:id" element={<TripEditPage />} />
         </Routes>
       </div>
     </Router>

@@ -45,32 +45,30 @@ const MapComponent = ({ trips, onMarkerClick }) => {
           title: trip.name,
         });
 
+        // InfoWindow 생성
+        const infoWindow = new window.google.maps.InfoWindow({
+          content: `
+          <div style="width: 150px; text-align: center;">
+          <img src="http://localhost:3000${trip.photo_url}" alt="대표 사진" style="width: 100%; height: auto; border-radius: 5px;">
+          <p style="margin: 5px 0;">${trip.memo}</p>
+        </div>
+      `,
+        });
+
+        marker.addListener('mouseover', () => {
+          infoWindow.open(map, marker);
+        });
+
         marker.addListener('click', () => {
           if (onMarkerClick) {
             onMarkerClick(trip);
           }
         });
-        // 마커 hover 시 대표 사진 표시
-        // marker.addListener('mouseover', () => {
-        //   const photoUrl =
-        //     trip.photos && trip.photos.length > 0
-        //       ? trip.photos[0].photo_url
-        //       : null;
 
-        //   if (photoUrl) {
-        //     infoWindowRef.current.setContent(
-        //       `<div style="width: 150px; text-align: center;">
-        //         <img src="${photoUrl}" alt="${trip.name}" style="width: 100%;" />
-        //         <p style="margin: 5px 0 0; font-size: 14px;">${trip.name}</p>
-        //       </div>`
-        //     );
-        //     infoWindowRef.current.open(map.current, marker);
-        //   }
-        // });
-        // 마우스가 마커에서 나가면 정보 창 닫기
-        //  marker.addListener('mouseout', () => {
-        //   infoWindowRef.current.close();
-        // });
+        //마우스가 마커에서 나가면 정보 창 닫기
+        marker.addListener('mouseout', () => {
+          infoWindow.close();
+        });
 
         markersRef.current.push(marker);
       });

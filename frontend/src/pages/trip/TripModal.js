@@ -1,6 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom'; // 라우팅에 필요
 
 const TripModal = ({ trip, onClose, isLoading }) => {
+  const navigate = useNavigate(); // useNavigate 훅 사용
+
   if (!trip || isLoading) {
     return (
       <div className="modal">
@@ -11,10 +14,6 @@ const TripModal = ({ trip, onClose, isLoading }) => {
       </div>
     );
   }
-
-  // trip.photos 로그 출력 (디버깅용)
-  console.log('Trip Photos: ', trip.trip_photos);
-
   return (
     <div className="modal">
       <div className="modal-content">
@@ -35,7 +34,7 @@ const TripModal = ({ trip, onClose, isLoading }) => {
         )}
 
         <h4>추가 사진들</h4>
-        {trip.trip_photos && trip.trip_photos.length > 1 ? (
+        {trip.trip_photos && trip.trip_photos.length > 0 ? (
           trip.trip_photos.map((photo) => (
             <img
               key={photo.id}
@@ -54,6 +53,21 @@ const TripModal = ({ trip, onClose, isLoading }) => {
         ) : (
           <p>메모가 없습니다.</p>
         )}
+
+        {/* 수정 버튼 추가 */}
+        <button
+          onClick={() => navigate(`/editTrip/${trip.id}`)}
+          style={{
+            marginTop: '20px',
+            padding: '10px 15px',
+            backgroundColor: '#007BFF',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '5px',
+          }}
+        >
+          수정
+        </button>
       </div>
     </div>
   );

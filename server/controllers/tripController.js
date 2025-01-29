@@ -4,6 +4,7 @@ import TripMemo from '../models/tripMemoModel.js';
 import axios from 'axios';
 import sequelize from '../config/db.js';
 import { models } from '../models/index1.js';
+import { Op } from 'sequelize';
 
 const GOOGLE_MAPS_API_KEY = 'AIzaSyBiiT7sHwRcIsxcRd-H1lQWHdQ9K0ZRZU8';
 
@@ -209,24 +210,49 @@ export const updateTrip = async (req, res) => {
 
     await trip.save({ transaction: t }); // 저장
 
-    //4. 추가 사진 수정
+    //4. 추가 사진 수정 (조건부 업데이트)
     if (additionalPhotos && additionalPhotos.length > 0) {
-      await TripPhoto.destroy({ where: { trip_id: id }, transaction: t }); // 기존 사진 삭제
-      const photos = additionalPhotos.map((url) => ({
-        trip_id: id,
-        photo_url: url,
-      }));
-      await TripPhoto.bulkCreate(photos, { transaction: t });
+      // 유지할 사진 ID를 추출
+      const existingPhotoIds = additionalPhotos // ID가 있는 사진만 필터링
+        .filter((photo) => photo.id)
+        .map((photo) => photo.id);
+
+      // 삭제할 사진 제거
+      await TripPhoto.destroy({
+        where: { trip_id: id, id: { [Op.notIn]: existingPhotoIds } }, //Op.notIn은 "이 목록에 없는 항목"을 의미
+        transaction: t,
+      });
+
+      // 새로 추가된 사진 입력
+      const newPhotos = additionalPhotos.filter((photo) => !photo.id);
+      if (newPhotos.length > 0) {
+        const photosToCreate = newPhotos.map((photo) => ({
+          trip_id: id,
+          photo_url: photo.photo_url,
+        }));
+        await TripPhoto.bulkCreate(photosToCreate, { transaction: t });
+      }
     }
 
     //5. 추가 메모 수정
     if (additionalMemos && additionalMemos.length > 0) {
-      await TripMemo.destroy({ where: { trip_id: id }, transaction: t });
-      const memos = additionalMemos.map((text) => ({
-        trip_id: id,
-        memo: text,
-      }));
-      await TripMemo.bulkCreate(memos, { transaction: t });
+      const existingMemoIds = additionalMemos
+        .filter((memo) => memo.id)
+        .map((memo) => memo.id);
+
+      await TripMemo.destroy({
+        where: { trip_id: id, id: { [Op.notIn]: existingMemoIds } },
+        transaction: t,
+      });
+
+      const newMemos = additionalMemos.filter((memo) => !memo.id);
+      if (newMemos.length > 0) {
+        const memosToCreate = newMemos.map((memo) => ({
+          trip_id: id,
+          memo: memo.memo,
+        }));
+        await TripMemo.bulkCreate(memosToCreate, { transaction: t });
+      }
     }
 
     await t.commit();
