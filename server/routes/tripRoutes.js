@@ -16,7 +16,11 @@ router.post('/tripPhoto', upload.array('trip', 10), tripUploadPhotos);
 router.post('/add', addTrip);
 router.get('/', getAllTrips);
 router.get('/:id', getTripDetails);
-router.put('/:id', updateTrip);
+router.put(
+  '/:id',
+  upload.fields([{ name: 'trip' }, { name: 'additionalPhotos' }]),
+  updateTrip
+);
 router.delete('/:id', deleteTrip);
 
 export default router;

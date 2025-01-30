@@ -163,17 +163,15 @@ export const getTripDetails = async (req, res) => {
 
 export const updateTrip = async (req, res) => {
   const { id } = req.params;
-  const { address, name, photo_url, memo, additionalPhotos, additionalMemos } =
-    req.body;
+  const { address, name, memo, additionalMemos } = req.body;
 
   if (!id || !name || !address) {
-    return res.status(400).json({ message: 'ID, 주소, 이름은 필수 입니다' });
+    return res.status(400).json({ message: 'ID, 주소, 이름은 필수입니다' });
   }
 
   const t = await sequelize.transaction();
 
   try {
-    //1. 여행지 ID로 데이터 조회
     const trip = await Trip.findOne({ where: { id }, transaction: t });
 
     if (!trip) {
@@ -182,11 +180,41 @@ export const updateTrip = async (req, res) => {
         .json({ message: '해당 ID의 여행지를 찾을 수 없습니다' });
     }
 
-    // 2. 주소 변경 시, 위도/경도 업데이트
+    // 📸 **대표 사진 처리 (새로운 파일이 업로드되었을 경우)**
+    let photoUrl = trip.photo_url;
+    if (req.files['trip']) {
+      photoUrl = `/trip/${req.files['trip'][0].filename}`;
+    }
+
+    // 🖼 **추가 사진 처리 (기존 사진 유지 + 새로운 사진 추가)**
+    let additionalPhotos = [];
+    try {
+      // 배열이 아닌 경우만 JSON.parse를 시도
+      if (
+        req.body.additionalPhotos &&
+        typeof req.body.additionalPhotos === 'string'
+      ) {
+        additionalPhotos = JSON.parse(req.body.additionalPhotos);
+      } else {
+        additionalPhotos = req.body.additionalPhotos || [];
+      }
+    } catch (error) {
+      console.error('Error parsing additionalPhotos:', error);
+      additionalPhotos = req.body.additionalPhotos || [];
+    }
+
+    if (req.files['additionalPhotos']) {
+      const uploadedPhotos = req.files['additionalPhotos'].map(
+        (file) => `/trip/${file.filename}`
+      );
+      additionalPhotos = [...additionalPhotos, ...uploadedPhotos];
+    }
+
+    // 🌍 **주소 변경 시, 위도/경도 업데이트**
     let lat = trip.latitude;
     let lng = trip.longitude;
 
-    if (address != trip.address) {
+    if (address !== trip.address) {
       const geocodeResponse = await axios.get(
         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
           address
@@ -200,68 +228,43 @@ export const updateTrip = async (req, res) => {
       lng = location.lng;
     }
 
-    //3. 여행지 기본 정보 수정
-    trip.name = name || trip.name;
-    trip.address = address || trip.address;
+    // 🚀 **여행지 기본 정보 업데이트**
+    trip.name = name;
+    trip.address = address;
     trip.latitude = lat;
     trip.longitude = lng;
-    trip.photo_url = photo_url || trip.photo_url;
-    trip.memo = memo || trip.memo;
+    trip.photo_url = photoUrl;
+    trip.memo = memo;
 
-    await trip.save({ transaction: t }); // 저장
+    await trip.save({ transaction: t });
 
-    //4. 추가 사진 수정 (조건부 업데이트)
-    if (additionalPhotos && additionalPhotos.length > 0) {
-      // 유지할 사진 ID를 추출
-      const existingPhotoIds = additionalPhotos // ID가 있는 사진만 필터링
-        .filter((photo) => photo.id)
-        .map((photo) => photo.id);
-
-      // 삭제할 사진 제거
-      await TripPhoto.destroy({
-        where: { trip_id: id, id: { [Op.notIn]: existingPhotoIds } }, //Op.notIn은 "이 목록에 없는 항목"을 의미
-        transaction: t,
-      });
-
-      // 새로 추가된 사진 입력
-      const newPhotos = additionalPhotos.filter((photo) => !photo.id);
-      if (newPhotos.length > 0) {
-        const photosToCreate = newPhotos.map((photo) => ({
-          trip_id: id,
-          photo_url: photo.photo_url,
-        }));
-        await TripPhoto.bulkCreate(photosToCreate, { transaction: t });
-      }
+    // 🏞 **추가 사진 업데이트**
+    if (additionalPhotos.length > 0) {
+      await TripPhoto.destroy({ where: { trip_id: id }, transaction: t });
+      const photosToCreate = additionalPhotos.map((url) => ({
+        trip_id: id,
+        photo_url: url,
+      }));
+      await TripPhoto.bulkCreate(photosToCreate, { transaction: t });
     }
 
-    //5. 추가 메모 수정
+    // ✏ **추가 메모 업데이트**
     if (additionalMemos && additionalMemos.length > 0) {
-      const existingMemoIds = additionalMemos
-        .filter((memo) => memo.id)
-        .map((memo) => memo.id);
-
-      await TripMemo.destroy({
-        where: { trip_id: id, id: { [Op.notIn]: existingMemoIds } },
-        transaction: t,
-      });
-
-      const newMemos = additionalMemos.filter((memo) => !memo.id);
-      if (newMemos.length > 0) {
-        const memosToCreate = newMemos.map((memo) => ({
-          trip_id: id,
-          memo: memo.memo,
-        }));
-        await TripMemo.bulkCreate(memosToCreate, { transaction: t });
-      }
+      await TripMemo.destroy({ where: { trip_id: id }, transaction: t });
+      const memosToCreate = additionalMemos.map((memo) => ({
+        trip_id: id,
+        memo,
+      }));
+      await TripMemo.bulkCreate(memosToCreate, { transaction: t });
     }
 
     await t.commit();
     res
       .status(200)
-      .json({ message: '여행지가 성공적으로 업데이트 되었습니다', trip });
+      .json({ message: '여행지가 성공적으로 업데이트되었습니다', trip });
   } catch (error) {
-    await t.rollback(); // 실패 시 롤백
-    console.error(error);
+    await t.rollback();
+    console.error('🔴 여행지 업데이트 오류:', error);
     res
       .status(500)
       .json({ message: '여행지 정보를 업데이트하는 중 오류가 발생했습니다.' });

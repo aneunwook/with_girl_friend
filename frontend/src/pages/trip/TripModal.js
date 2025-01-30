@@ -1,8 +1,10 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom'; // 라우팅에 필요
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../../assets/styles/TripModal.css';
 
 const TripModal = ({ trip, onClose, isLoading }) => {
-  const navigate = useNavigate(); // useNavigate 훅 사용
+  const navigate = useNavigate();
+  const [currentIndex, setCurrentIndex] = useState(0); // 현재 이미지 인덱스 상태
 
   if (!trip || isLoading) {
     return (
@@ -14,57 +16,66 @@ const TripModal = ({ trip, onClose, isLoading }) => {
       </div>
     );
   }
+
+  const photos = trip.trip_photos || []; // 추가 사진 목록
+  const totalPhotos = photos.length; // 총 사진 개수
+
+  // 다음 사진으로 이동
+  const nextPhoto = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % totalPhotos);
+  };
+
+  // 이전 사진으로 이동
+  const prevPhoto = () => {
+    setCurrentIndex((prevIndex) => (prevIndex - 1 + totalPhotos) % totalPhotos);
+  };
+
   return (
     <div className="modal">
       <div className="modal-content">
-        <button onClick={onClose}>닫기</button>
+        <button className="close-btn" onClick={onClose}>
+          x
+        </button>
         <h3>{trip.name}</h3>
 
-        {trip.trip_photos && trip.trip_photos.length > 0 ? (
-          <>
-            <h4>대표 사진</h4>
+        {totalPhotos > 0 ? (
+          <div className="slider-container">
+            <button className="prev-btn" onClick={prevPhoto}>
+              <i className="fa-solid fa-chevron-left"></i>
+            </button>
             <img
-              src={`http://localhost:3000${trip.photo_url}`}
-              alt={trip.name}
-              style={{ width: '100%', marginBottom: '10px' }}
+              src={`http://localhost:3000${photos[currentIndex].photo_url}`}
+              alt={`여행 사진 ${currentIndex + 1}`}
+              className="slider-image"
             />
-          </>
+            <button className="next-btn" onClick={nextPhoto}>
+              <i className="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
         ) : (
-          <p>대표 사진이 없습니다.</p>
+          <p>사진이 없습니다.</p>
         )}
 
-        <h4>추가 사진들</h4>
-        {trip.trip_photos && trip.trip_photos.length > 0 ? (
-          trip.trip_photos.map((photo) => (
-            <img
-              key={photo.id}
-              src={`http://localhost:3000${photo.photo_url}`}
-              alt="추가 사진"
-              style={{ width: '100%', marginBottom: '10px' }}
-            />
-          ))
-        ) : (
-          <p>추가 사진이 없습니다.</p>
-        )}
+        {/* 인디케이터 (동그라미) */}
+        <div className="indicator-container">
+          {photos.map((_, index) => (
+            <span
+              key={index}
+              className={`indicator ${index === currentIndex ? 'active' : ''}`}
+              onClick={() => setCurrentIndex(index)} // 클릭 시 해당 사진으로 이동
+            ></span>
+          ))}
+        </div>
 
-        <h4>메모들</h4>
         {trip.memos && trip.memos.length > 0 ? (
           trip.memos.map((memo) => <p key={memo.id}>{memo.memo}</p>)
         ) : (
           <p>메모가 없습니다.</p>
         )}
 
-        {/* 수정 버튼 추가 */}
         <button
           onClick={() => navigate(`/editTrip/${trip.id}`)}
-          style={{
-            marginTop: '20px',
-            padding: '10px 15px',
-            backgroundColor: '#007BFF',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '5px',
-          }}
+          className="edit-btn"
         >
           수정
         </button>

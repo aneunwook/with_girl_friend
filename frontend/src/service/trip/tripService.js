@@ -60,11 +60,37 @@ export const getTripDetails = async (id) => {
 
 export const updateTrip = async (id, updatedData) => {
   try {
-    const response = await axiosInstance.put(`${api_url}/${id}`, updatedData);
+    const formData = new FormData();
+    formData.append('name', updatedData.name);
+    formData.append('address', updatedData.address);
+    formData.append('memo', updatedData.memo);
+
+    // 📸 **대표 사진 처리**
+    if (updatedData.photo_url instanceof File) {
+      formData.append('trip', updatedData.photo_url);
+    } else {
+      formData.append('photo_url', updatedData.photo_url);
+    }
+
+    // 🖼 **추가 사진 처리**
+    updatedData.additionalPhotos.forEach((photo, index) => {
+      if (photo.file instanceof File) {
+        formData.append('additionalPhotos', photo.file);
+      } else {
+        formData.append(`additionalPhotos[${index}]`, photo.photo_url);
+      }
+    });
+
+    console.log('📸 전송할 FormData:', [...formData.entries()]);
+
+    const response = await axiosInstance.put(`${api_url}/${id}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+
     return response.data;
   } catch (error) {
     console.error(
-      'Error updating trip:',
+      '🔴 여행지 수정 오류:',
       error.response?.data || error.message
     );
     throw error;

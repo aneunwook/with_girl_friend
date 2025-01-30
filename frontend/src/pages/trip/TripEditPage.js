@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getTripDetails, updateTrip } from '../../service/trip/tripService.js';
+import {
+  getTripDetails,
+  updateTrip,
+  uploadTripPhoto,
+} from '../../service/trip/tripService.js';
 
 const TripEditPage = () => {
   const { id } = useParams();
@@ -50,11 +54,24 @@ const TripEditPage = () => {
     ]);
   };
 
-  // 특정 사진 URL변경
-  const handlePhotoChange = (index, url) => {
-    const updatedPhotos = [...additionalPhotos]; // 기존 리스트 복사
-    updatedPhotos[index].photo_url = url; // 해당 인덱스의 URL 변경
-    setAdditionalPhotos(updatedPhotos); // 상태 업데이트
+  const handlePhotoUpload = async (index, event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('trip', file);
+
+    try {
+      // 기존 fetch 대신 uploadTripPhoto 함수 사용
+      const data = await uploadTripPhoto(formData);
+
+      // 업로드된 사진의 URL을 상태에 반영
+      const newPhotos = [...additionalPhotos];
+      newPhotos[index].photo_url = data.photo_url; // 서버에서 받은 URL 저장
+      setAdditionalPhotos(newPhotos);
+    } catch (error) {
+      console.error('업로드 실패:', error);
+    }
   };
 
   // 특정 사진 삭제
@@ -150,11 +167,20 @@ const TripEditPage = () => {
         <h3>추가 사진들</h3>
         {additionalPhotos.map((photo, index) => (
           <div key={index}>
+            {/* 미리보기 추가 */}
+            {photo.photo_url && (
+              <img
+                src={`http://localhost:3000${photo.photo_url}`} // 서버에서 저장된 이미지 URL 사용
+                alt={`추가 사진 ${index + 1}`}
+                style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+              />
+            )}
+
+            {/* 파일 업로드 input */}
             <input
-              type="text"
-              placeholder="추가 사진 URL"
-              value={photo.photo_url} // 해당 사진 URL
-              onChange={(e) => handlePhotoChange(index, e.target.value)} // URL 변경 시 호출
+              type="file"
+              accept="image/*"
+              onChange={(e) => handlePhotoUpload(index, e)}
             />
             <button onClick={() => handleDeletePhoto(index)}>삭제</button>
           </div>
