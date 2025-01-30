@@ -1,0 +1,25 @@
+.form-container {
+  max-width: 500px;
+  margin: 0px auto;
+  padding: 25px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.input-field {
+  width: 480px;
+  padding: 10px;
+  margin: 8px 0px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+/* 📌 입력 필드가 포커스를 받을 때 스타일 */
+.input-field:focus {
+  outline: none; /* 기본 포커스 테두리 제거 */
+  border-color: #007bff; /* 테두리 색상을 파란색으로 변경 */
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* 약간의 파란색 그림자 추가 */
+}
