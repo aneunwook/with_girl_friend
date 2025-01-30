@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import axiosInstance from '../../service/axiosInstance';
+import { addTrip, uploadTripPhoto } from '../../service/trip/tripService.js';
 import '../../assets/styles/AddTripPage.css';
 
 const AddTripPage = ({ onTripAdded }) => {
@@ -51,18 +52,7 @@ const AddTripPage = ({ onTripAdded }) => {
       // Step 1: 사진 업로드
       const photoData = new FormData();
       photos.forEach((file) => photoData.append('trip', file));
-
-      const uploadResponse = await axiosInstance.post(
-        '/trips/tripPhoto',
-        photoData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
-
-      const { photo_url, additionalPhotos } = uploadResponse.data;
+      const { photo_url, additionalPhotos } = await uploadTripPhoto(photoData);
 
       // Step 2: 여행지 추가
       const tripData = {
@@ -74,7 +64,7 @@ const AddTripPage = ({ onTripAdded }) => {
         additionalMemos: formData.additionalMemos,
       };
 
-      const addResponse = await axiosInstance.post('/trips/add', tripData);
+      const addResponse = await addTrip(tripData);
       console.log('Add Trip Response:', addResponse.data);
 
       if (onTripAdded) {
