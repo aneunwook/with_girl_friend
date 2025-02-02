@@ -44,7 +44,7 @@ const TripModal = ({ trip, onClose, isLoading }) => {
               <i className="fa-solid fa-chevron-left"></i>
             </button>
             <img
-              src={`http://localhost:5000${photos[currentIndex].photo_url}`}
+              src={`http://localhost:3000${photos[currentIndex].photo_url}`}
               alt={`여행 사진 ${currentIndex + 1}`}
               className="slider-image"
             />

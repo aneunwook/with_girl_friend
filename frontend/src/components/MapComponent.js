@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
+import '../assets/styles/MapComponent.css';
 
-const MapComponent = ({ trips, onMarkerClick, tempMarker}) => {
+const MapComponent = ({ trips, onMarkerClick, tempMarker, className }) => {
   const mapRef = useRef(null);
   const markersRef = useRef([]); // 마커 참조
   const map = useRef(null); // 지도 객체
@@ -50,7 +51,7 @@ const MapComponent = ({ trips, onMarkerClick, tempMarker}) => {
         const infoWindow = new window.google.maps.InfoWindow({
           content: `
           <div style="width: 150px; text-align: center;">
-          <img src="http://localhost:5000${trip.photo_url}" alt="대표 사진" style="width: 100%; height: auto; border-radius: 5px;">
+          <img src="http://localhost:3000${trip.photo_url}" alt="대표 사진" style="width: 100%; height: auto; border-radius: 5px;">
           <p style="margin: 5px 0;">${trip.memo}</p>
         </div>
       `,
@@ -78,21 +79,21 @@ const MapComponent = ({ trips, onMarkerClick, tempMarker}) => {
 
   // 주소 입력 시 임시 마커 처리
   useEffect(() => {
-    if(map.current){
+    if (map.current) {
       // 기존 임시 마커 삭제
-      if(tempMarkerRef.current){
+      if (tempMarkerRef.current) {
         tempMarkerRef.current.setMap(null);
       }
 
-      if(tempMarker){
+      if (tempMarker) {
         const { latitude, longitude } = tempMarker;
-        if(!isNaN(latitude) && !isNaN(longitude)){
+        if (!isNaN(latitude) && !isNaN(longitude)) {
           tempMarkerRef.current = new window.google.maps.Marker({
-            position : {lat : latitude, lng: longitude},
-            map : map.current,
-            title : '입력한 주소',
-            icon : {
-              url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png', // 파란색 마커
+            position: { lat: latitude, lng: longitude },
+            map: map.current,
+            title: '입력한 주소',
+            icon: {
+              url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
             },
           });
 
@@ -103,15 +104,7 @@ const MapComponent = ({ trips, onMarkerClick, tempMarker}) => {
     }
   }, [tempMarker]);
 
-  return (
-    <div
-      ref={mapRef}
-      style={{
-        width: '100%',
-        height: '100%', // 화면 전체 높이
-      }}
-    />
-  );
+  return <div ref={mapRef} className={`map ${className}`} />;
 };
 
 export default MapComponent;

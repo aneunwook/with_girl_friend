@@ -12,16 +12,16 @@ const AddTripPage = ({ onTripAdded, existingTrips }) => {
   });
 
   const [photos, setPhotos] = useState([]); //모든 업로드 된 사진들
-  const [tempMarker, setTempMarker] = useState(null) //주소 입력 시 임시 마커
+  const [tempMarker, setTempMarker] = useState(null); //주소 입력 시 임시 마커
   const [trips, setTrips] = useState(existingTrips || []); // 기존 저장된 여행 목록
   const [previewPhoto, setPreviewPhoto] = useState(null); // 미리보기 용 사진
 
   // 사용자가 주소를 입력할 때마다 임시 마커 업데이트
   useEffect(() => {
-    if(formData.address){
+    if (formData.address) {
       const geocoder = new window.google.maps.Geocoder();
-      geocoder.geocode({ address: formData.address}, (results, status) => {
-        if (status === 'OK'){
+      geocoder.geocode({ address: formData.address }, (results, status) => {
+        if (status === 'OK') {
           const location = results[0].geometry.location;
           setTempMarker({
             name: formData.name || '입력 중...',
@@ -29,17 +29,15 @@ const AddTripPage = ({ onTripAdded, existingTrips }) => {
             latitude: location.lat(),
             longitude: location.lng(),
             memo: formData.memo,
-
-          })
-        } else{
+          });
+        } else {
           setTempMarker(null);
         }
       });
-    }else{
+    } else {
       setTempMarker(null);
     }
   }, [formData.address]);
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -92,17 +90,16 @@ const AddTripPage = ({ onTripAdded, existingTrips }) => {
       const addResponse = await addTrip(tripData);
 
       if (!addResponse || !addResponse.trip) {
-        console.error("Invalid API response structure:", addResponse);
-        return;
-      }
-      
-      const trip = addResponse.trip;
-      if (!trip) {
-        console.error("No trip data in response:", addResponse);
+        console.error('Invalid API response structure:', addResponse);
         return;
       }
 
-      
+      const trip = addResponse.trip;
+      if (!trip) {
+        console.error('No trip data in response:', addResponse);
+        return;
+      }
+
       if (onTripAdded) {
         onTripAdded(trip); // 부모 컴포넌트에 추가된 여행지 정보 전달
       }
@@ -125,65 +122,74 @@ const AddTripPage = ({ onTripAdded, existingTrips }) => {
   };
 
   return (
-    <div className="add-trip-container">
-    <form onSubmit={handleSubmit} className="form-container">
-      <div>
-        <input
-          type="text"
-          name="name"
-          className="input-field"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="여행지의 이름을 입력해 주세요"
-          required
-        />
-      </div>
-      <div>
-        <input
-          type="text"
-          name="address"
-          className="input-field"
-          value={formData.address}
-          onChange={handleChange}
-          placeholder="주소를 입력해 주세요"
-        />
-      </div>
-      <div className='file-upload-container'>
-        <input
-          type="file"
-          name="trip"
-          id="fileUpload" // label과 연결하기 위해 id 지정
-          className="file-input"
-          placeholder="추가 할 사진들을 넣어 주세요"
-          multiple
-          onChange={handlePhotoChange}
-        />
+    <>
+      <div className="add-trip-container">
+        <div className="title-container">
+          <p className="form-title ">Add a New Travel Destination!</p>
+          <p className="form-description">
+            Enter the name and address of the place you visited, and add photos
+            and notes!
+          </p>
+        </div>
+        <form onSubmit={handleSubmit} className="form-container">
+          <div>
+            <input
+              type="text"
+              name="name"
+              className="input-field"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="여행지의 이름을 입력해 주세요"
+              required
+            />
+          </div>
+          <div>
+            <input
+              type="text"
+              name="address"
+              className="input-field"
+              value={formData.address}
+              onChange={handleChange}
+              placeholder="주소를 입력해 주세요"
+            />
+          </div>
+          <div className="file-upload-container">
+            <input
+              type="file"
+              name="trip"
+              id="fileUpload" // label과 연결하기 위해 id 지정
+              className="file-input"
+              placeholder="추가 할 사진들을 넣어 주세요"
+              multiple
+              onChange={handlePhotoChange}
+            />
 
-         {/* 파일 업로드 입력창 (사용자가 직접 입력 가능) */}
-         <div className="file-input-box">
-          <input
-            type="text"
-            className="file-text-input"
-            placeholder="파일을 선택하거나 클릭하여 업로드하세요"
-            readOnly
-            value={photos.map((file) => file.name).join(', ')} // 선택된 파일명 표시
-          />
-        <label htmlFor="fileUpload" className="custom-upload-button">
-            <i class="fa-solid fa-upload"></i>
-        </label>
-      </div>
-      </div>
-      <div>
-        <input
-          type="text"
-          name="memo"
-          className="input-field"
-          value={formData.memo}
-          placeholder="내용을 적어 주세요"
-          onChange={handleChange}
-        />
-      </div>
-      {/* <div>
+            {/* 선택된 파일명을 여러 줄로 표시 */}
+            <div className="file-name-display">
+              {photos.map((file, index) => (
+                <span key={index} className="file-name">
+                  {file.name}
+                </span>
+              ))}
+              <label htmlFor="fileUpload" className="custom-upload-button">
+                <i class="fa-solid fa-upload"></i>
+              </label>
+            </div>
+            <p className="how-to-upload">
+              파일을 선택하거나 클릭하여 업로드 하세요
+            </p>
+          </div>
+          <div>
+            <input
+              type="text"
+              name="memo"
+              className="input-field"
+              value={formData.memo}
+              placeholder="내용을 적어 주세요"
+              onChange={handleChange}
+            />
+          </div>
+          {/* <div>
         <label>추가 메모들:</label>
         {formData.additionalMemos.map((memo, index) => (
           <div key={index}>
@@ -202,13 +208,20 @@ const AddTripPage = ({ onTripAdded, existingTrips }) => {
           추가 메모 추가
         </button>
       </div> */}
-      <button type="submit">여행지 추가</button>
-    </form>
-   {/* 우측 - 지도 */}
-   <div className="map-container">
-        <MapComponent trips={trips} tempMarker={tempMarker} />
+          <div className="submit-button">
+            <button type="submit">여행지 추가</button>
+          </div>
+        </form>
+        {/* 우측 - 지도 */}
+        <div className="map-container">
+          <MapComponent
+            trips={trips}
+            tempMarker={tempMarker}
+            className="add-map"
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

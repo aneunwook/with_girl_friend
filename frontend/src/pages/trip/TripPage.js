@@ -43,8 +43,19 @@ const TripPage = () => {
   };
 
   return (
-    <div>
-      <MapComponent trips={trips} onMarkerClick={handleMarkerClick} />
+    <div className="map-page-container">
+      <div className="map-header">
+        <p className="map-title">Our Shared Memories</p>
+        <div className="map-subtitle-button">
+          <p className="map-subtitle">Let’s Leave Our Moments on the Map</p>
+          <button className="map-button">Add Destination</button>
+        </div>
+      </div>
+      <MapComponent
+        trips={trips}
+        onMarkerClick={handleMarkerClick}
+        className="main-map"
+      />
       {selectedTrip && (
         <TripModal
           trip={selectedTrip}

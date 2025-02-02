@@ -1,0 +1,80 @@
+/* MapComponent의 기본 스타일 */
+.main-map {
+  max-width: 1000px; /* 최대 너비 제한 */
+  width: 90%; /* 화면 크기에 따라 유동적으로 조정 */
+  min-height: 600px; /* 지도 최소 높이 설정 */
+  margin: 0 auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.map-page-container {
+  position: relative;
+  width: 100%;
+  max-width: 1500px;
+  min-height: 800px; /* 고정 높이 대신 최소 높이 설정 */
+  height: auto;
+  margin: 0 auto;
+  padding: 20px;
+  overflow: hidden; /* 배경이 잘리지 않도록 */
+}
+
+.map-page-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, #f2f2f2, #d9e3f0);
+  z-index: -1;
+}
+
+.map-header {
+  display: flex;
+  flex-direction: column; /* 제목과 서브타이틀-버튼 영역을 수직으로 쌓음 */
+  max-width: 1000px; /* 최대 너비 설정 */
+  width: 90%;
+  margin: 0 auto; /* 중앙 정렬 */
+  padding: 10px 40px; /* 좌우 여백 */
+}
+
+.map-subtitle-button {
+  display: flex;
+  justify-content: space-between; /* 좌측: 서브타이틀, 우측: 버튼 */
+  align-items: center;
+}
+
+.map-title {
+  font-size: 35px;
+  font-weight: 700;
+  font-family: 'Open Sans', serif;
+  margin-bottom: 8px;
+  background: linear-gradient(to right, #30cfd0, #330867);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.map-subtitle {
+  font-size: 20px;
+  font-family: 'EB Garamond', serif;
+  background: linear-gradient(to right, #1e130c, #9a8478);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.map-button {
+  padding: 10px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  background-color: #4a90e2;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.map-button:hover {
+  background-color: #357ab7;
+}

@@ -1,64 +1,103 @@
 /* https://webgradients.com/ https://cssgradient.io/ https://uigradients.com/#SunnyDays https://bennettfeely.com/clippy/*/
 /* 전체 페이지 가로 스크롤 방지 */
-html, body {
+html,
+body {
   overflow-x: hidden; /* 좌우 스크롤 없애기 */
   width: 100%;
   margin: 0;
   padding: 0;
 }
+.title-container {
+  width: 100%; /* 부모 요소의 전체 너비를 사용 */
+  margin-left: 220px;
+  margin-bottom: 20px; /* 아래 폼과 간격 추가 */
+}
+
+.form-title {
+  font-size: 35px;
+  font-weight: 700;
+  font-family: 'Open Sans', serif;
+  margin-bottom: 8px;
+  background: linear-gradient(
+    to right,
+    #30cfd0,
+    #330867
+  ); /* 좌 → 우 그라데이션 */
+  -webkit-background-clip: text; /* 텍스트에만 배경 적용 */
+  -webkit-text-fill-color: transparent; /* 글자 색상을 투명하게 설정 */
+}
+
+/* 설명 스타일 */
+.form-description {
+  font-size: 20px;
+  font-family: 'EB Garamond', serif;
+  background: linear-gradient(
+    to right,
+    #1e130c,
+    #9a8478
+  ); /* 좌 → 우 그라데이션 */
+  -webkit-background-clip: text; /* 텍스트에만 배경 적용 */
+  -webkit-text-fill-color: transparent; /* 글자 색상을 투명하게 설정 */
+}
 
 .add-trip-container {
-    position: relative;
-    display: flex;
-    flex-wrap: wrap; /* 화면이 줄어들면 자동 줄바꿈 */
-    gap: 20px;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    max-width: 1500px;
-    height: 800px;
-    margin: 0 auto;
-    margin-top: 30px;
-    padding: 20px;
-    border: 1px solid;
-    overflow: hidden; /* 배경이 잘리지 않도록 */
-    
-  }
+  position: relative;
+  display: flex;
+  flex-wrap: wrap; /* 화면이 줄어들면 자동 줄바꿈 */
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1500px;
+  height: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  overflow: hidden; /* 배경이 잘리지 않도록 */
+}
 
-  .add-trip-container::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(circle, rgba(120,228,120,1) 0%, rgba(148,233,196,1) 91%);
-    clip-path: circle(49.2% at 100% 51%);
-    z-index: -1; /* 배경을 뒤로 */
-  }
-  
-.form-container, .map-container {
+.add-trip-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(to top, #f9f9f9, #dfe8f1, #b8c6db);
+  /* clip-path: circle(60% at 100% 50%); */
+  z-index: -1; /* 배경을 뒤로 */
+}
+
+.form-container,
+.map-container {
   flex: 1; /* 부모 크기에 맞게 자동 조정 */
   width: 100%; /* 기본적으로 부모 너비 사용 */
-  max-width: 600px; /* 너무 커지지 않도록 제한 */
+  max-width: 500px; /* 너무 커지지 않도록 제한 */
   box-sizing: border-box; /* padding 포함 */
 }
 
 .form-container {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  width: 600px;
+  align-items: center; /* 가로 방향 중앙 정렬 */
+  justify-content: center; /* 세로 방향 중앙 정렬 (필요시 추가) */
+  gap: 50px;
+  width: 500px;
   height: 650px;
-  padding: 25px;
+  padding: 2px;
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
   box-sizing: border-box; /* 추가 */
+  background-image: url('../image/form-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-.map-container {
-  width: 600px; /* 폼과 동일하게 설정 */
+.map-container,
+.add-map {
+  width: 500px; /* 폼과 동일하게 설정 */
   height: 650px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -73,7 +112,8 @@ html, body {
     margin-top: 200px;
   }
 
-  .form-container, .map-container {
+  .form-container,
+  .map-container {
     max-width: 100%; /* 너비 전체 사용 */
   }
 
@@ -84,80 +124,113 @@ html, body {
 }
 
 .input-field {
-  width: 480px;
+  width: 380px;
   padding: 10px;
-  margin: 8px 0px;
-  margin-bottom: 20px;
   border: none;
-  border-bottom: 2px solid #333; /* 밑줄 추가 */
   outline: none; /* 클릭 시 파란 테두리 제거 */
-  background: transparent; /* 배경색 없애기 */
-  font-size: 16px;
+  background-color: rgba(255, 255, 255, 0.8); /* 연한 배경 & 약간의 투명도 */
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1); /* 살짝 입체감 */
+  backdrop-filter: blur(1px); /* 블러 효과 추가 */
+  font-size: 15px;
 }
 
 /* 입력 필드가 포커스를 받을 때 스타일 */
 .input-field:focus {
-
 }
 
-.file-upload-container{
+.file-upload-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100px;
-  gap: 10px;
 }
 
-.file-input{
+.file-input {
   display: none;
-
 }
 
 /* 파일 입력창과 버튼을 감싸는 박스 */
 .file-input-box {
   display: flex;
-  width: 500px;
-  height: 100px;
-  border: 1px solid #ccc;
+  width: 400px;
+  height: 150px;
   border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.7); /* 투명도를 더 높이기 */
+  box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1); /* 살짝 입체감 */
+  backdrop-filter: blur(1px); /* 블러 효과 추가 */
   overflow: hidden;
   align-items: center;
-  margin-bottom: 10px;
   position: relative; /* 아이콘 위치 조절을 위해 relative 설정 */
-
 }
 
-/* 입력창 스타일 */
-.file-text-input {
-  flex: 1;
-  padding: 10px;
-  border: none;
+.file-name-display {
+  display: flex;
+  flex-direction: column; /* 세로 정렬 */
+  width: 390px;
+  min-height: 150px; /* 높이를 늘려서 중앙 정렬이 잘 되도록 설정 */
+  max-height: 200px;
+  overflow-y: auto;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.6);
+  position: relative;
+}
+
+/* 파일명 스타일 */
+.file-name {
   font-size: 14px;
-  color: #555;
-  text-align: center; /* 텍스트 가운데 정렬 */
-
+  color: black;
+  font-weight: bold;
+  margin: 2px 0;
 }
 
-/* 업로드 버튼 스타일 */
-  .custom-upload-button {
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    position: absolute; /* 부모인 .file-input-box 기준으로 위치 조정 */
-    left: 50%; /* 왼쪽 기준 50% */
-    top: 50%; /* 위쪽 기준 50% */
-    transform: translate(-50%, -50%); /* 정확한 중앙 정렬 */
-    font-size: 30px; /* 아이콘 크기 */
-    color: #007bff; /* 아이콘 색상 */
-  }
+/* 업로드 버튼 (아이콘 포함) */
+.custom-upload-button {
+  position: absolute; /* 중앙 배치를 위해 절대 위치 지정 */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* 정확히 중앙으로 이동 */
+  cursor: pointer;
+  font-size: 24px;
+  color: #555;
+  transition: transform 0.2s ease-out; /* 부드러운 애니메이션 */
+}
 
 .custom-upload-button:hover {
-  background-color: #0056b3; /* 좀 더 진한 파란색으로 변경 */
+  transform: translate(-50%, -70%); /* 살짝 위로 이동 */
 }
 
-/* 업로드된 파일명 목록 스타일 */
-.file-names {
-  margin-top: 5px; /* 위쪽 여백 추가 */
-  font-size: 14px; /* 글씨 크기 */
-  color: #555; /* 회색 글씨 */
+.how-to-upload {
+  font-size: 13px;
+  margin-right: auto;
+  color: black;
+  font-weight: bold;
+}
+
+/* 버튼을 감싸는 div (정렬용) */
+.submit-button {
+  width: 100%; /* 부모 요소의 가로 길이를 따라감 */
+  display: flex;
+  justify-content: center; /* 버튼을 중앙에 정렬 */
+}
+
+/* 버튼 스타일 */
+.submit-button button {
+  cursor: pointer;
+  font-size: 16px;
+  padding: 10px 20px;
+  background: rgb(140, 200, 255, 0.9);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: transform 0.2s ease-out, background-color 0.2s ease-in-out;
+}
+
+/* 마우스 호버 시 살짝 위로 이동 */
+.submit-button button:hover {
+  transform: translateY(-5px); /* Y축으로 5px 위로 이동 */
+  background-color: #2980b9; /* 색상도 약간 변경 */
 }
