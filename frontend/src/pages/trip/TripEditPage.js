@@ -9,7 +9,6 @@ import MapComponent from '../../components/MapComponent.js';
 
 import '../../assets/styles/EditTripPage.css';
 
-
 const TripEditPage = (existingTrips) => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -22,6 +21,7 @@ const TripEditPage = (existingTrips) => {
   const [name, setName] = useState(''); // 여행지 이름
   const [address, setAddress] = useState(''); // 여행지 주소
   const [photo_url, setPhotoUrl] = useState(''); // 대표 사진 URL
+  const [memo, setMemo] = useState(''); //대표 메모
   const [additionalPhotos, setAdditionalPhotos] = useState([]); // 추가 사진 리스트
   const [additionalMemos, setAdditionalMemos] = useState([]); // 추가 메모 리스트
   const [trips, setTrips] = useState(existingTrips || []); // 기존 저장된 여행 목록
@@ -47,7 +47,6 @@ const TripEditPage = (existingTrips) => {
     }
   }, [address]);
 
-
   // 여행지 상세 정보를 가져오는 함수
   useEffect(() => {
     const fetchTripDetails = async () => {
@@ -62,6 +61,7 @@ const TripEditPage = (existingTrips) => {
         setAdditionalPhotos(
           Array.isArray(data.trip_photos) ? data.trip_photos : []
         );
+        setMemo(data.memo);
         setAdditionalMemos(Array.isArray(data.memo) ? data.memo : []);
       } catch (err) {
         setError(err.message || 'Failed to fetch trip details'); // 에러 발생 시 메시지
@@ -100,6 +100,21 @@ const TripEditPage = (existingTrips) => {
     }
   };
 
+  const handleMainPhotoUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('trip', file);
+
+    try {
+      const data = await uploadTripPhoto(formData);
+      setPhotoUrl(file); // 여기에서 File 객체 저장
+    } catch (error) {
+      console.error('대표 사진 업로드 실패:', error);
+    }
+  };
+
   // 특정 사진 삭제
   const handleDeletePhoto = (index) => {
     const updatedPhotos = [...additionalPhotos]; //기존 리스트 복사
@@ -134,6 +149,7 @@ const TripEditPage = (existingTrips) => {
         address,
         photo_url,
         additionalPhotos,
+        memo,
         additionalMemos,
       };
 
@@ -160,120 +176,133 @@ const TripEditPage = (existingTrips) => {
     <div className="edit-trip-container">
       {/* 제목 영역 */}
       <div className="title-container">
-        <p className="form-title">여행지 수정</p>
-        <p className="form-description">여행지 정보를 수정하세요.</p>
+        <p className="form-title">Add a New Travel Destination!</p>
+        <p className="form-description">
+          Enter the name and address of the place you visited, and add photos
+          and notes!
+        </p>
       </div>
 
       {/* 폼 영역 */}
       <form className="edit-form-container">
         <div>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="input-field"
-              placeholder="여행지의 이름을 입력해 주세요"
-              required
-            />
+          <h3>Name</h3>
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="input-field"
+            placeholder="여행지의 이름을 입력해 주세요"
+            required
+          />
         </div>
         <div>
-            <input
-              type="text"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              className="input-field"
-              placeholder="주소를 입력해 주세요"
-            />
+          <h3>Address</h3>
+          <input
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            className="input-field"
+            placeholder="주소를 입력해 주세요"
+          />
+          <h3 className="post-text">사진 첨부</h3>
         </div>
-        <div>
-            <input
-              type="text"
-              value={photo_url}
-              onChange={(e) => setPhotoUrl(e.target.value)}
-              className="input-field"
-              placeholder="대표 사진 URL을 입력해 주세요"
-            />
-        </div>
-        <div>
-              <label htmlFor={`extra-image-${additionalPhotos.length - 1}`} className="add-button" onClick={handleAddPhoto}>
-              <i class="fa-solid fa-camera"></i>사진 추가
-              </label>
-           </div>
         {/* 추가 사진 영역 */}
-        <div className='edit-photo-container'>
-          
-          {additionalPhotos.map((photo, index) => (
+        <div className="edit-photo-container">
+          {[{ photo_url }, ...additionalPhotos].map((photo, index) => (
             <div key={index} className="edit-photo-item">
-              {/* 미리보기 */}
+              {/* 미리보기 */}₩
               {photo.photo_url && (
                 <div className="photo-wrapper">
-                <img
-                  src={`http://localhost:5000${photo.photo_url}`}
-                  alt={`추가 사진 ${index + 1}`}
-                  className='photo-preview'
-                />
-                {/* 개별적으로 label을 추가 */}
-              <label htmlFor={`extra-image-${index}`} className="custom-edit-button">
-                <i class="fa-regular fa-pen-to-square"></i>
-              </label>
-              <button type="button" className="delete-button" onClick={() => handleDeletePhoto(index)}>
-                  <i class="fa-solid fa-x"></i>
-              </button>
-              </div>
+                  <img
+                    src={
+                      photo.photo_url instanceof File
+                        ? URL.createObjectURL(photo.photo_url)
+                        : `http://localhost:3000${photo.photo_url}`
+                    }
+                    alt={`추가 사진 ${index === 0 ? '대표' : index}`}
+                    className="photo-preview"
+                  />
+                  <label
+                    htmlFor={`extra-image-${index}`}
+                    className="custom-edit-button"
+                  >
+                    <i class="fa-regular fa-pen-to-square"></i>
+                  </label>
+                  {/* 대표 사진 삭제는 photo_url 상태를 지우고, 추가 사진은 배열에서 제거 */}
+                  <button
+                    type="button"
+                    className="delete-button"
+                    onClick={() =>
+                      index === 0
+                        ? setPhotoUrl('')
+                        : handleDeletePhoto(index - 1)
+                    }
+                  >
+                    <i className="fa-solid fa-x"></i>
+                  </button>
+                </div>
               )}
               {/* 파일 업로드 input */}
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => handlePhotoUpload(index, e)}
-                className='extra-image'
-                id={`extra-image-${index}`}  // 각 input에 고유 id 부여
+                onChange={(e) =>
+                  index === 0
+                    ? handleMainPhotoUpload(e)
+                    : handlePhotoUpload(index - 1, e)
+                }
+                className="extra-image"
+                id={`extra-image-${index}`} // 각 input에 고유 id 부여
               />
             </div>
           ))}
-          {/* 추가 사진 업로드 버튼 -> 첫 번째 input과 연결 */}
-          
+          {/* 최대 10개까지만 추가 가능 */}
+          {additionalPhotos.length < 10 && (
+            <label
+              htmlFor={`extra-image-${additionalPhotos.length - 1}`}
+              className="add-button"
+              onClick={handleAddPhoto}
+            >
+              <i class="fa-solid fa-camera"></i>사진 추가
+            </label>
+          )}
         </div>
-          
+
         {/* 추가 메모 영역 */}
         <div>
-          <h3>추가 메모들</h3>
-          {additionalMemos.map((memo, index) => (
-            <div key={index}>
-              <textarea
-                placeholder="메모 내용"
-                value={memo.memo}
-                onChange={(e) => handleMemoChange(index, e.target.value)}
-                className="edit-input-field"
-              />
-              <button type="button" onClick={() => handleDeleteMemo(index)}>
-                삭제
-              </button>
-            </div>
-          ))}
-          <button type="button" onClick={handleAddMemo}>
-            메모 추가
-          </button>
+          <h3>메모</h3>
+          <textarea
+            type="text"
+            value={memo}
+            onChange={(e) => setMemo(e.target.value)}
+            className="input-field"
+            placeholder="메모 해주세요"
+          />
         </div>
 
         {/* 제출 버튼 영역 */}
         <div className="edit-submit-button">
-          <button type="button" onClick={handleUpdate}>
+          <button type="button" onClick={handleUpdate} className="edit-button">
             수정
           </button>
-          <button type="button" onClick={() => navigate(-1)}>
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="delete-edit-button"
+          >
             취소
           </button>
         </div>
       </form>
       {/* 우측 - 지도 */}
       <div className="map-container">
-          <MapComponent
-            trips={trips}
-            tempMarker={tempMarker}
-            className="add-map"
-          />
-        </div>
+        <MapComponent
+          trips={trips}
+          tempMarker={tempMarker}
+          className="add-map"
+        />
+      </div>
     </div>
   );
 };

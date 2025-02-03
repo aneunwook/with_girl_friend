@@ -78,7 +78,6 @@ body {
   width: 100%; /* 기본적으로 부모 너비 사용 */
   max-width: 500px; /* 너무 커지지 않도록 제한 */
   box-sizing: border-box; /* padding 포함 */
-
 }
 
 .form-container {
@@ -86,7 +85,6 @@ body {
   flex-direction: column;
   align-items: center; /* 가로 방향 중앙 정렬 */
   justify-content: center; /* 세로 방향 중앙 정렬 (필요시 추가) */
-  gap: 50px;
   width: 500px;
   height: 650px;
   padding: 2px;
@@ -94,7 +92,7 @@ body {
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   box-sizing: border-box; /* 추가 */
-  background-image: url('image/form-bg.jpg');
+  background-image: url('image/form-bg1.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -103,7 +101,7 @@ body {
 .map-container,
 .add-map {
   width: 500px; /* 폼과 동일하게 설정 */
-  height: 650px;
+  height: 800px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   box-sizing: border-box; /* 추가 */
@@ -116,7 +114,8 @@ body {
     align-items: center;
   }
 
-  .form-container, .map-container {
+  .form-container,
+  .map-container {
     width: 100%; /* 너비를 부모 요소 전체 사용 */
     max-width: 500px; /* 폼 크기가 너무 커지지 않도록 제한 */
   }
@@ -205,7 +204,7 @@ body {
   margin: 2px 0;
 }
 
-.delete-photo-button{
+.delete-photo-button {
   background: none;
   border: none;
   cursor: pointer;

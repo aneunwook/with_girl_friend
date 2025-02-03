@@ -2,7 +2,10 @@ import React, { useState, useRef, useMemo } from 'react';
 import axiosInstance from '../../service/axiosInstance';
 import { useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
-import { uploadPosts, createPostWithPhotos } from '../../service/photo/photoService'; // 서비스 함수
+import {
+  uploadPosts,
+  createPostWithPhotos,
+} from '../../service/photo/photoService'; // 서비스 함수
 import 'react-quill/dist/quill.snow.css';
 import '../../assets/styles/CreatePost.css';
 
@@ -36,10 +39,10 @@ const CreatePostPage = () => {
           const urls = await uploadPosts([file]); // 업로드 서비스 호출
           if (urls && urls[0]) {
             const imageUrl = urls[0]; // 업로드된 상대 경로
-  
+
             // 절대 경로 변환
-            const absoluteImageUrl = `http://localhost:5000${imageUrl}`;
-  
+            const absoluteImageUrl = `http://localhost:3000${imageUrl}`;
+
             // Quill 에디터에 이미지 삽입
             const editor = quillRef.current.getEditor();
             const range = editor.getSelection();
@@ -48,7 +51,7 @@ const CreatePostPage = () => {
             } else {
               console.error('에디터 선택 범위(range)가 유효하지 않습니다.');
             }
-  
+
             // 상태 업데이트
             setPhotoUrls((prevUrls) => [...prevUrls, absoluteImageUrl]);
           } else {
@@ -61,12 +64,11 @@ const CreatePostPage = () => {
     };
     input.click();
   };
-  
-  
+
   // 게시글 폼 제출 핸들러
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const data = {
       title: formData.title,
       description: content.trim(),
@@ -74,7 +76,7 @@ const CreatePostPage = () => {
       user_id: 1, // 사용자 ID (예시)
       photoUrls, // 업로드된 이미지 URL 리스트
     };
-  
+
     try {
       await createPostWithPhotos(data); // createPostWithPhotos 서비스 호출
       setMessage('게시글이 등록되었습니다!');
@@ -84,26 +86,29 @@ const CreatePostPage = () => {
       setMessage('게시글 등록 중 문제가 발생했습니다.');
     }
   };
-  
-  const modules = useMemo(() => ({
-    toolbar: {
-      container: [
-        [{ header: [1, 2, false] }], 
-        ['bold', 'italic', 'underline'],
-        [{ list: 'ordered' }, { list: 'bullet' }],
-        ['image'],
-      ],
-      handlers: {
-        image: handleImageUpload, // 이미지를 선택하면 이 핸들러 실행
+
+  const modules = useMemo(
+    () => ({
+      toolbar: {
+        container: [
+          [{ header: [1, 2, false] }],
+          ['bold', 'italic', 'underline'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          ['image'],
+        ],
+        handlers: {
+          image: handleImageUpload, // 이미지를 선택하면 이 핸들러 실행
+        },
       },
-    },
-  }), []);
+    }),
+    []
+  );
 
-  const formats = useMemo(() => [
-    'header', 'bold', 'italic', 'underline', 'list', 'bullet', 'image',
-  ], []);
+  const formats = useMemo(
+    () => ['header', 'bold', 'italic', 'underline', 'list', 'bullet', 'image'],
+    []
+  );
 
-  
   return (
     <div className="post-form">
       <form onSubmit={handleSubmit}>
@@ -116,7 +121,9 @@ const CreatePostPage = () => {
             type="text"
             name="title"
             value={formData.title}
-            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, title: e.target.value })
+            }
             placeholder="제목을 입력해주세요"
             required
           />

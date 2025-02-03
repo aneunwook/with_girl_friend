@@ -180,13 +180,15 @@ export const updateTrip = async (req, res) => {
         .json({ message: '해당 ID의 여행지를 찾을 수 없습니다' });
     }
 
-    // 📸 **대표 사진 처리 (새로운 파일이 업로드되었을 경우)**
+    // 대표 사진 처리 (새로운 파일이 업로드되었을 경우)
     let photoUrl = trip.photo_url;
     if (req.files['trip']) {
       photoUrl = `/trip/${req.files['trip'][0].filename}`;
+    } else if (req.body.photo_url) {
+      photoUrl = req.body.photo_url;
     }
 
-    // 🖼 **추가 사진 처리 (기존 사진 유지 + 새로운 사진 추가)**
+    // **추가 사진 처리 (기존 사진 유지 + 새로운 사진 추가)**
     let additionalPhotos = [];
     try {
       // 배열이 아닌 경우만 JSON.parse를 시도
@@ -210,7 +212,7 @@ export const updateTrip = async (req, res) => {
       additionalPhotos = [...additionalPhotos, ...uploadedPhotos];
     }
 
-    // 🌍 **주소 변경 시, 위도/경도 업데이트**
+    // 주소 변경 시, 위도/경도 업데이트
     let lat = trip.latitude;
     let lng = trip.longitude;
 
@@ -228,7 +230,7 @@ export const updateTrip = async (req, res) => {
       lng = location.lng;
     }
 
-    // 🚀 **여행지 기본 정보 업데이트**
+    // 여행지 기본 정보 업데이트
     trip.name = name;
     trip.address = address;
     trip.latitude = lat;
@@ -238,7 +240,7 @@ export const updateTrip = async (req, res) => {
 
     await trip.save({ transaction: t });
 
-    // 🏞 **추가 사진 업데이트**
+    //  **추가 사진 업데이트**
     if (additionalPhotos.length > 0) {
       await TripPhoto.destroy({ where: { trip_id: id }, transaction: t });
       const photosToCreate = additionalPhotos.map((url) => ({
@@ -264,7 +266,7 @@ export const updateTrip = async (req, res) => {
       .json({ message: '여행지가 성공적으로 업데이트되었습니다', trip });
   } catch (error) {
     await t.rollback();
-    console.error('🔴 여행지 업데이트 오류:', error);
+    console.error(' 여행지 업데이트 오류:', error);
     res
       .status(500)
       .json({ message: '여행지 정보를 업데이트하는 중 오류가 발생했습니다.' });

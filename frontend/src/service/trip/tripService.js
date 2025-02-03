@@ -65,14 +65,15 @@ export const updateTrip = async (id, updatedData) => {
     formData.append('address', updatedData.address);
     formData.append('memo', updatedData.memo);
 
-    // 📸 **대표 사진 처리**
+    console.log('📸 대표 사진 데이터:', updatedData.photo_url);
+    //  **대표 사진 처리**
     if (updatedData.photo_url instanceof File) {
       formData.append('trip', updatedData.photo_url);
     } else {
       formData.append('photo_url', updatedData.photo_url);
     }
 
-    // 🖼 **추가 사진 처리**
+    //  **추가 사진 처리**
     updatedData.additionalPhotos.forEach((photo, index) => {
       if (photo.file instanceof File) {
         formData.append('additionalPhotos', photo.file);
@@ -86,13 +87,11 @@ export const updateTrip = async (id, updatedData) => {
     const response = await axiosInstance.put(`${api_url}/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
+    console.log('📸 FormData 확인:', [...formData.entries()]);
 
     return response.data;
   } catch (error) {
-    console.error(
-      '🔴 여행지 수정 오류:',
-      error.response?.data || error.message
-    );
+    console.error(' 여행지 수정 오류:', error.response?.data || error.message);
     throw error;
   }
 };

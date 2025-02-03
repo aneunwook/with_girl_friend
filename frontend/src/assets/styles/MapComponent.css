@@ -75,17 +75,17 @@
   transition: 0.3s;
 }
 
+.map-button:hover {
+  background-color: #357ab7;
+}
+
 .map-button a {
   text-decoration: none; /* 밑줄 제거 */
   color: inherit; /* 부모 요소(버튼)의 색상 따라가기 */
 }
 
-.map-button:hover {
-  background-color: #357ab7;
-}
-
 .custom-info-window {
-  width: 200px;  /* div의 고정 너비 */
+  width: 200px; /* div의 고정 너비 */
   height: 180px; /* div의 고정 높이 */
   text-align: center;
   background: white;
