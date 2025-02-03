@@ -51,7 +51,7 @@ const MapComponent = ({ trips, onMarkerClick, tempMarker, className }) => {
         const infoWindow = new window.google.maps.InfoWindow({
           content: `
           <div style="width: 150px; text-align: center;">
-          <img src="http://localhost:3000${trip.photo_url}" alt="대표 사진" style="width: 100%; height: auto; border-radius: 5px;">
+          <img src="http://localhost:5000${trip.photo_url}" alt="대표 사진" style="width: 100%; height: auto; border-radius: 5px;">
           <p style="margin: 5px 0;">${trip.memo}</p>
         </div>
       `,
@@ -91,7 +91,7 @@ const MapComponent = ({ trips, onMarkerClick, tempMarker, className }) => {
           tempMarkerRef.current = new window.google.maps.Marker({
             position: { lat: latitude, lng: longitude },
             map: map.current,
-            title: '입력한 주소',
+            title: '입력한 주소임',
             icon: {
               url: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
             },

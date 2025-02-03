@@ -170,7 +170,7 @@ const TripEditPage = () => {
             {/* 미리보기 추가 */}
             {photo.photo_url && (
               <img
-                src={`http://localhost:3000${photo.photo_url}`} // 서버에서 저장된 이미지 URL 사용
+                src={`http://localhost:5000${photo.photo_url}`} // 서버에서 저장된 이미지 URL 사용
                 alt={`추가 사진 ${index + 1}`}
                 style={{ width: '100px', height: '100px', objectFit: 'cover' }}
               />
