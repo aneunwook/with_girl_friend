@@ -50,9 +50,10 @@ const MapComponent = ({ trips, onMarkerClick, tempMarker, className }) => {
         // InfoWindow 생성
         const infoWindow = new window.google.maps.InfoWindow({
           content: `
-          <div style="width: 150px; text-align: center;">
-          <img src="http://localhost:5000${trip.photo_url}" alt="대표 사진" style="width: 100%; height: auto; border-radius: 5px;">
-          <p style="margin: 5px 0;">${trip.memo}</p>
+           <div class="custom-info-window">
+          <img src="http://localhost:5000${trip.photo_url}" alt="대표 사진" class="info-img">
+          <hr class="info-divider"/>
+          <p class="info-text">${trip.memo}</p>
         </div>
       `,
         });

@@ -3,10 +3,16 @@
 html,
 body {
   overflow-x: hidden; /* 좌우 스크롤 없애기 */
-  width: 100%;
   margin: 0;
   padding: 0;
+  width: 100vw;
+  min-height: 100vh; /* 화면 크기에 맞춰 배경이 꽉 차도록 설정 */
+  background: linear-gradient(to top, #f9f9f9, #dfe8f1, #b8c6db);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
+
 .title-container {
   width: 100%; /* 부모 요소의 전체 너비를 사용 */
   margin-left: 220px;
@@ -48,8 +54,8 @@ body {
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 1500px;
-  height: 800px;
+  max-width: 90vw; /* 화면 크기에 맞춰 조정 */
+  min-height: 900px;
   margin: 0 auto;
   padding: 20px;
   overflow: hidden; /* 배경이 잘리지 않도록 */
@@ -62,7 +68,6 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: linear-gradient(to top, #f9f9f9, #dfe8f1, #b8c6db);
   /* clip-path: circle(60% at 100% 50%); */
   z-index: -1; /* 배경을 뒤로 */
 }
@@ -73,6 +78,7 @@ body {
   width: 100%; /* 기본적으로 부모 너비 사용 */
   max-width: 500px; /* 너무 커지지 않도록 제한 */
   box-sizing: border-box; /* padding 포함 */
+
 }
 
 .form-container {
@@ -87,9 +93,8 @@ body {
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-
   box-sizing: border-box; /* 추가 */
-  background-image: url('../image/form-bg.jpg');
+  background-image: url('image/form-bg.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -104,22 +109,35 @@ body {
   box-sizing: border-box; /* 추가 */
 }
 
+/* 반응형 적용 */
+@media (max-width: 1024px) {
+  .add-trip-container {
+    flex-direction: column; /* 작은 화면에서는 세로 배치 */
+    align-items: center;
+  }
+
+  .form-container, .map-container {
+    width: 100%; /* 너비를 부모 요소 전체 사용 */
+    max-width: 500px; /* 폼 크기가 너무 커지지 않도록 제한 */
+  }
+}
+
 /* 반응형 적용 (768px 이하일 때 세로 배치) */
 @media (max-width: 768px) {
   .add-trip-container {
     flex-direction: column; /* 세로 배치 */
     align-items: center;
-    margin-top: 200px;
+    margin-top: 50px;
   }
 
   .form-container,
   .map-container {
     max-width: 100%; /* 너비 전체 사용 */
+    max-width: 450px; /* 폼 크기가 너무 크지 않도록 조정 */
   }
 
   .map-container {
-    max-height: 800px;
-    max-width: 600px;
+    max-height: 600px;
   }
 }
 
@@ -128,9 +146,9 @@ body {
   padding: 10px;
   border: none;
   outline: none; /* 클릭 시 파란 테두리 제거 */
-  background-color: rgba(255, 255, 255, 0.8); /* 연한 배경 & 약간의 투명도 */
   border-radius: 10px;
   padding: 15px;
+  background-color: rgba(255, 255, 255, 0.8); /* 연한 배경 & 약간의 투명도 */
   box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1); /* 살짝 입체감 */
   backdrop-filter: blur(1px); /* 블러 효과 추가 */
   font-size: 15px;
@@ -153,7 +171,7 @@ body {
 /* 파일 입력창과 버튼을 감싸는 박스 */
 .file-input-box {
   display: flex;
-  width: 400px;
+  width: 80%;
   height: 150px;
   border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.7); /* 투명도를 더 높이기 */
@@ -181,10 +199,18 @@ body {
 
 /* 파일명 스타일 */
 .file-name {
-  font-size: 14px;
+  font-size: 15px;
   color: black;
   font-weight: bold;
   margin: 2px 0;
+}
+
+.delete-photo-button{
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: red;
+  font-size: 10px;
 }
 
 /* 업로드 버튼 (아이콘 포함) */

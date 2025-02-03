@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import MapComponent from '../../components/MapComponent.js';
 import TripModal from './TripModal.js';
 import { getAllTrips, getTripDetails } from '../../service/trip/tripService.js';
-import { useActionData, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 const TripPage = () => {
   const { id } = useParams(); // URL의 'id' 파라미터 추출
@@ -48,7 +48,7 @@ const TripPage = () => {
         <p className="map-title">Our Shared Memories</p>
         <div className="map-subtitle-button">
           <p className="map-subtitle">Let’s Leave Our Moments on the Map</p>
-          <button className="map-button">Add Destination</button>
+          <button className="map-button"><Link to={'/add'}>Add Destination</Link></button>
         </div>
       </div>
       <MapComponent

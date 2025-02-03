@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import MapComponent from '../../components/MapComponent.js';
 import { addTrip, uploadTripPhoto } from '../../service/trip/tripService.js';
 import '../../assets/styles/AddTripPage.css';
@@ -15,6 +16,7 @@ const AddTripPage = ({ onTripAdded, existingTrips }) => {
   const [tempMarker, setTempMarker] = useState(null); //주소 입력 시 임시 마커
   const [trips, setTrips] = useState(existingTrips || []); // 기존 저장된 여행 목록
   const [previewPhoto, setPreviewPhoto] = useState(null); // 미리보기 용 사진
+  const navigate = useNavigate();
 
   // 사용자가 주소를 입력할 때마다 임시 마커 업데이트
   useEffect(() => {
@@ -68,6 +70,12 @@ const AddTripPage = ({ onTripAdded, existingTrips }) => {
     setPhotos((prevPhoto) => [...prevPhoto, ...files]);
   };
 
+  const handleDeletePhoto = (index) => {
+    const updatedPhotos = [...photos];
+    updatedPhotos.splice(index, 1);
+    setPhotos(updatedPhotos);
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -103,6 +111,9 @@ const AddTripPage = ({ onTripAdded, existingTrips }) => {
       if (onTripAdded) {
         onTripAdded(trip); // 부모 컴포넌트에 추가된 여행지 정보 전달
       }
+
+      alert('여행지가 추가 되었습니다')
+        navigate('/trips')
 
       // 기존 여행지 목록 업데이트
       setTrips([...trips, trip]);
@@ -162,14 +173,18 @@ const AddTripPage = ({ onTripAdded, existingTrips }) => {
               placeholder="추가 할 사진들을 넣어 주세요"
               multiple
               onChange={handlePhotoChange}
+              required
             />
 
             {/* 선택된 파일명을 여러 줄로 표시 */}
             <div className="file-name-display">
               {photos.map((file, index) => (
-                <span key={index} className="file-name">
-                  {file.name}
-                </span>
+                <div key={index} className="photo-item">
+                  <span className="file-name">{file.name}</span>
+                  <button type="button" onClick={() => handleDeletePhoto(index)} className='delete-photo-button'>
+                    <i class="fa-solid fa-x"></i>
+                  </button>
+              </div>
               ))}
               <label htmlFor="fileUpload" className="custom-upload-button">
                 <i class="fa-solid fa-upload"></i>
@@ -187,6 +202,7 @@ const AddTripPage = ({ onTripAdded, existingTrips }) => {
               value={formData.memo}
               placeholder="내용을 적어 주세요"
               onChange={handleChange}
+              required
             />
           </div>
           {/* <div>
