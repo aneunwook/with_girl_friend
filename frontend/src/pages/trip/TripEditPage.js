@@ -211,14 +211,14 @@ const TripEditPage = (existingTrips) => {
         <div className="edit-photo-container">
           {[{ photo_url }, ...additionalPhotos].map((photo, index) => (
             <div key={index} className="edit-photo-item">
-              {/* 미리보기 */}₩
+              {/* 미리보기 */}
               {photo.photo_url && (
                 <div className="photo-wrapper">
                   <img
                     src={
                       photo.photo_url instanceof File
                         ? URL.createObjectURL(photo.photo_url)
-                        : `http://localhost:3000${photo.photo_url}`
+                        : `http://localhost:5000${photo.photo_url}`
                     }
                     alt={`추가 사진 ${index === 0 ? '대표' : index}`}
                     className="photo-preview"

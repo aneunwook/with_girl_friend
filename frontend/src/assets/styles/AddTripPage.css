@@ -59,6 +59,7 @@ body {
   margin: 0 auto;
   padding: 20px;
   overflow: hidden; /* 배경이 잘리지 않도록 */
+  
 }
 
 .add-trip-container::before {
@@ -78,6 +79,7 @@ body {
   width: 100%; /* 기본적으로 부모 너비 사용 */
   max-width: 500px; /* 너무 커지지 않도록 제한 */
   box-sizing: border-box; /* padding 포함 */
+  
 }
 
 .form-container {
@@ -96,12 +98,14 @@ body {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  overflow-x: hidden; /* 좌우 스크롤 없애기 */
+
 }
 
 .map-container,
 .add-map {
   width: 500px; /* 폼과 동일하게 설정 */
-  height: 800px;
+  height: 810px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   box-sizing: border-box; /* 추가 */

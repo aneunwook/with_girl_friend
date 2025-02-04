@@ -66,27 +66,3 @@ sequelize
     console.error('Unable to connect to the database:', err);
   });
 
-// JWT 관련 라우트 주석 처리
-/*
-app.post('/api/refresh-token', (req, res) => {
-  const { refreshToken } = req.body;
-
-  if (!refreshToken || !refreshTokens[refreshToken]) {
-    return res.status(403).json({ message: 'Forbidden: Invalid refresh token' });
-  }
-
-  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
-    if (err) {
-      return res.status(403).json({ message: 'Forbidden: Invalid refresh token' });
-    }
-
-    const newAccessToken = jwt.sign(
-      { userId: user.userId, role: user.role },
-      process.env.ACCESS_TOKEN_SECRET,
-      { expiresIn: '15m' }
-    );
-
-    res.json({ accessToken: newAccessToken });
-  });
-});
-*/

@@ -51,7 +51,7 @@ const MapComponent = ({ trips, onMarkerClick, tempMarker, className }) => {
         const infoWindow = new window.google.maps.InfoWindow({
           content: `
            <div class="custom-info-window">
-          <img src="http://localhost:3000${trip.photo_url}" alt="대표 사진" class="info-img">
+          <img src="http://localhost:5000${trip.photo_url}" alt="대표 사진" class="info-img">
           <hr class="info-divider"/>
           <p class="info-text">${trip.name}</p>
         </div>
