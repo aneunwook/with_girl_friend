@@ -69,11 +69,24 @@ const CreatePostPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      console.error("🚨 인증 토큰이 없습니다!");
+      return;
+    }
+
+    const decodedToken = JSON.parse(atob(token.split('.')[1])); // Base64 디코딩
+  const userId = decodedToken.id; // JWT에 저장된 사용자 ID 가져오기
+
+  console.log("✅ JWT에서 추출한 사용자 ID:", userId);
+
+
     const data = {
       title: formData.title,
       description: content.trim(),
       tags: formData.tags,
-      user_id: 1, // 사용자 ID (예시)
+      user_id: userId, // 사용자 ID (예시)
       photoUrls, // 업로드된 이미지 URL 리스트
     };
 

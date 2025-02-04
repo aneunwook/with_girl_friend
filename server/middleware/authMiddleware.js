@@ -1,43 +1,29 @@
-// // import jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
-// const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'your-secret-key';
+dotenv.config();
 
-// const authenticateToken = (req, res, next) => {
-//   const authHeader = req.headers['authorization'];
-//   console.log('Authorization Header:', authHeader);
+const authMiddleware = (req, res, next) => {
+    console.log("🔍 Authorization 헤더:", req.headers.authorization);
 
-//   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-//     return res
-//       .status(401)
-//       .json({ message: 'Unauthorized: Token is missing or malformed' });
-//   }
+    const token = req.headers.authorization?.split(" ")[1];
 
-//   // 토큰 추출
-//   const token = authHeader.split(' ')[1];
+    if(!token){
+        return res.status(401).json({message : '토큰이 필요합니다'});
+    }
 
-//   try {
-//     // 토큰 검증
-//     const decodedToken = jwt.verify(token, JWT_SECRET_KEY);
-//     console.log('Decoded Token:', decodedToken);
+    try{
+        console.log("🚀 추출된 토큰:", token);
 
-//     // 토큰 구조 확인
-//     if (!decodedToken || !decodedToken.userId || !decodedToken.role) {
-//       console.error('Invalid token structure:', decodedToken);
-//       return res
-//         .status(403)
-//         .json({ message: 'Forbidden: Invalid token structure' });
-//     }
+        const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        console.log("✅ 토큰 디코딩 성공:", decoded);
 
-//     req.user = { id: decodedToken.userId, role: decodedToken.role };
-//     console.log('Request User Object:', req.user);
-//     next();
-//   } catch (err) {
-//     console.error('Token Verification Error:', err.message);
-//     if (err.name === 'TokenExpiredError') {
-//       return res.status(403).json({ message: 'Token has expired' });
-//     }
-//     return res.status(403).json({ message: 'Forbidden: Invalid token' });
-//   }
-// };
+        req.user = decoded;
+        next();
+  } catch (error) {
+    console.error("❌ JWT 검증 실패:", error.message);
+        return res.status(401).json({ message: "유효하지 않은 토큰입니다." });
+  }
+};
 
-// // export default authenticateToken;
+export default authMiddleware;

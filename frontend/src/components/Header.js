@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // 라우팅을 위한 Link
+import { Link } from 'react-router-dom'; 
 import Sidebar from './Sidebar'; // Sidebar 컴포넌트
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext.js';
 import '../assets/styles/Header.css'; // 헤더 스타일
 
 const Header = () => {
+  const { user, logout } = useContext(AuthContext);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
@@ -21,6 +24,14 @@ const Header = () => {
         {/* 로고 */}
         <div className="logo">
           <h1>My Board</h1>
+        </div>
+
+        <div>
+        {user ? (
+        <button onClick={logout}>로그아웃</button>
+      ) : (
+        <Link to="/login">로그인</Link>
+      )}
         </div>
       </header>
 

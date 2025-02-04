@@ -1,5 +1,7 @@
 import bcrypt from 'bcrypt';
 import User from '../models/userModel.js';
+import generateToken from '../utils/generateToken.js';
+import authMiddleware from '../middleware/authMiddleware.js';
 
 const signUp = async (req, res) => {
   try {
@@ -68,10 +70,14 @@ const signIn = async (req, res) => {
         .json({ message: '이메일 또는 비밀번호가 일치하지 않습니다' });
     }
 
-    console.log('로그인 성공');
+    //jwt 토큰 생성
+    const token = generateToken(user);
+
+    console.log('로그인 성공, 발급된 토큰', token);
     return res.json({
       success: true,
       message: '로그인 성공',
+      token,
       user: {
         id: user.id,
         email: user.email,
@@ -85,4 +91,23 @@ const signIn = async (req, res) => {
   }
 };
 
-export { signIn, signUp };
+const getUserProfile = async (req, res) => {
+  try{
+    const user = await User.findByPk(req.user.id);
+
+    if(!user){
+      return res.status(404).json({message: '사용자를 찾을 수 없습니다'});
+    }
+
+    res.json({
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+    });
+  } catch (error) {
+    res.status(500).json({ message: '서버 오류' });
+  }
+}
+
+export { signIn, signUp, getUserProfile };
