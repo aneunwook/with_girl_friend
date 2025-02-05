@@ -182,8 +182,8 @@ export const updateTrip = async (req, res) => {
 
     // 대표 사진 처리 (새로운 파일이 업로드되었을 경우)
     let photoUrl = trip.photo_url;
-    if (req.files['trip']) {
-      photoUrl = `/trip/${req.files['trip'][0].filename}`;
+    if (req.files['trip']) { // 파일이 업로드되었는지 확인
+      photoUrl = `/trip/${req.files['trip'][0].filename}`; //업로드된 파일의 이름을 가져와서 저장
     } else if (req.body.photo_url) {
       photoUrl = req.body.photo_url;
     }

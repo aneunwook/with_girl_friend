@@ -1,5 +1,27 @@
 import axiosInstance from '../axiosInstance';
 
+// 1. 이메일 인증 요청 (인증 코드 전송)
+export const requestEmailVerification = async (email) => {
+  try{
+    const response = await axiosInstance.post('/auth/sendEmailVerification', {email});
+    return response.data;
+  }catch(err){
+    console.error("이메일 인증 요청 실패", err);
+    throw err;
+  }
+}
+
+// 2. 이메일 인증 코드 검증
+export const verifyEmailCode = async (email, code) => {
+  try{
+    const response = await axiosInstance.post('/auth/verifyEmailCode', {email, code});
+    return response.data;
+  }catch (err) {
+    console.error("인증 코드 확인 실패:", err);
+    throw err;
+  }
+}
+
 export const signUp = async (userData) => {
   try {
     const response = await axiosInstance.post('/auth/signUp', userData);
@@ -21,8 +43,12 @@ export const signUp = async (userData) => {
 
 export const signIn = async (userData) => {
   try {
-    const response = await axiosInstance.post('/auth/signIn', userData); // 여기가 문제일 수 있음
+    const response = await axiosInstance.post('/auth/signIn', userData);
     console.log('응답 전체:', response);
+
+    // 로그인 성공 시 JWT 저장
+    //localStorage.setItem('token', response.data.token);
+
     return response.data;
   } catch (err) {
     if (err.response) {

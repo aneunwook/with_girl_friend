@@ -15,7 +15,7 @@ const router = express.Router();
 router.post('/upload', authMiddleware, upload.array('photos'), uploadPhotos);
 router.post('/photo', authMiddleware, createPostWithPhotos);
 router.get('/allPost', getAllPosts);
-router.get('/:id', getPostDetails);
+router.get('/:id', authMiddleware, getPostDetails);
 router.put('/:id', authMiddleware, upload.array('photos'), updatePostWithPhotos);
 router.delete('/:id', authMiddleware, deletePostWithPhotos);
 

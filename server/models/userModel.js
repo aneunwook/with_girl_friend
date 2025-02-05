@@ -26,6 +26,10 @@ const User = sequelize.define('User', {
         type: DataTypes.STRING,
         allowNull: false,
         defaultValue: 'user',
+    },
+    isVerified: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     }
 },{
     timestamps: true, //createdAt, updatedAt 컬럼 자동생성

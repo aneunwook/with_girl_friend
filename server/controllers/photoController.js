@@ -4,6 +4,7 @@ import Post from '../models/postModel.js';
 import Photo from '../models/photoModel.js';
 import fs from 'fs';
 import path from 'path';
+import { error } from 'console';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -128,6 +129,10 @@ export const getPostDetails = async (req, res) => {
       return res.status(404).json({ error: '게시물을 찾을 수 없습니다.' });
     }
 
+    if(post.user_id !== req.user.id){
+      return res.status(403).json({ error: '이 게시물에 대한 권한이 없습니다.'});
+    }
+
     res.status(200).json(post); // 게시물과 관련된 사진들을 함께 반환
   } catch (err) {
     console.error('게시물 상세보기 실패:', err);
@@ -210,9 +215,10 @@ export const updatePostWithPhotos = async (req, res) => {
 
 export const deletePostWithPhotos = async (req, res) => {
   const t = await sequelize.transaction();
-
+  
   try {
     const { id } = req.params;
+    const userId = req.user.id; // 현재 로그인한 사용자 ID (토큰에서 가져옴)
 
     //1. 게시물 확인
     const post = await Post.findByPk(id, {
@@ -221,6 +227,11 @@ export const deletePostWithPhotos = async (req, res) => {
     if (!post) {
       return res.status(404).json({ message: '게시물이 존재하지 않습니다' });
     }
+
+     // 게시물 소유자 검증 (현재 로그인한 사용자와 게시물 작성자 비교)
+     if (post.user_id !== userId) {
+      return res.status(403).json({ message: "삭제할 권한이 없습니다." });
+  }
 
     // 게시물 삭제 (연결된 사진도 함께 삭제됨, `onDelete: CASCADE` 설정 덕분)
     await post.destroy({ transaction: t });
