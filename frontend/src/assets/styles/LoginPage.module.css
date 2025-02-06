@@ -1,20 +1,20 @@
-.signUpContainer{
-    position: relative;
-    display: flex;
-    flex-wrap: wrap; /* 화면이 줄어들면 자동 줄바꿈 */
-    gap: 20px;
-    align-items: flex-start; /* 내용이 위에서부터 정렬되도록 변경 */
-    justify-content: center;
-    width: 100%;
-    max-width: 90vw; /* 화면 크기에 맞춰 조정 */
-    min-height: 1100px; /* 최소 높이 설정 */
-    margin: 0 auto;
-    padding: 20px;
-    overflow: visible; /* 배경이 잘리지 않도록 */
+.signUpContainer {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap; /* 화면이 줄어들면 자동 줄바꿈 */
+  gap: 20px;
+  align-items: flex-start; /* 내용이 위에서부터 정렬되도록 변경 */
+  justify-content: center;
+  width: 100%;
+  max-width: 90vw; /* 화면 크기에 맞춰 조정 */
+  min-height: 1100px; /* 최소 높이 설정 */
+  margin: 0 auto;
+  padding: 20px;
+  overflow: visible; /* 배경이 잘리지 않도록 */
 }
 
-.signUpFormContainer{
-display: flex;
+.signUpFormContainer {
+  display: flex;
   flex-direction: column;
   align-items: center; /* 가로 방향 중앙 정렬 */
   justify-content: flex-start; /* 내부 요소를 위에서부터 배치 */
@@ -23,8 +23,8 @@ display: flex;
   min-height: 810px; /* 최소 높이 설정 */
   padding: 20px;
   background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 28px;
+  box-shadow: 0 14px 16px rgba(0, 0, 0, 0.2);
   box-sizing: border-box;
   /* background-image: url('image/form-bg1.jpg'); */
   background-size: cover;
@@ -34,6 +34,61 @@ display: flex;
   z-index: 10; /* z-index 추가 */
 }
 
-.emailContainer{
-    font-size: 10px;
+.emailContainer {
+  position: relative;
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 가로 방향 중앙 정렬 */
+  justify-content: flex-start; /* 내부 요소를 위에서부터 배치 */
+  gap: 20px; /* 요소 간격 조정 */
+  min-height: 300px; /* 최소 높이 설정 */
+  padding: 20px;
+  background: #fff;
+  border-radius: 28px;
+  box-shadow: 0 14px 16px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+}
+
+.inputWrapper {
+  position: relative;
+  width: 300px; /* input 크기와 동일하게 */
+}
+
+.signUpField:focus {
+  border-color: #007bff;
+}
+
+.signUpField {
+  width: 300px;
+  height: 30px;
+  padding: 8px 15px; /* padding-top을 늘려서 label 위치 보정 */
+  border-radius: 30px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: border 0.3s;
+}
+
+.floatingLabel {
+  position: absolute;
+  left: 15px;
+  top: 82%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #aaa;
+  transition: all 0.3s ease-in-out;
+  pointer-events: none;
+  background-color: white;
+  padding: 0 5px;
+}
+
+/* input이 focus되거나 값이 입력된 경우 label을 위로 이동 */
+.signUpField:focus + .floatingLabel,
+.signUpField:not(:placeholder-shown) + .floatingLabel {
+  top: 84px; /* 기존 0px에서 조금 내려줌 */
+  font-size: 13px; /* 더 작게 변경 */
+  color: #007bff;
+  background-color: white;
+  padding: 0 5px;
 }
