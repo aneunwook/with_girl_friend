@@ -92,3 +92,10 @@
   background-color: white;
   padding: 0 5px;
 }
+
+@media (max-width: 600px) {
+  .floatingLabel {
+    font-size: 12px;
+    top: 81%;
+  }
+}
