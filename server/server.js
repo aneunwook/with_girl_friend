@@ -55,7 +55,7 @@ app.use((req, res, next) => {
 
 // 서버 실행 전에 Sequelize 연결 확인
 sequelize
-  .sync({ force: false })
+  .sync({ force: true })
   .then(() => {
     console.log('Database synchronized successfully');
     app.listen(port, () => {

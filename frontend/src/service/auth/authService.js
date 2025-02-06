@@ -22,6 +22,16 @@ export const verifyEmailCode = async (email, code) => {
   }
 }
 
+export const checkEmail = async (email) => {
+  try{
+    const response = await axiosInstance.post('/auth/check-email', {email});
+    return response;
+  }catch(err){
+    console.error("이메일이 중복 되었습니다", err);
+    throw err;
+  }
+}
+
 export const signUp = async (userData) => {
   try {
     const response = await axiosInstance.post('/auth/signUp', userData);

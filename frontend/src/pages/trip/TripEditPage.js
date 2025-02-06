@@ -6,7 +6,6 @@ import {
   uploadTripPhoto,
 } from '../../service/trip/tripService.js';
 import MapComponent from '../../components/MapComponent.js';
-
 import '../../assets/styles/EditTripPage.css';
 
 const TripEditPage = (existingTrips) => {

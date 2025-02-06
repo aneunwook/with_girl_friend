@@ -18,6 +18,11 @@ const EmailVerification = sequelize.define(
       type: DataTypes.DATE,
       allowNull: false,
     },
+    isVerified: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false, // 기본값은 false (아직 인증되지 않음)
+    },
+    
   },
   {
     timestamps: true,

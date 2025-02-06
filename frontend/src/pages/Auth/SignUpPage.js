@@ -4,7 +4,9 @@ import {
   signUp,
   requestEmailVerification,
   verifyEmailCode,
+  checkEmail
 } from '../../service/auth/authService';
+import styles from '../../assets/styles/LoginPage.module.css';
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
@@ -14,6 +16,9 @@ const SignUpPage = () => {
   });
   const [verificationCode, setVerificationCode] = useState(''); // 사용자가 입력한 인증 코드
   const [isVerified, setIsVerified] = useState(false); // 이메일 인증 완료 여부
+  const [isChecking, setIsChecking] = useState(false);
+  const [isEmailValid, setIsEmailValid] = useState(false);
+  const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -48,6 +53,31 @@ const SignUpPage = () => {
     }
   };
 
+  const handleCheckEmail = async() => {
+    if(!formData.email){
+      setMessage('이메일을 입력하세요');
+      return;
+    }
+    setIsChecking(true);
+    setIsEmailValid(false);
+    try{
+      const response = await checkEmail(formData.email);
+      if(response.status === 200){
+        setMessage('사용 가능한 이메일 입니다.')
+        handleVerification();
+        setIsEmailValid(true);// 이메일 사용 가능
+      }
+    }catch(error){
+        if(error.response && error.response.status === 409){
+          setMessage('이미 존재하는 이메일 입니다.');
+        }else {
+          setMessage("⚠ 오류가 발생했습니다. 다시 시도하세요.");
+      }
+    }finally{
+      setIsChecking(false);
+    }
+  };
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -78,10 +108,10 @@ const SignUpPage = () => {
   };
 
   return (
-    <div>
+    <div className={styles.signUpContainer}>
+      <form onSubmit={handleSubmit} className={styles.signUpFormContainer}>
       <h1>회원가입</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
+        <div className={styles.emailContainer}>
           <label>Email:</label>
           <input
             type="email"
@@ -91,11 +121,13 @@ const SignUpPage = () => {
             placeholder="이메일을 입력해 주세요"
             required
           />
-          <button type="button" onClick={handleVerification}>
+          <button type='button' onClick={handleCheckEmail}>중복 확인</button>
+          <button type="button" onClick={handleVerification} disabled={!isEmailValid}>
             이메일 인증 요청
           </button>
+          {message && <p>{message}</p>}
         </div>
-        <div>
+        <div className='verified-container'>
           <input
             type="text"
             placeholder="인증 코드 입력"
@@ -106,7 +138,7 @@ const SignUpPage = () => {
             인증 코드 확인
           </button>
         </div>
-        <div>
+        <div className='password-container'>
           <label>Password:</label>
           <input
             type="password"
@@ -117,7 +149,7 @@ const SignUpPage = () => {
             required
           />
         </div>
-        <div>
+        <div className='name-container'>
           <label>Name:</label>
           <input
             type="text"

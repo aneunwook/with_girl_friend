@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';  // ✅ AuthProvider import
+import { AuthProvider } from './context/AuthContext'; 
 import CreatePostPage from './pages/board/CreatePostPage.js';
 import HomePage from './pages/board/HomePage.js';
 import EditPostPage from './pages/board/EditPostPage.js';
@@ -15,7 +15,7 @@ import TripEditPage from './pages/trip/TripEditPage.js';
 
 function App() {
   return (
-    <AuthProvider>  {/* ✅ AuthProvider로 감싸기 */}
+    <AuthProvider>
       <Router>
         <Header />
         <div className="content">

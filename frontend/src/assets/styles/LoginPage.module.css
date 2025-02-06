@@ -1,0 +1,39 @@
+.signUpContainer{
+    position: relative;
+    display: flex;
+    flex-wrap: wrap; /* 화면이 줄어들면 자동 줄바꿈 */
+    gap: 20px;
+    align-items: flex-start; /* 내용이 위에서부터 정렬되도록 변경 */
+    justify-content: center;
+    width: 100%;
+    max-width: 90vw; /* 화면 크기에 맞춰 조정 */
+    min-height: 1100px; /* 최소 높이 설정 */
+    margin: 0 auto;
+    padding: 20px;
+    overflow: visible; /* 배경이 잘리지 않도록 */
+}
+
+.signUpFormContainer{
+display: flex;
+  flex-direction: column;
+  align-items: center; /* 가로 방향 중앙 정렬 */
+  justify-content: flex-start; /* 내부 요소를 위에서부터 배치 */
+  gap: 20px; /* 요소 간격 조정 */
+  width: 500px;
+  min-height: 810px; /* 최소 높이 설정 */
+  padding: 20px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  /* background-image: url('image/form-bg1.jpg'); */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow-x: hidden; /* 내부 내용이 많아지면 스크롤 가능하도록 설정 */
+  z-index: 10; /* z-index 추가 */
+}
+
+.emailContainer{
+    font-size: 10px;
+}
