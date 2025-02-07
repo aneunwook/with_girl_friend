@@ -7,7 +7,8 @@ import EditPostPage from './pages/board/EditPostPage.js';
 import PostDetailPage from './pages/board/PostDetailPage.js';
 import Header from './components/Header.js';
 import LoginForm from './components/LoginForm.js';
-import SignUpPage from './pages/Auth/SignUpPage.js';
+import SignUpRoutes from './routes/SignUpRoutes.js'
+import { SignUpProvider } from './pages/Auth/SignUpContext.js';
 import AnniversaryPage from './pages/anniversary/AnniversaryPage.js';
 import TripPage from './pages/trip/TripPage.js';
 import AddTripPage from './pages/trip/AddTripPage.js';
@@ -16,6 +17,7 @@ import TripEditPage from './pages/trip/TripEditPage.js';
 function App() {
   return (
     <AuthProvider>
+      <SignUpProvider>
       <Router>
         <Header />
         <div className="content">
@@ -25,7 +27,7 @@ function App() {
             <Route path="/photos/:id" element={<PostDetailPage />} />
             <Route path="/post-edit/:id" element={<EditPostPage />} />
             <Route path="/login" element={<LoginForm />} />
-            <Route path="/signUp" element={<SignUpPage />} />
+            <Route path="/signUp/*">{SignUpRoutes} </Route>
             <Route path="/anniversary" element={<AnniversaryPage />} />
             <Route path="/trips" element={<TripPage />} />
             <Route path="/add" element={<AddTripPage />} />
@@ -33,6 +35,7 @@ function App() {
           </Routes>
         </div>
       </Router>
+      </SignUpProvider>
     </AuthProvider>
   );
 }

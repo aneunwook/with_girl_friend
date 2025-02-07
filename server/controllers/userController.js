@@ -91,10 +91,10 @@ const verifyEmailCode = async (req, res) => {
 
 const signUp = async (req, res) => {
   try {
-    const { email, password, name } = req.body;
-    console.log('Request Body:', req.body);
+    const { email, password, passwordConfirm, name } = req.body;
+    const specialCharRegex = /[!@#$%^&*(),.?":{}|<>]/; // 특수문자 정규식
 
-    if (!email || !password || !name) {
+    if (!email || !password || !passwordConfirm || !name) {
       return res.status(400).json({ message: '모든 필드를 입력해주세요.' });
     }
 
@@ -102,6 +102,14 @@ const signUp = async (req, res) => {
       return res
         .status(400)
         .json({ message: '비밀번호가 최소 8자 이상이여야 합니다' });
+    }
+
+    if(!specialCharRegex.test(password)){
+      return res.status(400).json({ message: '비밀번호에 최소 1개의 특수문자가 포함되어야 합니다.'})
+    }
+
+    if(password !== passwordConfirm){
+      return res.status(400).json({message : '비밀번호가 일치하지 않습니다.'});
     }
 
     //비밀번호 암호화

@@ -1,0 +1,177 @@
+.signUpContainer {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap; /* 화면이 줄어들면 자동 줄바꿈 */
+  gap: 20px;
+  align-items: center; /* 내용이 위에서부터 정렬되도록 변경 */
+  justify-content: center;
+  width: 100%;
+  max-width: 90vw; /* 화면 크기에 맞춰 조정 */
+  min-height: 1100px; /* 최소 높이 설정 */
+  margin: 0 auto;
+  padding: 20px;
+  overflow: visible; /* 배경이 잘리지 않도록 */
+}
+
+.signUpTitle,.signUpSubTitle{
+  text-align: center;
+}
+
+.signUpSubTitle{
+  width: 300px;
+  margin-top: 0px;
+}
+
+.signUpFormContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 가로 방향 중앙 정렬 */
+  justify-content: flex-start; /* 내부 요소를 위에서부터 배치 */
+  gap: 20px; /* 요소 간격 조정 */
+  width: 500px;
+  min-height: 810px; /* 최소 높이 설정 */
+  padding: 20px;
+  background: #fff;
+  border-radius: 28px;
+  box-shadow: 0 14px 16px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  /* background-image: url('image/form-bg1.jpg'); */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  overflow-x: hidden; /* 내부 내용이 많아지면 스크롤 가능하도록 설정 */
+  z-index: 10; /* z-index 추가 */
+}
+
+.emailContainer, .verifiedContainer {
+  position: relative;
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 가로 방향 중앙 정렬 */
+  justify-content: flex-start; /* 내부 요소를 위에서부터 배치 */
+  gap: 20px; /* 요소 간격 조정 */
+  min-height: 300px; /* 최소 높이 설정 */
+  padding: 20px;
+  background: #fff;
+  border-radius: 28px;
+  box-shadow: 0 14px 16px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+
+}
+
+.inputWrapper {
+  position: relative;
+  width: 300px; /* input 크기와 동일하게 */
+  transition: all 0.5s ease-in-out;
+}
+
+/* input을 정중앙에 배치 */
+.signUpField, .disabledInput {
+  width: 270px;
+  height: 30px;
+  padding: 8px 15px;
+  border-radius: 30px;
+  font-size: 15px;
+  border: 1px solid rgb(39, 39, 39);
+  outline: none;
+  transition: border 0.3s;
+  background: rgba(39, 39, 39, 0.03);
+}
+
+/* 라벨을 input 정중앙에 배치 */
+.floatingLabel {
+  position: absolute;
+  left: 15px;
+  top: 50%; /* 중앙 정렬 */
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: rgb(39, 39, 39);
+  transition: all 0.3s ease-in-out;
+  pointer-events: none;
+  background-color: none;
+  padding: 0 5px;
+}
+
+/* input이 focus되거나 값이 입력된 경우 label을 위로 이동 */
+.signUpField:focus + .floatingLabel,
+.signUpField:not(:placeholder-shown) + .floatingLabel {
+  top: 1px;
+  font-size: 13px;
+  background-color: white;
+  padding: 0 5px;
+}
+
+@media (max-width: 600px) {
+  .floatingLabel {
+    font-size: 12px;
+    top: 81%;
+  }
+}
+
+.sendCode{
+  width: 300px;
+  height: 40px;
+  border-radius: 30px;
+  border: 1px solid #ccc;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  padding: 8px 15px;
+  margin-bottom: 20px;
+  color: rgb(255, 255, 255);
+  background-color: rgb(39, 39, 39);
+  transition: all 0.2s ease-in-out; /* transition 추가 */
+}
+
+.sendCode:hover{
+  background-color: #aaa;
+}
+
+.messageContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  gap: 10px;
+  width: 100%;
+  height: 0; /* 초기 높이 0 */
+  overflow: hidden;
+  opacity: 0;
+  text-align: center;
+  transform: translateY(-10px);
+  transition: height 0.5s ease-out, opacity 0.5s ease-out, transform 0.5s ease-out;
+}
+
+/* 메시지가 보일 때 */
+.messageContainer.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+hr{
+  margin: 0px;
+  border-width: 0px 0px thin;
+  border-style: solid black;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.loginLink{
+  margin: 0px;
+  color: rgb(39, 39, 39);
+  text-decoration: none;
+}
+
+.loginLink:hover{
+  text-decoration: underline; /* 마우스 호버 시 밑줄 표시 */
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  margin: 10px auto;
+  border: 3px solid rgba(0, 0, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: blue;
+  animation: spin 0.8s linear infinite;
+}
+

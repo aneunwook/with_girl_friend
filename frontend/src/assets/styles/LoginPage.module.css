@@ -1,101 +1,144 @@
-.signUpContainer {
-  position: relative;
-  display: flex;
-  flex-wrap: wrap; /* 화면이 줄어들면 자동 줄바꿈 */
-  gap: 20px;
-  align-items: flex-start; /* 내용이 위에서부터 정렬되도록 변경 */
-  justify-content: center;
-  width: 100%;
-  max-width: 90vw; /* 화면 크기에 맞춰 조정 */
-  min-height: 1100px; /* 최소 높이 설정 */
-  margin: 0 auto;
-  padding: 20px;
-  overflow: visible; /* 배경이 잘리지 않도록 */
+.loginContainer {
+    position: relative;
+    display: flex;
+    flex-direction: column; /* 위에서부터 아래로 배치 */
+    align-items: center; /* 중앙 정렬 */
+    justify-content: center;
+    width: 100%;
+    max-width: 90vw;
+    min-height: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+    overflow: visible;
 }
 
-.signUpFormContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* 가로 방향 중앙 정렬 */
-  justify-content: flex-start; /* 내부 요소를 위에서부터 배치 */
-  gap: 20px; /* 요소 간격 조정 */
-  width: 500px;
-  min-height: 810px; /* 최소 높이 설정 */
-  padding: 20px;
-  background: #fff;
-  border-radius: 28px;
-  box-shadow: 0 14px 16px rgba(0, 0, 0, 0.2);
-  box-sizing: border-box;
-  /* background-image: url('image/form-bg1.jpg'); */
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  overflow-x: hidden; /* 내부 내용이 많아지면 스크롤 가능하도록 설정 */
-  z-index: 10; /* z-index 추가 */
+.contentContainer {
+    display: flex;
+    flex-direction: row; /* 내부 컨테이너를 좌우 배치 */
+    width: 100%;
+    max-width: 800px; /* 전체 컨테이너 크기 조정 */
+    height: 400px; /* 원하는 높이 설정 */
+    background: #fff;
+    border-radius: 28px;
+    box-shadow: 0 14px 16px rgba(0, 0, 0, 0.2);
+    overflow: hidden; /* 안에서 넘치지 않도록 */
+    padding: 15px;
 }
 
-.emailContainer {
-  position: relative;
-  width: 500px;
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* 가로 방향 중앙 정렬 */
-  justify-content: flex-start; /* 내부 요소를 위에서부터 배치 */
-  gap: 20px; /* 요소 간격 조정 */
-  min-height: 300px; /* 최소 높이 설정 */
-  padding: 20px;
-  background: #fff;
-  border-radius: 28px;
-  box-shadow: 0 14px 16px rgba(0, 0, 0, 0.2);
-  box-sizing: border-box;
+.userContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+    width: 100%; /* 전체의 50% 차지 */
+    padding: 15% 10%;
+    box-sizing: border-box;
+}
+
+.loginSubmitForm {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px; /* 입력 필드 간 간격 추가 */
+    width: 100%;
+}
+
+.loginField{
+    width: 100%;
+    height: 25px;
+    padding: 10px 15px;
+    border-radius: 30px;
+    font-size: 15px;
+    border: 1px solid rgb(39, 39, 39);
+    outline: none;
+    transition: border 0.3s;
+    background: rgba(39, 39, 39, 0.03);
 }
 
 .inputWrapper {
-  position: relative;
-  width: 300px; /* input 크기와 동일하게 */
-}
-
-.signUpField:focus {
-  border-color: #007bff;
-}
-
-.signUpField {
-  width: 300px;
-  height: 30px;
-  padding: 8px 15px; /* padding-top을 늘려서 label 위치 보정 */
-  border-radius: 30px;
-  font-size: 15px;
-  border: 1px solid #ccc;
-  outline: none;
-  transition: border 0.3s;
-}
-
-.floatingLabel {
-  position: absolute;
-  left: 15px;
-  top: 82%;
-  transform: translateY(-50%);
-  font-size: 16px;
-  color: #aaa;
-  transition: all 0.3s ease-in-out;
-  pointer-events: none;
-  background-color: white;
-  padding: 0 5px;
-}
-
-/* input이 focus되거나 값이 입력된 경우 label을 위로 이동 */
-.signUpField:focus + .floatingLabel,
-.signUpField:not(:placeholder-shown) + .floatingLabel {
-  top: 84px; /* 기존 0px에서 조금 내려줌 */
-  font-size: 13px; /* 더 작게 변경 */
-  color: #007bff;
-  background-color: white;
-  padding: 0 5px;
-}
-
-@media (max-width: 600px) {
-  .floatingLabel {
-    font-size: 12px;
-    top: 81%;
+    position: relative;
+    width: 300px; /* input 크기와 동일하게 */
+    transition: all 0.5s ease-in-out;
   }
+  
+
+/* 라벨을 input 정중앙에 배치 */
+.floatingLabel {
+    position: absolute;
+    left: 15px;
+    top: 50%; /* 중앙 정렬 */
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: rgb(39, 39, 39);
+    transition: all 0.3s ease-in-out;
+    pointer-events: none;
+    background-color: none;
+    padding: 0 5px;
+  }
+  
+  /* input이 focus되거나 값이 입력된 경우 label을 위로 이동 */
+  .loginField:focus + .floatingLabel,
+  .loginField:not(:placeholder-shown) + .floatingLabel {
+    top: 1px;
+    font-size: 13px;
+    background-color: white;
+    padding: 0 5px;
+  }
+
+.imgContainer {
+    height: 100%;
+    width: 100%; /* 전체의 50% 차지 */
+    border-radius: 30px;
+    background-image: url('image/form-bg1.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.sendLoginContainer{
+    width: 100%;
+}
+
+.loginButton{
+    width: 100%;
+    height: 40px;
+    border-radius: 30px;
+    border: 1px solid #ccc;
+    font-size: 0.9375rem;
+    cursor: pointer;
+    padding: 8px 1px;
+    margin-bottom: 25px;
+    color: rgb(255, 255, 255);
+    background-color: rgb(39, 39, 39);
+    transition: all 0.2s ease-in-out; /* transition 추가 */
+}
+
+.loginButton:hover{
+    background-color: #aaa;
+  }
+  
+hr{
+  margin: 0px;
+  border-width: 0px 0px thin;
+  border-style: solid black;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.goToSignUpContainer{
+    display: flex;
+    justify-content: space-between;
+    width: 100%; /* 부모 요소 전체 너비 사용 */
+    padding: 10px;
+}
+
+.loginLink, .forgotPassword{
+    margin: 0px;
+  color: rgb(39, 39, 39);
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.loginLink{
+    left: 0;
 }
