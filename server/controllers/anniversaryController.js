@@ -1,89 +1,111 @@
-import { Op } from "sequelize";
-import Anniversary from "../models/anniversaryModel.js";
+import { Op } from 'sequelize';
+import Anniversary from '../models/anniversaryModel.js';
 
-export const createAnniversary = async(req, res) => {
-    try{
-        const {userId, name, anniversaryDate, description} = req.body;
+export const createAnniversary = async (req, res) => {
+  try {
+    const { userId, name, anniversaryDate, description } = req.body;
 
-        if(!userId || !name || !anniversaryDate){
-            return res.status(400).json({message: '필수 데이터가 누락되었습니다'})
-        }
-
-        const newAnniversary = await Anniversary.create({
-            user_id: userId,
-            name,
-            anniversary_date: anniversaryDate,
-            description,
-        })
-
-        res.status(201).json({message: '기념일이 성공적으로 추가되었습니다', date: newAnniversary});
-
-    }catch(err){
-        console.error(err);
-        res.status(500).json({message: '기념일 추가 중 오류가 발생했습니다.', error: err.message});
+    if (!userId || !name || !anniversaryDate) {
+      return res.status(400).json({ message: '필수 데이터가 누락되었습니다' });
     }
-}
 
-export const getAnniversariesByDateRange = async(req, res) => {
-    try{
-        const {startDate, endDate} = req.query;
-    
-        if(!startDate || !endDate){
-            return res.status(400).json({message:'날짜 범위를 입력해 주세요'})
-        }
-    
-        const anniversaries = await Anniversary.findAll({
-            where:{
-                anniversary_date:{
-                    [Op.between] : [startDate, endDate],
-                },
-            },
-        });
-        res.status(200).json(anniversaries);
-    }catch(err){
-        console.error(err);
-        res.status(500).json({message: '기념일 조회 중 오류가 발생했습니다.', error: err.message});
+    const newAnniversary = await Anniversary.create({
+      user_id: userId,
+      name,
+      anniversary_date: anniversaryDate,
+      description,
+    });
+
+    res.status(201).json({
+      message: '기념일이 성공적으로 추가되었습니다',
+      date: newAnniversary,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: '기념일 추가 중 오류가 발생했습니다.',
+      error: err.message,
+    });
+  }
+};
+
+export const getAnniversariesByDateRange = async (req, res) => {
+  try {
+    const { startDate, endDate } = req.query;
+
+    if (!startDate || !endDate) {
+      return res.status(400).json({ message: '날짜 범위를 입력해 주세요' });
     }
-}
 
-export const updateAnniversary = async(req,res) =>{
-        const {id} = req.params;
-        const {name, anniversaryDate, description} = req.body;
-        console.log(req.params.id)
+    const anniversaries = await Anniversary.findAll({
+      where: {
+        anniversary_date: {
+          [Op.between]: [startDate, endDate],
+        },
+      },
+    });
 
-    try{
-        const anniversary = await Anniversary.findByPk(id);
+    console.log('📡 DB에서 가져온 데이터:', anniversaries); // ✅ DB 데이터 확인
 
-        if(!anniversary){
-            return res.status(404).json({message : "기념일을 찾을 수 없습니다"});
-        }
+    res.status(200).json(anniversaries);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: '기념일 조회 중 오류가 발생했습니다.',
+      error: err.message,
+    });
+  }
+};
 
-        anniversary.name = name || anniversary.name;
-        anniversary.anniversary_date = anniversaryDate || anniversary.anniversary_date;
-        anniversary.description = description || anniversary.description;
+export const updateAnniversary = async (req, res) => {
+  const { id } = req.params;
+  const { name, anniversaryDate, description } = req.body;
 
-        await anniversary.save();
+  try {
+    const anniversary = await Anniversary.findByPk(id);
 
-        res.status(200).json({message: "기념일이 성공적으로 수정되었습니다", data: anniversary})
-    }catch(err){
-        console.error(err);
-        res.status(500).json({ message: "기념일 수정 중 오류가 발생했습니다.", error: err.message });
+    if (!anniversary) {
+      return res.status(404).json({ message: '기념일을 찾을 수 없습니다' });
     }
-}
 
-export const deleteAnniversary = async (req,res) => {
-    const {id} = req.params;
-    try{
-        const deleteCount = await Anniversary.findByPk(id);
+    anniversary.name = name || anniversary.name;
+    anniversary.anniversary_date =
+      anniversaryDate || anniversary.anniversary_date;
+    anniversary.description = description || anniversary.description;
 
-        if(!deleteCount){
-            return res.status(404).json({ message: '기념일을 찾을 수 없습니다' });
-        }
+    await anniversary.save();
 
-        await deleteCount.destroy();
-        res.status(200).json({message : '기념일이 성공적으로 삭제되었습니다.'})
-    }catch(err){
-        console.error(err);
-        res.status(500).json({message: "기념일 삭제 중 오류가 발생했습니다.", error: error.message});
+    console.log('📡 업데이트된 데이터:', anniversary); // ✅ 응답 확인
+
+    res.status(200).json({
+      message: '기념일이 성공적으로 수정되었습니다',
+      data: anniversary,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: '기념일 수정 중 오류가 발생했습니다.',
+      error: err.message,
+    });
+  }
+};
+
+export const deleteAnniversary = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deleteCount = await Anniversary.findByPk(id);
+
+    if (!deleteCount) {
+      return res.status(404).json({ message: '기념일을 찾을 수 없습니다' });
     }
-}
+
+    await deleteCount.destroy();
+    res.status(200).json({ message: '기념일이 성공적으로 삭제되었습니다.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      message: '기념일 삭제 중 오류가 발생했습니다.',
+      error: error.message,
+    });
+  }
+};

@@ -1,0 +1,48 @@
+.loveDay {
+  width: 100%;
+  height: 300px;
+  background-color: pink;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* ✅ 세로 중앙 정렬 */
+  align-items: center;
+}
+
+.howLongText {
+  text-align: center;
+  font-size: 50px;
+}
+
+.loveDayInfo {
+  display: flex;
+  justify-content: center; /* ✅ 가로 중앙 정렬 */
+  align-items: center;
+}
+
+.row {
+  display: flex;
+  align-items: center; /* ✅ 숫자+텍스트+콜론 정렬 */
+  gap: 15px;
+}
+
+.timeBox {
+  display: flex;
+  flex-direction: column; /* ✅ 숫자와 단위 세로 정렬 */
+  align-items: center;
+  text-align: center;
+}
+
+.timeBox h3 {
+  font-size: 40px;
+  margin: 0;
+}
+
+.timeBox span {
+  font-size: 16px;
+}
+
+.colonBox {
+  font-size: 40px;
+  font-weight: bold;
+  margin: 0 5px;
+}

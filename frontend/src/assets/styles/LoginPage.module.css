@@ -1,144 +1,152 @@
+* {
+  box-sizing: border-box;
+}
+
 .loginContainer {
-    position: relative;
-    display: flex;
-    flex-direction: column; /* 위에서부터 아래로 배치 */
-    align-items: center; /* 중앙 정렬 */
-    justify-content: center;
-    width: 100%;
-    max-width: 90vw;
-    min-height: 1100px;
-    margin: 0 auto;
-    padding: 20px;
-    overflow: visible;
+  position: relative;
+  display: flex;
+  flex-direction: column; /* 위에서부터 아래로 배치 */
+  align-items: center; /* 중앙 정렬 */
+  justify-content: center;
+  width: 100%;
+  max-width: 90vw;
+  min-height: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+  overflow: visible;
 }
 
 .contentContainer {
-    display: flex;
-    flex-direction: row; /* 내부 컨테이너를 좌우 배치 */
-    width: 100%;
-    max-width: 800px; /* 전체 컨테이너 크기 조정 */
-    height: 400px; /* 원하는 높이 설정 */
-    background: #fff;
-    border-radius: 28px;
-    box-shadow: 0 14px 16px rgba(0, 0, 0, 0.2);
-    overflow: hidden; /* 안에서 넘치지 않도록 */
-    padding: 15px;
+  display: flex;
+  flex-direction: row; /* 내부 컨테이너를 좌우 배치 */
+  width: 100%;
+  max-width: 900px; /* 전체 컨테이너 크기 조정 */
+  height: 500px; /* 원하는 높이 설정 */
+  background: #fff;
+  border-radius: 28px;
+  box-shadow: 0 14px 16px rgba(0, 0, 0, 0.2);
+  overflow: hidden; /* 안에서 넘치지 않도록 */
+  padding: 15px;
 }
 
 .userContainer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 25px;
-    width: 100%; /* 전체의 50% 차지 */
-    padding: 15% 10%;
-    box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  width: 100%;
+  padding: 15% 10%;
+  box-sizing: border-box;
 }
 
 .loginSubmitForm {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px; /* 입력 필드 간 간격 추가 */
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px; /* 입력 필드 간 간격 추가 */
+  width: 100%;
 }
 
-.loginField{
-    width: 100%;
-    height: 25px;
-    padding: 10px 15px;
-    border-radius: 30px;
-    font-size: 15px;
-    border: 1px solid rgb(39, 39, 39);
-    outline: none;
-    transition: border 0.3s;
-    background: rgba(39, 39, 39, 0.03);
+.loginField {
+  width: 100%;
+  max-width: 300px;
+  height: 47px;
+  padding: 10px 15px;
+  border-radius: 30px;
+  font-size: 15px;
+  border: 1px solid rgb(39, 39, 39);
+  outline: none;
+  transition: border 0.3s;
+  background: rgba(39, 39, 39, 0.03);
 }
 
 .inputWrapper {
-    position: relative;
-    width: 300px; /* input 크기와 동일하게 */
-    transition: all 0.5s ease-in-out;
-  }
-  
+  position: relative;
+  transition: all 0.5s ease-in-out;
+}
+
+.inputWrapper,
+.sendLoginContainer {
+  width: 100%; /* 부모 기준으로 크기 설정 */
+  max-width: 316px;
+}
 
 /* 라벨을 input 정중앙에 배치 */
 .floatingLabel {
-    position: absolute;
-    left: 15px;
-    top: 50%; /* 중앙 정렬 */
-    transform: translateY(-50%);
-    font-size: 16px;
-    color: rgb(39, 39, 39);
-    transition: all 0.3s ease-in-out;
-    pointer-events: none;
-    background-color: none;
-    padding: 0 5px;
-  }
-  
-  /* input이 focus되거나 값이 입력된 경우 label을 위로 이동 */
-  .loginField:focus + .floatingLabel,
-  .loginField:not(:placeholder-shown) + .floatingLabel {
-    top: 1px;
-    font-size: 13px;
-    background-color: white;
-    padding: 0 5px;
-  }
+  position: absolute;
+  left: 15px;
+  top: 50%; /* 중앙 정렬 */
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: rgb(39, 39, 39);
+  transition: all 0.3s ease-in-out;
+  pointer-events: none;
+  background-color: none;
+  padding: 0 5px;
+}
+
+/* input이 focus되거나 값이 입력된 경우 label을 위로 이동 */
+.loginField:focus + .floatingLabel,
+.loginField:not(:placeholder-shown) + .floatingLabel {
+  top: 1px;
+  font-size: 13px;
+  background-color: white;
+  padding: 0 5px;
+}
 
 .imgContainer {
-    height: 100%;
-    width: 100%; /* 전체의 50% 차지 */
-    border-radius: 30px;
-    background-image: url('image/form-bg1.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
+  height: 100%;
+  width: 100%; /* 전체의 50% 차지 */
+  border-radius: 30px;
+  padding: 15% 6%;
+  background-image: url('image/form-bg1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
-.sendLoginContainer{
-    width: 100%;
+.loginButton {
+  width: 100%;
+  height: 47px;
+  max-width: 300px;
+  border-radius: 30px;
+  border: 1px solid #ccc;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  padding: 8px 1px;
+  margin-bottom: 25px;
+  color: rgb(255, 255, 255);
+  background-color: rgb(39, 39, 39);
+  transition: all 0.2s ease-in-out; /* transition 추가 */
 }
 
-.loginButton{
-    width: 100%;
-    height: 40px;
-    border-radius: 30px;
-    border: 1px solid #ccc;
-    font-size: 0.9375rem;
-    cursor: pointer;
-    padding: 8px 1px;
-    margin-bottom: 25px;
-    color: rgb(255, 255, 255);
-    background-color: rgb(39, 39, 39);
-    transition: all 0.2s ease-in-out; /* transition 추가 */
+.loginButton:hover {
+  background-color: #aaa;
 }
 
-.loginButton:hover{
-    background-color: #aaa;
-  }
-  
-hr{
+hr {
   margin: 0px;
   border-width: 0px 0px thin;
   border-style: solid black;
   border-color: rgba(0, 0, 0, 0.12);
 }
 
-.goToSignUpContainer{
-    display: flex;
-    justify-content: space-between;
-    width: 100%; /* 부모 요소 전체 너비 사용 */
-    padding: 10px;
+.goToSignUpContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%; /* 부모 요소 전체 너비 사용 */
+  padding: 10px;
 }
 
-.loginLink, .forgotPassword{
-    margin: 0px;
+.loginLink,
+.forgotPassword {
+  margin: 0px;
   color: rgb(39, 39, 39);
-    font-size: 14px;
-    text-decoration: none;
+  font-size: 14px;
+  text-decoration: none;
 }
 
-.loginLink{
-    left: 0;
+.loginLink {
+  left: 0;
 }

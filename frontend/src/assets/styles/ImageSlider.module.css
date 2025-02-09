@@ -1,0 +1,16 @@
+.sliderContainer {
+  width: 95%;
+  margin: auto;
+  justify-content: center;
+  margin-top: 20px;
+  position: relative; /* 🔥 상대 위치 설정 */
+}
+
+.slideImage {
+  width: 100%;
+  height: 400px;
+  object-fit: cover; /* 🔥 이미지가 짤리지 않도록 */
+  border-radius: 10px;
+  display: block;
+  background-color: #f0f0f0;
+}

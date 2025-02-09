@@ -1,56 +1,27 @@
-.calendar {
-  border: 1px solid #ccc;
-  width: 100%;
+/* 날짜 셀 크기 고정 */
+.fc-daygrid-day-frame {
+  height: 100px !important; /* 원하는 고정 높이 설정 */
+  overflow: hidden !important; /* 넘치는 요소 숨김 */
 }
 
-.weekdays {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  grid-column: span 7;
-}
-
-.weekday {
-  text-align: center;
-  padding: 10px;
-  background-color: #f0f0f0;
-  font-weight: bold;
-  border: 1px solid #ddd;
-}
-
-.days {
-  display: flex;
-  flex-wrap: wrap; /* 날짜가 넘치면 다음 줄로 */
-  width: 100%;
-}
-
-.days > * {
-  display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    text-align: center;
-    box-sizing: border-box;
-    padding: 10px;
-    border: 1px solid #ddd; /* 모든 칸에 테두리 적용 */
-    background-color: #f9f9f9;
-    overflow: hidden;
-    width: calc(100% / 7);
-    height: 130px;
-}
-
-.calendar-day {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  text-align: center;
-  box-sizing: border-box;
-  padding: 10px;
-  border: 1px solid #ddd;
-  background-color: #f9f9f9;
+/* 이벤트 리스트 영역 크기 제한 */
+.fc-daygrid-day-events {
+  max-height: 150px; /* 날짜 칸 내부 이벤트 높이 제한 */
   overflow: hidden;
-  width: calc(100% / 7); /* 각 날짜의 너비를 1/7로 설정 */
-  height: 130px;
+}
+
+/* 이벤트 요소 크기 제한 */
+.fc-event {
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  max-width: 100% !important;
+}
+
+/* "더보기" 버튼 스타일 */
+.fc-daygrid-more-link {
+  font-size: 12px;
+  color: blue;
+  cursor: pointer;
 }
 
 .anniversary-list {
@@ -62,56 +33,6 @@
   text-align: center; /* 텍스트 왼쪽 정렬 */
   word-wrap: break-word; /* 단어가 길 경우 줄바꿈 */
   transition: overflow 0.3s; /* 스크롤바 전환 효과 */
-}
-
-.anniversary-item {
-  display: flex; /* 점과 텍스트를 가로로 배치 */
-  align-items: center; /* 점과 텍스트 수직 정렬 */
-  margin-bottom: 5px;
-  font-size: 14px; /* 기념일 텍스트 크기 */
-  background-color: #ea4df0;/* 텍스트 색상 */
-  white-space: nowrap; /* 텍스트가 한 줄로 유지되도록 설정 */
-  overflow: hidden; /* 넘치는 텍스트 숨기기 */
-  text-overflow: ellipsis; /* 넘치는 텍스트 생략 (...) */
-  border-radius: 10px;
-  border: none;
-  outline: none; /* 포커스 시 생기는 외곽선 제거 */
-  cursor: pointer;
-}
-
-.dot {
-  width: 8px;
-  height: 8px;
-  background-color: #007bff; /* 점 색상 */
-  border-radius: 50%; /* 원형 */
-  margin-right: 8px; /* 점과 텍스트 간격 */
-}
-/* 마우스를 올리면 스크롤바 활성화 */
-.anniversary-list:hover {
-  overflow-y: auto; /* 스크롤 활성화 */
-}
-
-/* Webkit 기반 브라우저용 스크롤바 스타일 */
-.anniversary-list::-webkit-scrollbar {
-  width: 8px; /* 스크롤바의 너비 */
-  height: 8px; /* 가로 스크롤바의 높이 */
-}
-
-/* 스크롤바 트랙 (배경) */
-.anniversary-list::-webkit-scrollbar-track {
-  background: #f1f1f1; /* 트랙 배경색 */
-  border-radius: 10px; /* 트랙의 둥근 모서리 */
-}
-
-/* 스크롤바 핸들 (움직이는 부분) */
-.anniversary-list::-webkit-scrollbar-thumb {
-  background: #007bff; /* 핸들의 배경색 */
-  border-radius: 10px; /* 핸들의 둥근 모서리 */
-}
-
-/* 스크롤바 핸들 위에 마우스를 올렸을 때 */
-.anniversary-list::-webkit-scrollbar-thumb:hover {
-  background: gray; /* 핸들의 호버 색상 */
 }
 
 /* 반응형 - 작은 화면에서 박스 크기 조정 */
@@ -144,13 +65,16 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   padding: 20px;
   opacity: 0; /* 처음에 투명 */
-  transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out; /* 크기와 투명도를 동시에 변화 */  visibility: hidden; /* 숨겨진 상태 유지 */
+  transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out; /* 크기와 투명도를 동시에 변화 */
+  visibility: hidden; /* 숨겨진 상태 유지 */
+  z-index: 999;
 }
 
 .fullscreen-modal.show {
   opacity: 1; /* 완전히 나타남 */
   visibility: visible; /* 보이도록 변경 */
   transform: translate(-50%, -50%) scale(1); /* 정면으로 확대 */
+  z-index: 999;
 }
 
 .close-button {
@@ -166,7 +90,7 @@
   transition: transform 0.3s ease, color 0.3s ease; /* 부드러운 변화를 위한 transition */
 }
 
-.close-button:hover{
+.close-button:hover {
   color: #ff0000; /* 호버 시 빨간색 */
   transform: scale(1.5); /* 텍스트 크기 확대 */
 }
@@ -200,42 +124,35 @@
   z-index: -1; /* 배경을 텍스트 뒤로 */
 }
 
-/* 수정 버튼 색상 */
-.edit-button.btnFloat:before {
-  background: #00AE68; /* 초록색 */
+.button-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: nowrap;
+  width: 100%;
 }
 
-.edit-button.btnFloat:hover:before {
-  transform: scale(1.5);
-  box-shadow: 0px 5px 5px -2px rgba(0, 0, 0, 0.25);
+.edit-button,
+.delete-button {
+  display: inline-block;
+  width: auto;
 }
 
-/* 추가 버튼 색상 */
-.add-button.btnFloat:before {
-  background: #FFAA40; /* 주황색 */
+.delete-button:hover {
+  background-color: #cc0000;
 }
 
-.add-button.btnFloat:hover:before {
-  transform: scale(1.5);
-  box-shadow: 0px 5px 5px -2px rgba(0, 0, 0, 0.25);
-}
-
-.hidden {
-  display: none;
-}
-
-.fullscreen-modal form{
+.fullscreen-modal form {
   display: flex;
   flex-direction: column; /* 수직 정렬 */
   gap: 15px; /* 요소 간 간격 추가 */
-  
 }
 
 .anniversaryName,
-.anniversaryDescription{
+.anniversaryDescription {
   margin-top: 20px;
   border: none;
-  border-bottom: 1px solid rgba(0,0,0,0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 0;
   padding-left: 0;
   box-shadow: none;
@@ -243,25 +160,12 @@
   transition: all 0.1s ease-out;
 }
 
-.dday-list {
-  margin-top: 20px;
-  padding: 10px;
-  border: 1px solid #ccc;
+.custom-event {
+  background: linear-gradient(135deg, #ff9a9e 10%, #fad0c4 100%);
+  color: white;
+  padding: 1px;
   border-radius: 5px;
-  background-color: #f9f9f9;
-}
-
-.dday-list h2 {
-  margin-bottom: 10px;
-  font-size: 1.2em;
-}
-
-.dday-list ul {
-  list-style-type: none;
-  padding: 0;
-}
-
-.dday-list li {
-  margin: 5px 0;
-  font-size: 1em;
+  font-size: 0.9em;
+  text-align: center;
+  border: none;
 }

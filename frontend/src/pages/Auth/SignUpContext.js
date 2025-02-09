@@ -9,6 +9,7 @@ export const SignUpProvider = ({ children }) => {
     passwordConfirm: '',
     name: '',
     verificationCode: '',
+    startDate: '',
     isVerified: false,
   });
 
