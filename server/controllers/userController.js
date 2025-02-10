@@ -260,6 +260,29 @@ const getUserProfile = async (req, res) => {
   }
 };
 
+const searchUserByEmail = async (req, res) => {
+  try{
+    console.log("📩 요청받은 데이터:", req.body); // 🔥 요청된 데이터 확인!
+
+    const { email } = req.body;
+
+    // 이메일로 유저 검색
+    const user = await User.findOne({
+      where : { email },
+      attributes : ['id', 'email', 'name'],
+    });
+
+    if(!user){
+      return res.status(404).json({message : '사용자를 찾을 수 없습니다.'});
+    }
+
+    res.json(user); // 유저 정보 반환
+  }catch(err){
+    console.error("서버오류 : ", err);
+    res.status(500).json({ message: '서버 오류' });
+  }
+}
+
 export {
   signIn,
   signUp,
@@ -267,4 +290,5 @@ export {
   sendVerificationCode,
   verifyEmailCode,
   checkEmail,
+  searchUserByEmail
 };

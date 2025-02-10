@@ -4,7 +4,6 @@ import Post from '../models/postModel.js';
 import Photo from '../models/photoModel.js';
 import fs from 'fs';
 import path from 'path';
-import { error } from 'console';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

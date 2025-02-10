@@ -13,6 +13,8 @@ import postRoutes from './routes/postRoutes.js';
 import anniversaryRoutes from './routes/anniversaryRoutes.js';
 import photoRoutes from './routes/photoRoutes.js';
 import tripRoutes from './routes/tripRoutes.js';
+import coupleRoutes from './routes/coupleRoutes.js';
+import playlistRoutes from './routes/playlistRoutes.js'
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -38,6 +40,8 @@ app.use('/api/auth', userRoutes);
 app.use('/api/anniversaries', anniversaryRoutes);
 app.use('/api/photos', photoRoutes);
 app.use('/api/trips', tripRoutes);
+app.use('/api/couples', coupleRoutes);
+app.use('/api/playlists', playlistRoutes);
 
 // 정적 파일 제공: `/uploads` 요청에 대해 처리
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
@@ -55,7 +59,7 @@ app.use((req, res, next) => {
 
 // 서버 실행 전에 Sequelize 연결 확인
 sequelize
-  .sync({ force: true })
+  .sync({ force: false })
   .then(() => {
     console.log('Database synchronized successfully');
     app.listen(port, () => {
