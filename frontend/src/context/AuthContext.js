@@ -7,6 +7,8 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token')); // ✅ 토큰 상태 추가
+  const [spotifyToken, setSpotifyToken] = useState(localStorage.getItem('spotify_access_token')); // Spotify 토큰 추가
+
 
   useEffect(
     () => {
@@ -27,8 +29,13 @@ export const AuthProvider = ({ children }) => {
         delete axiosInstance.defaults.headers.common['Authorization'];
         setUser(null); // ✅ 로그아웃 시 user 상태 초기화
       }
+
+      if (spotifyToken) {
+        axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${spotifyToken}`;
+        // 여기서 Spotify 사용자 정보도 불러올 수 있으면 추가
+      }
     },
-    [token],
+    [token, spotifyToken],
     [user]
   );
 
@@ -89,15 +96,27 @@ export const AuthProvider = ({ children }) => {
       throw err;
     }
   };
+
+  // Spotify 로그인 함수
+  const spotifyLogin = async (token) => {
+    if (token) {
+      localStorage.setItem('spotify_access_token', token);
+      setSpotifyToken(token);
+      axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('spotify_access_token');
     setToken(null);
+    setSpotifyToken(null);
     setUser(null);
     window.location.href = '/'; //
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, token, spotifyToken, login, logout, spotifyLogin }}>
       {children}
     </AuthContext.Provider>
   );

@@ -6,6 +6,7 @@ import generateToken from '../utils/generateToken.js';
 import dotenv from 'dotenv';
 import dayjs from 'dayjs';
 import nodemailer from 'nodemailer';
+import axios from 'axios';
 import { where } from 'sequelize';
 
 dotenv.config();
@@ -283,6 +284,40 @@ const searchUserByEmail = async (req, res) => {
   }
 }
 
+const spotifyAuthCallback = async (req, res) => {
+  const code = req.query.code;
+
+  if (!code) {
+    return res.status(400).json({ message: "인증된 코드가 없습니다" });
+  }
+
+  try {
+    const tokenResponse = await axios.post(
+        "https://accounts.spotify.com/api/token",
+        new URLSearchParams({
+            grant_type: "authorization_code",
+            code,
+            redirect_uri: process.env.SPOTIFY_REDIRECT_URI,
+            client_id: process.env.SPOTIFY_CLIENT_ID,
+            client_secret: process.env.SPOTIFY_CLIENT_SECRET,
+        }),
+        {
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+        }
+    );
+
+    const { access_token, refresh_token } = tokenResponse.data;
+
+     // 프론트엔드에 토큰을 전달 (예제에서는 쿼리로 전달)
+     res.redirect(`http://localhost:3000/login-success?access_token=${access_token}&refresh_token=${refresh_token}`);
+    } catch (error) {
+      console.error("Error getting Spotify token:", error);
+      res.status(500).json({ message: "Failed to get Spotify token" });
+  }
+}
+
 export {
   signIn,
   signUp,
@@ -290,5 +325,6 @@ export {
   sendVerificationCode,
   verifyEmailCode,
   checkEmail,
-  searchUserByEmail
+  searchUserByEmail,
+  spotifyAuthCallback
 };

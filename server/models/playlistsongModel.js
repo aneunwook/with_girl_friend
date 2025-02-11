@@ -35,6 +35,10 @@ const PlaylistSong = sequelize.define(
         type: DataTypes.STRING,
         allowNull: false,
         },
+        album_image:{
+            type: DataTypes.STRING,
+        allowNull: false,
+        },
         preview_url: {
         type: DataTypes.STRING,
         allowNull: true, // 미리 듣기 URL (없을 수도 있음)

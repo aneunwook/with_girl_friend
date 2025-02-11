@@ -5,7 +5,8 @@ import {
   sendVerificationCode,
   verifyEmailCode,
   checkEmail,
-  searchUserByEmail
+  searchUserByEmail,
+  spotifyAuthCallback
 } from '../controllers/userController.js';
 import express from 'express';
 import authMiddleware from '../middleware/authMiddleware.js';
@@ -21,5 +22,8 @@ router.post('/search', searchUserByEmail);
 
 //이메일 중복 확인
 router.post('/check-email', checkEmail);
+
+//스포티파이 로그인
+router.get('/callback', spotifyAuthCallback);
 
 export default router;

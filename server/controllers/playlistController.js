@@ -109,6 +109,40 @@ const getSpotifyAccessToken = async () => {
   
     return response.data.access_token;
   };
+
+// 곡 검색
+export const searchSong = asyncHandler(async (req, res) => {
+    const { query } = req.query;
+
+    if(!query){
+        return res.status(400).json({ message : '검색어를 입력하세요'});
+    }
+
+    const accessToken = await getSpotifyAccessToken();
+
+    try{
+        const response = await axios.get(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=10`,
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+
+      const tracks = response.data.tracks.items.map((track) => ({
+        id: track.id,
+        name: track.name,
+        artist: track.artists.map((artist) => artist.name).join(", "),
+        album: track.album.name,
+        preview_url: track.preview_url, // 미리 듣기 URL
+        image: track.album.images[0]?.url, // 앨범 커버 이미지
+      }));
+
+      res.json({ tracks });
+    }catch(error){
+        console.error("Spotify 검색 오류:", error);
+      res.status(500).json({ message: "Spotify 검색 중 오류 발생" });
+    }
+})
+
   
   // 플레이리스트에 곡 추가
 export const addSongToPlaylist = asyncHandler(async (req, res) => {
@@ -135,6 +169,7 @@ export const addSongToPlaylist = asyncHandler(async (req, res) => {
         track_name: trackData.name,
         artist_name: trackData.artists.map((artist) => artist.name).join(", "),
         album_name: trackData.album.name,
+        album_image: trackData.album.images[0]?.url,
         preview_url: trackData.preview_url,
     })
 
