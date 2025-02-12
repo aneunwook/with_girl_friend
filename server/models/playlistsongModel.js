@@ -43,6 +43,10 @@ const PlaylistSong = sequelize.define(
         type: DataTypes.STRING,
         allowNull: true, // 미리 듣기 URL (없을 수도 있음)
         },
+        external_url: { 
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         },
         {
           timestamps: true,

@@ -171,6 +171,8 @@ export const addSongToPlaylist = asyncHandler(async (req, res) => {
         album_name: trackData.album.name,
         album_image: trackData.album.images[0]?.url,
         preview_url: trackData.preview_url,
+        external_url: trackData.external_urls.spotify, // 추가!
+
     })
 
   

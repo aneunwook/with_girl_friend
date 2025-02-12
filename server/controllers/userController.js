@@ -310,13 +310,37 @@ const spotifyAuthCallback = async (req, res) => {
 
     const { access_token, refresh_token } = tokenResponse.data;
 
-     // 프론트엔드에 토큰을 전달 (예제에서는 쿼리로 전달)
+     // 프론트엔드에 토큰을 전달
      res.redirect(`http://localhost:3000/login-success?access_token=${access_token}&refresh_token=${refresh_token}`);
     } catch (error) {
       console.error("Error getting Spotify token:", error);
       res.status(500).json({ message: "Failed to get Spotify token" });
   }
 }
+
+const refreshSpotifyToken = async (req, res) => {
+  const refresh_token = req.query.refresh_token;
+
+  try {
+    const response = await axios.post(
+      "https://accounts.spotify.com/api/token",
+      new URLSearchParams({
+        grant_type: "refresh_token",
+        refresh_token,
+        client_id: process.env.SPOTIFY_CLIENT_ID,
+        client_secret: process.env.SPOTIFY_CLIENT_SECRET,
+      }),
+      {
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      }
+    );
+
+    res.json(response.data);
+  } catch (error) {
+    console.error("토큰 갱신 실패:", error);
+    res.status(500).json({ message: "토큰 갱신 실패" });
+  }
+};
 
 export {
   signIn,
@@ -326,5 +350,6 @@ export {
   verifyEmailCode,
   checkEmail,
   searchUserByEmail,
-  spotifyAuthCallback
+  spotifyAuthCallback,
+  refreshSpotifyToken
 };
