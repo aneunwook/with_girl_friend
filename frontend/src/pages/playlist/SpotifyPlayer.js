@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import axios from "axios"; // Spotify API 요청을 위해 필요
+import PlaylistSongPage from "./PlaylistSongPage.js";
 
 const loadSpotifySDK = () => {
   return new Promise((resolve, reject) => {
@@ -35,6 +36,8 @@ const loadSpotifySDK = () => {
 const SpotifyPlayer = ({ token, uri, onPlayPause, onPrevTrack, onNextTrack }) => { 
   const [player, setPlayer] = useState(null);
   const [deviceId, setDeviceId] = useState(null);
+  const prevUriRef = useRef(null);  // ✅ prevUri를 useRef로 변경
+  const deviceIdRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
@@ -94,6 +97,8 @@ const SpotifyPlayer = ({ token, uri, onPlayPause, onPrevTrack, onNextTrack }) =>
       return;
     }
 
+    console.log("📢 웹 플레이어 전환 시작! 현재 Device ID:", deviceId);
+
     try {
       await axios.put(
         "https://api.spotify.com/v1/me/player",
@@ -107,29 +112,44 @@ const SpotifyPlayer = ({ token, uri, onPlayPause, onPrevTrack, onNextTrack }) =>
     }
   };
 
-  // 곡 재생 함수 (웹 플레이어 활성화 후 실행)
-  const playSong = async (trackUri) => {
-    if (!deviceId) {
-      console.error("❌ Device ID가 없음!");
-      return;
+  useEffect(() => {
+    if (deviceId) {
+      deviceIdRef.current = deviceId;
+    }
+  }, [deviceId]);
+  
+ const playPlaylist = useCallback(async (trackUris, startIndex = 0) => {
+  console.log("🎶 playPlaylist 실행됨!", trackUris, startIndex);
+
+
+    if (!deviceIdRef.current) {
+        console.error("❌ Device ID가 없음!");
+        return;
     }
 
-    console.log("🎵 재생할 URI:", trackUri);
+    if (!Array.isArray(trackUris) || trackUris.length === 0) {
+        console.error("❌ 유효한 트랙 리스트가 없습니다!");
+        return;
+    }
+
+    console.log(`🎵 playPlaylist 실행! uris: ${trackUris}, startIndex: ${startIndex}`);
 
     try {
-      const accessToken = localStorage.getItem("spotify_access_token");
+        const accessToken = localStorage.getItem("spotify_access_token");
 
-      await axios.put(
-        "https://api.spotify.com/v1/me/player/play",
-        { uris: [trackUri] },  // 🔥 Spotify API에 곡 URI 전달!
-        { headers: { Authorization: `Bearer ${accessToken}` } }
-      );
+        await axios.put(
+            "https://api.spotify.com/v1/me/player/play",
+            { uris: trackUris, offset: { position: startIndex } },
+            { headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" } }
+        );
 
-      console.log("✅ 곡 재생 요청 성공!");
+        console.log(`✅ 곡 재생 요청 성공! (🎵 ${startIndex}번째 곡부터 재생)`);
     } catch (error) {
-      console.error("❌ 곡 재생 실패:", error);
+        console.error("❌ 곡 재생 실패:", error.response ? error.response.data : error);
     }
-  };
+}, []); // 🔥 빈 배열 `[]` -> `playPlaylist`가 한 번만 생성됨!
+
+  
 
    const getActiveSpotifyDevice = async () => {
     const accessToken = localStorage.getItem("spotify_access_token");
@@ -211,72 +231,80 @@ const SpotifyPlayer = ({ token, uri, onPlayPause, onPrevTrack, onNextTrack }) =>
 };
 
 const nextTrack = async () => {
-    const accessToken = localStorage.getItem("spotify_access_token");
+  const accessToken = localStorage.getItem("spotify_access_token");
 
-    try {
-        await axios.post(
-            "https://api.spotify.com/v1/me/player/next",
-            {},
-            { headers: { Authorization: `Bearer ${accessToken}` } }
-        );
-        console.log("✅ 다음 곡으로 이동!");
-    } catch (error) {
-        console.error("❌ 다음 곡 이동 실패!", error);
-    }
+  try {
+      await axios.post(
+          "https://api.spotify.com/v1/me/player/next",
+          {},
+          { headers: { Authorization: `Bearer ${accessToken}` } }
+      );
+      console.log("✅ 다음 곡으로 이동!");
+  } catch (error) {
+      console.error("❌ 다음 곡 이동 실패!", error.response?.status, error.response?.data, error);
+  }
 };
 
 const prevTrack = async () => {
-    const accessToken = localStorage.getItem("spotify_access_token");
+  const accessToken = localStorage.getItem("spotify_access_token");
 
-    try {
-        await axios.post(
-            "https://api.spotify.com/v1/me/player/previous",
-            {},
-            { headers: { Authorization: `Bearer ${accessToken}` } }
-        );
-        console.log("✅ 이전 곡으로 이동!");
-    } catch (error) {
-        console.error("❌ 이전 곡 이동 실패!", error);
-    }
+  try {
+      await axios.post(
+          "https://api.spotify.com/v1/me/player/previous",
+          {},
+          { headers: { Authorization:` Bearer ${accessToken}` } }
+      );
+      console.log("✅ 이전 곡으로 이동!");
+  } catch (error) {
+      console.error("❌ 이전 곡 이동 실패!", error);
+  }
 };
 
+
   // 부모 컴포넌트에서 컨트롤 가능하도록 전달
-  useEffect(() => {
-    console.log("🔹 플레이어가 부모 컴포넌트에 컨트롤 함수 전달 중...");
-    console.log("🎵 playPause 함수:", playPause);
-    console.log("⏮ prevTrack 함수:", prevTrack);
-    console.log("⏭ nextTrack 함수:", nextTrack);
+    useEffect(() => {
+      getActiveSpotifyDevice();
+    }, []);
 
-    if (player) {
-        if (onPlayPause) {
-            console.log("✅ playPause 등록 완료!");
-            onPlayPause(() => playPause);
-        }
-        if (onNextTrack) {
-            console.log("✅ nextTrack 등록 완료!");
-            onNextTrack(() => nextTrack);
-        }
-        if (onPrevTrack) {
-            console.log("✅ prevTrack 등록 완료!");
-            onPrevTrack(() => prevTrack);
-        }
-    }
-}, [player]);
+    useEffect(() => {
+      if (!player) return;
+    
+      console.log("🎵 플레이어 컨트롤 등록 시작!");
+    
+      if (onPlayPause) onPlayPause(() => playPause);
+      if (onNextTrack) onNextTrack(() => nextTrack);
+      if (onPrevTrack) onPrevTrack(() => prevTrack);
+    
+      console.log("🎵 플레이어 컨트롤 등록 완료!");
+    }, [player]);
 
-  getActiveSpotifyDevice();
-
-  // `uri`가 변경될 때마다 자동으로 재생!
-  useEffect(() => {
-    if (uri && deviceId) {
-      playSong(uri);
-    }
-  }, [uri, deviceId]);
+    useEffect(() => {
+      console.log("🔍 현재 uri:", uri);
+      console.log("🔍 이전 uri:", prevUriRef.current);
+    
+      if (!uri || !deviceId) return;
+    
+      if (prevUriRef.current === uri) {
+        console.log("⚠️ 이전과 동일한 URI, 재생 안 함!");
+        return;
+      }
+    
+      console.log("🎵 useEffect 실행! 새로운 URI 재생:", uri);
+      prevUriRef.current = uri; 
+    
+      const uris = Array.isArray(uri) ? uri : [uri];
+      playPlaylist(uris);  
+    }, [uri]);
+    
+  
 
   return (
     <div>
       <h2>Spotify Web Player</h2>
       {player ? <p>🎵 플레이어가 실행 중입니다!</p> : <p>⏳ 플레이어 로딩 중...</p>}
-    </div>
+      {/* <PlaylistSongPage playPlaylist={playPlaylist} /> */}
+
+      </div>
   );
 };
 

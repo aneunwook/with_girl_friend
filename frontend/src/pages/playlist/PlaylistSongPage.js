@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react";
 import { useParams } from "react-router-dom"
 import {getPlaylistSongs, deleteSongFromPlaylist, addSongToPlaylist, searchSongs} from '../../service/playlist/playlistService.js';
 import SpotifyPlayer from "./SpotifyPlayer.js";
 import axios from "axios";
+import PlaylistPage from './PlaylistPage.js'
 
-const PlaylistSongsPage = () => {
+const PlaylistSongsPage = ({playPlaylist}) => {
+    console.log("✅ PlaylistSongsPage 렌더링됨!");
+    console.log("✅ playPlaylist props:", playPlaylist);
+
+
     const { playlistId } = useParams();
     const [songs, setSongs] = useState([]);
     const [query, setQuery] = useState('');
@@ -20,72 +25,62 @@ const PlaylistSongsPage = () => {
       }, []);
 
       useEffect(() => {
+        console.log("🎵 playPlaylist 함수 변경됨!", playPlaylist);
+    }, [playPlaylist]);
+
+    useEffect(() => {
+        let isMounted = true; // ✅ 추가
+    
         const checkTokenExpiration = async () => {
-          const token = localStorage.getItem("spotify_access_token");
-          const refreshToken = localStorage.getItem("spotify_refresh_token");
-      
-          if (!token) return;
-      
-          try {
-            await axios.get("https://api.spotify.com/v1/me", {
-              headers: { Authorization: `Bearer ${token}` },
-            });
-          } catch (error) {
-            if (error.response && error.response.status === 401) {
-              console.log("🔄 Access Token 만료됨, 새로고침...");
-      
-              const response = await axios.get(
-                `http://localhost:5000/api/auth/refresh?refresh_token=${refreshToken}`
-              );
-              const newAccessToken = response.data.access_token;
-      
-              localStorage.setItem("spotify_access_token", newAccessToken);
-              setToken(newAccessToken);
+            const token = localStorage.getItem("spotify_access_token");
+            const refreshToken = localStorage.getItem("spotify_refresh_token");
+    
+            if (!token) return;
+    
+            try {
+                await axios.get("https://api.spotify.com/v1/me", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+            } catch (error) {
+                if (error.response && error.response.status === 401) {
+                    console.log("🔄 Access Token 만료됨, 새로고침...");
+    
+                    const response = await axios.get(
+                        `http://localhost:5000/api/auth/refresh?refresh_token=${refreshToken}`
+                    );
+                    const newAccessToken = response.data.access_token;
+    
+                    localStorage.setItem("spotify_access_token", newAccessToken);
+    
+                    if (isMounted) {
+                        setToken(newAccessToken); // ✅ 컴포넌트가 마운트된 경우에만 상태 업데이트
+                    }
+                }
             }
-          }
         };
-      
+    
         checkTokenExpiration();
-        const interval = setInterval(checkTokenExpiration, 1000 * 60 * 55); // 55분마다 체크
+        const interval = setInterval(checkTokenExpiration, 1000 * 60 * 55);
+    
+        return () => {
+            isMounted = false; // ✅ 언마운트 시 루프 방지
+            clearInterval(interval);
+        };
+    }, []); // ✅ 의존성 배열을 비워서 한 번만 실행되게 함.
+    
       
-        return () => clearInterval(interval);
-      }, []);
-      
-      const CLIENT_ID = "7ba200b021fc4af9b605f684d5be25e7";
-      const REDIRECT_URI = "http://localhost:5000/api/auth/callback"; // 백엔드 OAuth 콜백 URL
-      const SCOPES = [
-        "user-read-private",
-        "user-read-email",
-        "user-read-playback-state",
-        "user-modify-playback-state",
-        "streaming", // 음악 스트리밍을 위해 필요
-      ];
-
-      const handleLogin = () => {
-        localStorage.removeItem('spotify_access_token'); // 기존 토큰 삭제
-        localStorage.removeItem("spotify_refresh_token");
-        localStorage.setItem('redirectTo', '/playlist'); // 로그인 후 이동할 경로 저장
-
-        const authUrl = `https://accounts.spotify.com/authorize?` +
-          `client_id=${CLIENT_ID}` +
-          `&response_type=code` +
-          `&redirect_uri=${encodeURIComponent(REDIRECT_URI)}` +
-          `&scope=${encodeURIComponent(SCOPES.join(" "))}` +
-          `&show_dialog=true`;
-      
-        window.location.href = authUrl; // Spotify 로그인 페이지로 이동
-      };
-
+    
     const loadSongs = async () => {
-        try{
+        try {
             const data = await getPlaylistSongs(playlistId);
-            console.log("🎶 불러온 곡 목록:", data); // 여기서 확인!
-
+            console.log("🎶 불러온 곡 목록:", data);
             setSongs(data);
-        }catch (error) {
+        } catch (error) {
             console.error("곡 목록 불러오기 실패:", error);
         }
-    }
+    };
+
+    
 
     const handleSearch = async () => {
         try{
@@ -124,16 +119,50 @@ const PlaylistSongsPage = () => {
         }
     }
 
+    // ✅ 개별 트랙 재생
+    const playTrack = async (trackUri) => {
+        if (!trackUri) {
+            console.error("❌ 트랙 URI가 없습니다!");
+            return;
+        }
+
+        const accessToken = localStorage.getItem("spotify_access_token");
+
+        try {
+            await axios.put(
+                "https://api.spotify.com/v1/me/player/play",
+                { uris: [trackUri] }, // ✅ 개별 트랙만 재생
+                { headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" } }
+            );
+            console.log(`✅ 개별 트랙 재생 성공! (${trackUri})`);
+        } catch (error) {
+            console.error("❌ 개별 트랙 재생 실패:", error.response ? error.response.data : error);
+        }
+    };
+
+    // ✅ Spotify URI 변환
     const convertToSpotifyUri = (song) => {
-        if (song.spotify_uri) {
-            return song.spotify_uri; // 이미 존재하면 그대로 사용
-        }
+        if (song.spotify_uri) return song.spotify_uri.trim();
         if (song.external_url) {
-            return "spotify:track:" + song.external_url.split("/track/")[1].split("?")[0];
+            const match = song.external_url.match(/track\/([a-zA-Z0-9]+)/);
+            return match ? `spotify:track:${match[1]}` : null;
         }
-        return null; // 변환할 수 없으면 null 반환
+        return null;
     };
     
+
+    const handlePlayPlaylist = () => {
+        if (songs.length > 0) {
+            const trackUris = songs.map(convertToSpotifyUri).filter(Boolean);
+    
+            if (JSON.stringify(trackUris) !== JSON.stringify(uri)) {
+                console.log("🎵 플레이리스트 재생할 트랙 리스트:", trackUris);
+                setUri(trackUris);
+            }
+        } else {
+            console.warn("🚨 플레이리스트가 비어 있음!");
+        }
+    };
 
     return (
         <div>
@@ -144,13 +173,16 @@ const PlaylistSongsPage = () => {
                         <li key={song.id}>
                             <img src={song.album_image} alt={song.album} width="100" height="100" />
                             {song.track_name} - {song.artist_name}{" "}
-                            <button onClick={() => {console.log("🎵 재생할 URI:",convertToSpotifyUri(song)); setUri(convertToSpotifyUri(song))}} >▶ 재생</button>
+                            <button onClick={() => playTrack(convertToSpotifyUri(song))}>▶ 개별 재생</button>
                             <button onClick={() => handleDeleteSong(song.id)}>삭제</button>
                         </li>
                     ))
+                    
                 ) : (
                     <p>곡이 없습니다.</p>
                 )}
+                <button onClick={handlePlayPlaylist}>🎶 전체 재생</button>
+
             </ul>
 
             <h3>곡 검색</h3>
@@ -176,28 +208,27 @@ const PlaylistSongsPage = () => {
             </ul>
             <button onClick={() => prevTrack && prevTrack()} disabled={!prevTrack}>⏮ 이전</button>
             <button onClick={() => {
-    console.log("▶/⏸ 버튼 클릭됨! 현재 playPause:", typeof playPause);
-    if (typeof playPause === "function") {
-        playPause();
-    } else {
-        console.error("❌ playPause가 함수가 아님!", playPause);
-    }
-}} disabled={!playPause}>
-    ▶/⏸ 재생/일시정지
-</button>
+                    console.log("▶/⏸ 버튼 클릭됨! 현재 playPause:", typeof playPause);
+                    if (typeof playPause === "function") {
+                        playPause();
+                    } else {
+                        console.error("❌ playPause가 함수가 아님!", playPause);
+                    }
+                }} disabled={!playPause}>
+                    ▶/⏸ 재생/일시정지
+                </button>
                 <button onClick={() => nextTrack && nextTrack()} disabled={!nextTrack}>⏭ 다음</button>
 
-            <button onClick={handleLogin}>Spotify 로그인</button>
              {/* SpotifyPlayer 컴포넌트 추가 */}
              <SpotifyPlayer 
                 token={token} 
                 uri={uri} 
                 onPlayPause={setPlayPause} 
                 onPrevTrack={setPrevTrack} 
-                onNextTrack={setNextTrack} 
+                onNextTrack={setNextTrack}
             />
         </div>
     )
-}
 
-export default PlaylistSongsPage;
+}
+export default memo(PlaylistSongsPage);
