@@ -120,25 +120,38 @@ const PlaylistSongsPage = ({playPlaylist}) => {
     }
 
     // ✅ 개별 트랙 재생
-    const playTrack = async (trackUri) => {
-        if (!trackUri) {
-            console.error("❌ 트랙 URI가 없습니다!");
-            return;
-        }
+    // ✅ 특정 인덱스부터 플레이리스트 재생 함수
+const playFromIndex = async (startIndex) => {
+    if (!songs.length) {
+        console.warn("🚨 플레이리스트가 비어 있음!");
+        return;
+    }
 
-        const accessToken = localStorage.getItem("spotify_access_token");
+    const trackUris = songs.map(convertToSpotifyUri).filter(Boolean); // 모든 트랙 URI 가져오기
+    const accessToken = localStorage.getItem("spotify_access_token");
 
-        try {
-            await axios.put(
-                "https://api.spotify.com/v1/me/player/play",
-                { uris: [trackUri] }, // ✅ 개별 트랙만 재생
-                { headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" } }
-            );
-            console.log(`✅ 개별 트랙 재생 성공! (${trackUri})`);
-        } catch (error) {
-            console.error("❌ 개별 트랙 재생 실패:", error.response ? error.response.data : error);
-        }
-    };
+    if (!trackUris[startIndex]) {
+        console.error("❌ 해당 인덱스의 트랙이 없음!");
+        return;
+    }
+
+    try {
+        await axios.put(
+            "https://api.spotify.com/v1/me/player/play",
+            {
+                uris: trackUris, // ✅ 전체 플레이리스트 재생
+                offset: { position: startIndex } // ✅ 사용자가 선택한 곡부터 시작
+            },
+            {
+                headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" }
+            }
+        );
+        console.log(`✅ ${startIndex + 1}번째 곡부터 플레이리스트 자동 재생 시작!`);
+    } catch (error) {
+        console.error("❌ 플레이리스트 재생 실패:", error.response ? error.response.data : error);
+    }
+};
+
 
     // ✅ Spotify URI 변환
     const convertToSpotifyUri = (song) => {
@@ -173,7 +186,9 @@ const PlaylistSongsPage = ({playPlaylist}) => {
                         <li key={song.id}>
                             <img src={song.album_image} alt={song.album} width="100" height="100" />
                             {song.track_name} - {song.artist_name}{" "}
-                            <button onClick={() => playTrack(convertToSpotifyUri(song))}>▶ 개별 재생</button>
+                            <button onClick={() => playFromIndex(songs.findIndex(s => s.id === song.id))}>
+                            ▶ 여기서부터 재생
+                            </button>
                             <button onClick={() => handleDeleteSong(song.id)}>삭제</button>
                         </li>
                     ))
