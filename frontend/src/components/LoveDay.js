@@ -43,6 +43,7 @@ const LoveDay = ({ user }) => {
   }
 
   return (
+    <div className={styles.LoveDayContainer}>
     <div className={styles.loveDay}>
       <div className={styles.howLong}>
         <p className={styles.howLongText}>How long we've been together?</p>
@@ -50,13 +51,11 @@ const LoveDay = ({ user }) => {
 
       <div className={styles.loveDayInfo}>
         <div className={styles.row}>
-          {/* ✅ 숫자 + 텍스트 (한 묶음) */}
           <div className={styles.timeBox}>
             <h3>{user.loveDays}</h3>
             <span>days</span>
           </div>
 
-          {/* ✅ 콜론 */}
           <div className={styles.colonBox}>:</div>
 
           <div className={styles.timeBox}>
@@ -79,6 +78,7 @@ const LoveDay = ({ user }) => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

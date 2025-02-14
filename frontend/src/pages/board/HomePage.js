@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getAllPosts } from '../../service/photo/photoService.js';
+import { getAllPosts, searchPost } from '../../service/photo/photoService.js';
 import PostCard from '../../components/PostCard.js';
 import Pagination from '../../components/Pagination.js';
 import Sidebar from '../../components/Sidebar.js';
@@ -12,15 +12,20 @@ const HomePage = () =>{
   const [posts, setPosts] = useState([]); // 게시물 리스트
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
   const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수
+  const [searchQuery, setSearchQuery] = useState('');
 
   // 게시물 데이터 가져오기 (API 호출)
   useEffect(() => {
     const fetchPosts = async () => {
       setLoading(true);
       setError(null);
-      
       try{
-        const data = await getAllPosts(currentPage, 10);
+        let data;
+        if(searchQuery){
+          data = await searchPost(searchQuery);
+        }else{
+          data = await getAllPosts(currentPage, 10);
+        }
         setPosts(data.posts || []);
         setTotalPages(data.totalPages);
       }catch(err){
@@ -30,7 +35,7 @@ const HomePage = () =>{
       }
     }
     fetchPosts();
-  }, [currentPage]) // currentPage 가 변경 될 때마다 호출
+  }, [currentPage, searchQuery]) // currentPage 가 변경 될 때마다 호출
 
   if(loading) return <p>Loading.......</p>;
   if(error) return <p>{error}</p>;
@@ -38,6 +43,16 @@ const HomePage = () =>{
   return(
     <div className='home-page'>
       <Sidebar />
+
+      <div>
+        <input 
+          type='text'
+          placeholder='검색어를 입력해주세요'
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <button onClick={() => setCurrentPage(1)}>검색</button>
+      </div>
       <h1 style={{marginLeft: '20px'}}>Post</h1>
       <div className='post-list'>
         {posts.length === 0 ? (

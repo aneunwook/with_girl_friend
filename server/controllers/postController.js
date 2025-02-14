@@ -1,11 +1,13 @@
 import Post from '../models/postModel.js';
+import { Op } from 'sequelize';
 
 const createPost = async (req, res) => {
   try {
     const { user_id, title, description, tags } = req.body;
 
     const newPost = await Post.create({
-      user_id, title, description, tags
+      user_id, title, description, 
+      tags : Array.isArray(tags) ? tags : tags.split(',').map(tag => tag.trim()) // 배열로 변환
     });
     return res.status(200).json(newPost);
   } catch (err) {

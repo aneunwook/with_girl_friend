@@ -1,3 +1,4 @@
+import { query, response } from 'express';
 import axiosInstance from '../axiosInstance';
 
 const api_url = '/posts';
@@ -26,7 +27,6 @@ export const getPosts = async (page, limit) => {
     throw err;
   }
 };
-
 
 export const createPost = async (data) => {
   try {

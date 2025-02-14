@@ -1,48 +1,84 @@
+.LoveDayContainer{
+  display: flex;
+  justify-content: center; /* 🔥 가로 중앙 정렬 */
+  align-items: center; /* 🔥 세로 중앙 정렬 */
+}
+
 .loveDay {
-  width: 100%;
+  margin-top: 40px;
+  width: 90%;
+  max-width: 600px;
   height: 300px;
   background-color: pink;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* ✅ 세로 중앙 정렬 */
+  justify-content: center;
   align-items: center;
+  border-radius: 30px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.howLong {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+  margin-bottom: 10px;
 }
 
 .howLongText {
   text-align: center;
-  font-size: 50px;
+  font-size: 25px;
 }
 
 .loveDayInfo {
   display: flex;
-  justify-content: center; /* ✅ 가로 중앙 정렬 */
+  justify-content: center;
   align-items: center;
+  margin-top: 5px;
+  background: rgba(255, 255, 255, 0.3);
+  padding: 10px 20px;
+  border-radius: 20px;
 }
 
 .row {
   display: flex;
-  align-items: center; /* ✅ 숫자+텍스트+콜론 정렬 */
-  gap: 15px;
+  align-items: center;
+  gap: 10px; /* 🔥 간격 조금 줄임 */
 }
 
 .timeBox {
+  width: 80px; /* 🔥 크기 줄이기 */
+  height: 80px; /* 🔥 정사각형으로 */
   display: flex;
-  flex-direction: column; /* ✅ 숫자와 단위 세로 정렬 */
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
+  background: white;
+  border-radius: 50%; /* 🔥 완전한 원형 */
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .timeBox h3 {
-  font-size: 40px;
-  margin: 0;
+  font-size: 20px; /* 🔥 크기 줄이기 */
+  font-weight: bold;
+  color: #ff4d6d;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.2);
+  margin-bottom: 2px; /* 🔥 간격 조정 */
 }
 
 .timeBox span {
-  font-size: 16px;
+  font-size: 12px;
+  color: #333;
+  font-weight: 500;
 }
 
 .colonBox {
-  font-size: 40px;
+  font-size: 30px;
   font-weight: bold;
-  margin: 0 5px;
+  color: #ff4d6d;
+  margin: 0 5px; /* 🔥 더 컴팩트하게 */
 }

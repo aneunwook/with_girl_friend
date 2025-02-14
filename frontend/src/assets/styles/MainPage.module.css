@@ -1,0 +1,48 @@
+.buttonBox{
+    width: 100%;
+    height: 650px;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-top: 30px;
+}
+
+.postBox, .TripBox, .postBox{
+    display: flex;
+    flex-direction: column; /* 🔥 세로 정렬 */
+    background-color: white;
+    width: 300px; /* 동일한 크기 */
+    height: 450px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 30px;
+    text-align: center;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.boradLink i, .tripsLink i, .anniversaryLink i {
+    font-size: 60px;
+    width: 100px; /* 동일한 너비 */
+    height: 100px; /* 동일한 높이 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+}
+
+.boradLink:hover .postBox,
+.tripsLink:hover .TripBox,
+.anniversaryLink:hover .postBox {
+    transform: scale(1.1); /* 약간 확대 */
+}
+
+.boradLink, .tripsLink, .anniversaryLink {
+    text-decoration-line: none;
+    font-size: 20px;
+}
+
+.postBox span, .TripBox span {
+    font-size: 18px;
+    font-weight: bold;
+    color: black;
+}

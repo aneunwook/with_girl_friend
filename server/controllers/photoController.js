@@ -60,6 +60,30 @@ export const createPostWithPhotos = async (req, res) => {
   }
 };
 
+export const searchPostsByTag = async (req, res) => {
+  try {
+    console.log("📢 검색 요청 도착! query:", req.query.query);  // ✅ 서버에서 요청 확인!
+
+    const { query } = req.query;
+
+    const postSearch = await Post.findAll({
+      where : {
+        [Op.or] : [
+          {title : { [Op.like] : `%${query}%`}},
+          {tags : { [Op.like] : `%${query}%`}}
+        ]
+      }
+    });
+
+    console.log("🔎 검색 결과:", postSearch);  // ✅ 검색된 데이터 확인
+
+    return res.status(200).json(postSearch);
+  }catch (err) {
+    console.error('Error searching posts:', err);
+    return res.status(500).send('Error searching posts');
+  }
+}
+
 export const getAllPosts = async (req, res) => {
   try {
     // 쿼리 파라미터에서 page와 limit 값을 가져옴, 기본값은 1페이지, 10개씩

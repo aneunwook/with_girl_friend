@@ -42,6 +42,20 @@ export const uploadPosts = async (files) => {
   }
 }
 
+export const searchPost = async (query) => {
+  try{
+    console.log("🔍 요청 URL:", `${api_url}/search`);  // ✅ URL 확인 로그
+
+    const response = await axiosInstance.get(`${api_url}/search`, {
+      params: { query }
+    });
+    console.log("🔍 검색 결과:", response.data);  // ✅ 서버에서 받은 데이터 확인
+      return response.data;
+  } catch (err) {
+    console.error('요청 실패:', err);
+    throw err;
+  }
+}
 
 export const createPostWithPhotos = async (data) => {
     try {

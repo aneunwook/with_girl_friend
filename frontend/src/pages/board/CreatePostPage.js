@@ -40,7 +40,7 @@ const CreatePostPage = () => {
             const imageUrl = urls[0]; // 업로드된 상대 경로
 
             // 절대 경로 변환
-            const absoluteImageUrl = `http://localhost:3000${imageUrl}`;
+            const absoluteImageUrl = `http://localhost:5000${imageUrl}`;
 
             // Quill 에디터에 이미지 삽입
             const editor = quillRef.current.getEditor();

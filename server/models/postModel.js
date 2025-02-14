@@ -30,9 +30,17 @@ const Post = sequelize.define(
     },
 
     tags: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.TEXT,
       allowNull: true, // 태그는 선택사항으로 설정
+      //JSON형식 으로 저장하기
+      get(){
+        return this.getDataValue('tags') ? JSON.parse(this.getDataValue('tags')) : [];
+      },
+      set(value){
+        this.setDataValue('tags', JSON.stringify(value));
+      }
     },
+
     is_private: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,

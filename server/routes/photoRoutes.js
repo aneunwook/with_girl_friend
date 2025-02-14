@@ -4,7 +4,8 @@ import {
   getPostDetails,
   updatePostWithPhotos,
   deletePostWithPhotos,
-  uploadPhotos
+  uploadPhotos,
+  searchPostsByTag
 } from '../controllers/photoController.js';
 import express from 'express';
 import upload from '../middleware/upload.js';
@@ -18,5 +19,6 @@ router.get('/allPost', getAllPosts);
 router.get('/:id', authMiddleware, getPostDetails);
 router.put('/:id', authMiddleware, upload.array('photos'), updatePostWithPhotos);
 router.delete('/:id', authMiddleware, deletePostWithPhotos);
+router.get('/search', searchPostsByTag);
 
 export default router;
