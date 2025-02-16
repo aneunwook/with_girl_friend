@@ -5,9 +5,15 @@ const createPost = async (req, res) => {
   try {
     const { user_id, title, description, tags } = req.body;
 
+    const tagsArray = Array.isArray(tags)
+      ? tags
+      : tags.split(',').map((tag) => tag.trim());
+
     const newPost = await Post.create({
-      user_id, title, description, 
-      tags : Array.isArray(tags) ? tags : tags.split(',').map(tag => tag.trim()) // 배열로 변환
+      user_id,
+      title,
+      description,
+      tags: tagsArray,
     });
     return res.status(200).json(newPost);
   } catch (err) {

@@ -22,35 +22,34 @@ const MainPage = ({}) => {
       <LoveDay user={user} />
 
       <div className={styles.buttonBox}>
-    <Link to='/post' className={styles.boradLink}>
-        <div className={styles.postBox}>
+        <Link to="/post" className={styles.boradLink}>
+          <div className={styles.postBox}>
             <i class="fa-regular fa-clipboard"></i>
             <span>post</span>
-        </div>
-    </Link>
+          </div>
+        </Link>
 
-    <Link to='/trips' className={styles.tripsLink}>
-        <div className={styles.TripBox}>
+        <Link to="/trips" className={styles.tripsLink}>
+          <div className={styles.TripBox}>
             <i class="fa-solid fa-plane"></i>
             <span>trips</span>
-        </div>
-    </Link>
+          </div>
+        </Link>
 
-    <Link to='/anniversary' className={styles.anniversaryLink}>
-        <div className={styles.postBox}>
+        <Link to="/anniversary" className={styles.anniversaryLink}>
+          <div className={styles.postBox}>
             <i class="fa-regular fa-calendar-days"></i>
             <span>anniversary</span>
-        </div>
-    </Link>
+          </div>
+        </Link>
 
-    <Link to='/playlist' className={styles.tripsLink}>
-        <div className={styles.TripBox}>
+        <Link to="/playlist" className={styles.tripsLink}>
+          <div className={styles.TripBox}>
             <i class="fa-solid fa-music"></i>
             <span>playlist</span>
-        </div>
-    </Link>
-</div>
-
+          </div>
+        </Link>
+      </div>
     </div>
   );
 };

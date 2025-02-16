@@ -40,7 +40,7 @@ const CreatePostPage = () => {
             const imageUrl = urls[0]; // 업로드된 상대 경로
 
             // 절대 경로 변환
-            const absoluteImageUrl = `http://localhost:5000${imageUrl}`;
+            const absoluteImageUrl = `http://localhost:3000${imageUrl}`;
 
             // Quill 에디터에 이미지 삽입
             const editor = quillRef.current.getEditor();
@@ -71,20 +71,25 @@ const CreatePostPage = () => {
     const token = localStorage.getItem('token');
 
     if (!token) {
-      console.error("🚨 인증 토큰이 없습니다!");
+      console.error('🚨 인증 토큰이 없습니다!');
       return;
     }
 
     const decodedToken = JSON.parse(atob(token.split('.')[1])); // Base64 디코딩
-  const userId = decodedToken.id; // JWT에 저장된 사용자 ID 가져오기
+    const userId = decodedToken.id; // JWT에 저장된 사용자 ID 가져오기
 
-  console.log("✅ JWT에서 추출한 사용자 ID:", userId);
+    console.log('✅ JWT에서 추출한 사용자 ID:', userId);
 
+    // 태그를 공백(혹은 쉼표) 기준으로 분리하고 배열로 변환
+    const tagsArray = formData.tags
+      .split(',') // 쉼표로 구분
+      .map((tag) => tag.trim()) // 공백 제거
+      .map((tag) => tag.replace('#', '')); // # 기호 제거
 
     const data = {
       title: formData.title,
       description: content.trim(),
-      tags: formData.tags,
+      tags: tagsArray,
       user_id: userId, // 사용자 ID (예시)
       photoUrls, // 업로드된 이미지 URL 리스트
     };

@@ -1,0 +1,52 @@
+.playlistContainer {
+  display: flex;
+}
+
+.spotifyLogin {
+  background-color: greenyellow;
+  border: none;
+  padding: 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.spotifyLogin:hover {
+  transform: scale(1.1);
+}
+
+.playlistAdd {
+  cursor: pointer;
+
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.playlistAdd:hover {
+  transform: scale(1.3);
+  color: gray;
+}
+
+.playlist {
+  width: 250px;
+  height: 650px;
+  border: 1px solid;
+  padding: 10px;
+}
+
+.playlistTitle {
+  display: flex;
+  justify-content: space-between;
+}
+
+.playlistAdd {
+  font-size: 30px;
+  margin-top: 20px;
+}
+
+.listName {
+  height: 30px;
+  border-radius: 10px;
+  border: none;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}

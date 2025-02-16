@@ -4,6 +4,8 @@ import Post from '../models/postModel.js';
 import Photo from '../models/photoModel.js';
 import fs from 'fs';
 import path from 'path';
+import { Op } from 'sequelize';
+import User from '../models/userModel.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -62,27 +64,39 @@ export const createPostWithPhotos = async (req, res) => {
 
 export const searchPostsByTag = async (req, res) => {
   try {
-    console.log("📢 검색 요청 도착! query:", req.query.query);  // ✅ 서버에서 요청 확인!
+    console.log('📢 요청 URL:', req.url); // ✅ 서버에서 실제 요청된 URL 확인
+    console.log('📢 검색 요청 도착! query:', req.query.query); // ✅ 서버에서 요청 확인!
 
     const { query } = req.query;
 
+    console.log('📢 검색 요청 도착! query:', query); // ✅ 요청 로그
+
+    if (!query || query.trim() === '') {
+      return res.status(400).json({ message: '검색어를 입력해주세요.' });
+    }
+
     const postSearch = await Post.findAll({
-      where : {
-        [Op.or] : [
-          {title : { [Op.like] : `%${query}%`}},
-          {tags : { [Op.like] : `%${query}%`}}
-        ]
-      }
+      where: {
+        [Op.or]: [
+          { title: { [Op.like]: `%${query}%` } },
+          { tags: { [Op.like]: `%${query}%` } },
+        ],
+      },
     });
 
-    console.log("🔎 검색 결과:", postSearch);  // ✅ 검색된 데이터 확인
+    if (postSearch.length === 0) {
+      console.log('❌ 검색 결과 없음');
+      return res.status(200).json({ posts: [], totalPages: 1 }); // ✅ 빈 배열 반환
+    }
+
+    console.log('🔎 검색 결과:', postSearch); // ✅ 검색된 데이터 확인
 
     return res.status(200).json(postSearch);
-  }catch (err) {
+  } catch (err) {
     console.error('Error searching posts:', err);
     return res.status(500).send('Error searching posts');
   }
-}
+};
 
 export const getAllPosts = async (req, res) => {
   try {
@@ -145,6 +159,11 @@ export const getPostDetails = async (req, res) => {
           as: 'postPhotos', // 관계 이름
           attributes: ['id', 'photo_url', 'created_at'], // 사진 URL 및 생성일 포함
         },
+        {
+          model: User,
+          as: 'author',
+          attributes: ['name'],
+        },
       ],
     });
 
@@ -152,8 +171,10 @@ export const getPostDetails = async (req, res) => {
       return res.status(404).json({ error: '게시물을 찾을 수 없습니다.' });
     }
 
-    if(post.user_id !== req.user.id){
-      return res.status(403).json({ error: '이 게시물에 대한 권한이 없습니다.'});
+    if (post.user_id !== req.user.id) {
+      return res
+        .status(403)
+        .json({ error: '이 게시물에 대한 권한이 없습니다.' });
     }
 
     res.status(200).json(post); // 게시물과 관련된 사진들을 함께 반환
@@ -238,7 +259,7 @@ export const updatePostWithPhotos = async (req, res) => {
 
 export const deletePostWithPhotos = async (req, res) => {
   const t = await sequelize.transaction();
-  
+
   try {
     const { id } = req.params;
     const userId = req.user.id; // 현재 로그인한 사용자 ID (토큰에서 가져옴)
@@ -251,10 +272,10 @@ export const deletePostWithPhotos = async (req, res) => {
       return res.status(404).json({ message: '게시물이 존재하지 않습니다' });
     }
 
-     // 게시물 소유자 검증 (현재 로그인한 사용자와 게시물 작성자 비교)
-     if (post.user_id !== userId) {
-      return res.status(403).json({ message: "삭제할 권한이 없습니다." });
-  }
+    // 게시물 소유자 검증 (현재 로그인한 사용자와 게시물 작성자 비교)
+    if (post.user_id !== userId) {
+      return res.status(403).json({ message: '삭제할 권한이 없습니다.' });
+    }
 
     // 게시물 삭제 (연결된 사진도 함께 삭제됨, `onDelete: CASCADE` 설정 덕분)
     await post.destroy({ transaction: t });

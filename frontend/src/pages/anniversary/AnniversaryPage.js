@@ -12,7 +12,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import 'dayjs/locale/ko';
 import Modal from '../../components/Modal.js';
-import '../../assets/styles/Anniversary.css';
+import styles from '../../assets/styles/Anniversary.module.css';
 
 dayjs.extend(relativeTime);
 dayjs.locale('ko');
@@ -40,36 +40,51 @@ const AnniversaryPage = () => {
     return `D${diff > 0 ? '-' : '+'}${Math.abs(diff)}`;
   };
 
-  // 🎯 백엔드에서 기념일 목록 가져오기
   const fetchAnniversaries = async () => {
     try {
-      const startDate = new Date();
+      const startDate = new Date(); // 오늘 날짜
       const endDate = new Date(
-        startDate.getFullYear(),
-        startDate.getMonth() + 1,
-        0
+        startDate.getFullYear() + 10,
+        startDate.getMonth(),
+        startDate.getDate()
+      ); // 10년 후
+
+      const formattedStartDate = startDate.toISOString().split('T')[0];
+      const formattedEndDate = endDate.toISOString().split('T')[0];
+
+      console.log(
+        '📡 요청할 날짜 범위:',
+        formattedStartDate,
+        '~',
+        formattedEndDate
       );
+
       const data = await getAnniversariesByDateRange(
-        startDate.toISOString().split('T')[0],
-        endDate.toISOString().split('T')[0]
+        formattedStartDate,
+        formattedEndDate
       );
 
-      console.log('📡 가져온 기념일 데이터:', data);
+      console.log('📡 서버에서 받아온 데이터:', data);
 
-      // 데이터를 FullCalendar에서 사용할 형식으로 변환
+      if (!data || data.length === 0) {
+        console.warn('⚠️ 기념일 데이터 없음! (백엔드 문제 가능성)');
+      }
+
       const formattedEvents = data.map((item) => ({
         id: item.id,
         title: item.name,
         start: item.anniversary_date,
         extendedProps: {
           description: item.description,
-          dDay: calculateDDay(item.anniversary_date), // D-Day 값 추가
+          dDay: calculateDDay(item.anniversary_date),
         },
       }));
 
+      console.log('🗓️ 캘린더에 추가할 이벤트:', formattedEvents);
+
       setEvents(formattedEvents);
     } catch (err) {
-      console.error('기념일 불러오기 실패:', err);
+      console.error('❌ 기념일 불러오기 실패:', err);
     }
   };
 
@@ -77,10 +92,6 @@ const AnniversaryPage = () => {
     fetchAnniversaries();
   }, []);
 
-  const filteredEvents =
-    filter === '전체'
-      ? events
-      : events.filter((event) => event.category === filter);
   const sortedEvents = [...events].sort((a, b) => {
     const aDiff = dayjs(a.start).diff(dayjs(), 'day');
     const bDiff = dayjs(b.start).diff(dayjs(), 'day');
@@ -126,15 +137,15 @@ const AnniversaryPage = () => {
 
       console.log('✅ 새로운 기념일:', response);
 
-      setEvents([
-        ...events,
+      setEvents((prevEvents) => [
+        ...prevEvents,
         {
           id: response.date.id,
           title: response.date.name,
           start: response.date.anniversary_date,
           extendedProps: {
             description: response.date.description,
-            category: response.date.category, // ✅ 카테고리 추가
+            dDay: calculateDDay(response.date.anniversary_date),
           },
         },
       ]);
@@ -148,7 +159,9 @@ const AnniversaryPage = () => {
   };
 
   // 🎯 기념일 수정
-  const handleUpdate = async () => {
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+
     if (!selectedEvent) return;
 
     try {
@@ -203,46 +216,53 @@ const AnniversaryPage = () => {
   };
 
   return (
-    <div className="calendar-container">
-      <h1>🎉 기념일 캘린더</h1>
-      <div className="filter-section">
-        <h3>필터</h3>
-        <select onChange={(e) => setFilter(e.target.value)} value={filter}>
-          <option value="전체">전체</option>
-          {categories.map((cat) => (
-            <option key={cat} value={cat}>
-              {cat}
-            </option>
-          ))}
-        </select>
+    <div className={styles.calendarContainer}>
+      <div className={styles.calendarHeader}>
+        <p className={styles.calendarTitle}>Our Shared Anniversary</p>
+        <div className={styles.calendarSubHeader}>
+          <p className={styles.calendarSubTitle}>
+            Celebrate and save your anniversary
+          </p>
+        </div>
       </div>
-      <FullCalendar
-        className="fc-daygrid-day-events"
-        plugins={[dayGridPlugin, interactionPlugin]}
-        initialView="dayGridMonth"
-        events={events}
-        dateClick={handleDateClick}
-        eventClick={handleEventClick}
-        dayMaxEventRows={2} // 한 날짜에 최대 2개의 이벤트만 표시
-        height="auto"
-        eventContent={(info) => (
-          <div className="custom-event">
-            <strong>
-              {info.event.title} ({info.event.extendedProps.dDay})
-            </strong>
-          </div>
-        )}
-      />
 
-      <div className="dday-container">
-        <h2>D-Day 목록</h2>
-        <ul>
-          {sortedEvents.map((event) => (
-            <li key={event.id}>
-              <strong>{event.extendedProps.dDay}</strong> - {event.title}
-            </li>
-          ))}
-        </ul>
+      <div className={styles.fullCalendarInfoContainer}>
+        <div className={styles.fullCalendarInfo}>
+          <FullCalendar
+            className={styles.fcDaygridDayDvents}
+            plugins={[dayGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            events={events}
+            dateClick={handleDateClick}
+            eventClick={handleEventClick}
+            dayMaxEventRows={2} // 한 날짜에 최대 2개의 이벤트만 표시
+            height="auto"
+            eventContent={(info) => (
+              <div className={styles.customEvent}>
+                <strong>{info.event.title}</strong>
+              </div>
+            )}
+          />
+        </div>
+
+        <div className={styles.ddayContainer}>
+          <div className={styles.ddayInfo}>
+            <h2 className={styles.ddayTitle}>D-Day</h2>
+            <hr className={styles.line}></hr>
+            <div className={styles.ddayList}>
+              {sortedEvents.map((event) => (
+                <div key={event.id} className={styles.ddayItem}>
+                  <strong className={styles.ddayContent}>
+                    <span className={styles.ddayTitleName}>{event.title}</span>
+                    <span className={styles.ddayDate}>
+                      {event.extendedProps.dDay}
+                    </span>
+                  </strong>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
 
         {modalVisible && (
           <Modal

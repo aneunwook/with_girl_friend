@@ -22,20 +22,12 @@ input:focus {
 }
 
 .title-input input {
-  width: 480px;
+  width: 450px;
   height: 50px;
   border: 0;
   font-size: 23px;
+  background: none;
 }
-
-/* .tags-input {
-  padding: 10px;
-  margin: 5px auto;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-} */
 
 .tags-input input {
   width: 480px;
@@ -46,6 +38,7 @@ input:focus {
   border: 1px solid #ddd;
   border-radius: 8px;
   margin-top: 50px;
+  background: none;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
@@ -68,8 +61,8 @@ input:focus {
   border: 1px solid #ddd;
   box-shadow: 0 4px 5px rgba(0, 0, 0, 0.1);
   text-align: center;
-  color: aquamarine;
-  background-color: blue;
+  color: white;
+  background-color: gray;
   margin-right: 10px;
   cursor: pointer;
 }
@@ -135,7 +128,7 @@ input:focus {
 }
 
 .ql-editor img {
-  max-width: 100%;  
+  max-width: 100%;
   display: block;
   margin: 0 auto;
 }

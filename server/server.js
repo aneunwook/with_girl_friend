@@ -14,7 +14,7 @@ import anniversaryRoutes from './routes/anniversaryRoutes.js';
 import photoRoutes from './routes/photoRoutes.js';
 import tripRoutes from './routes/tripRoutes.js';
 import coupleRoutes from './routes/coupleRoutes.js';
-import playlistRoutes from './routes/playlistRoutes.js'
+import playlistRoutes from './routes/playlistRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -38,7 +38,9 @@ app.use(express.json());
 app.use('/api/posts', postRoutes); // 여기에 CRUD 관련 라우트를 설정할 수 있습니다.
 app.use('/api/auth', userRoutes);
 app.use('/api/anniversaries', anniversaryRoutes);
+
 app.use('/api/photos', photoRoutes);
+console.log('🚀 photoRoutes 라우터 등록됨!', photoRoutes);
 app.use('/api/trips', tripRoutes);
 app.use('/api/couples', coupleRoutes);
 app.use('/api/playlists', playlistRoutes);

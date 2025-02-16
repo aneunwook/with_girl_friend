@@ -5,7 +5,7 @@ import {
   updatePostWithPhotos,
   deletePostWithPhotos,
   uploadPhotos,
-  searchPostsByTag
+  searchPostsByTag,
 } from '../controllers/photoController.js';
 import express from 'express';
 import upload from '../middleware/upload.js';
@@ -17,8 +17,14 @@ router.post('/upload', authMiddleware, upload.array('photos'), uploadPhotos);
 router.post('/photo', authMiddleware, createPostWithPhotos);
 router.get('/allPost', getAllPosts);
 router.get('/:id', authMiddleware, getPostDetails);
-router.put('/:id', authMiddleware, upload.array('photos'), updatePostWithPhotos);
+router.put(
+  '/:id',
+  authMiddleware,
+  upload.array('photos'),
+  updatePostWithPhotos
+);
 router.delete('/:id', authMiddleware, deletePostWithPhotos);
-router.get('/search', searchPostsByTag);
+// ✅ API 요청 로그 추가
+router.get('/whatSearch', searchPostsByTag);
 
 export default router;

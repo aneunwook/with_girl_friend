@@ -1,0 +1,113 @@
+/* src/assets/styles/HomePage.css */
+.homePage {
+  max-width: 1100px; /* 최대 너비 설정 */
+  margin: 0 auto; /* 가운데 정렬 */
+  padding: 0 20px; /* 내부 여백 */
+}
+
+.postBigTitleSearch {
+  display: flex;
+  align-items: center; /* 수직 중앙 정렬 */
+  justify-content: space-between; /* 양 끝으로 정렬 */
+  width: 100%; /* 부모 요소 가득 채우기 */
+}
+
+.postTitleBox {
+  display: flex;
+  flex-direction: column; /* 제목과 서브타이틀-버튼 영역을 수직으로 쌓음 */
+  width: 100%;
+  margin: 0 auto; /* 중앙 정렬 */
+}
+
+.postBigTitle {
+  font-size: 35px;
+  font-weight: 700;
+  font-family: 'Open Sans', serif;
+  margin-bottom: 8px;
+  background: linear-gradient(to right, #30cfd0, #330867);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.postSubTitleButton {
+  display: flex;
+  justify-content: space-between; /* 좌측: 서브타이틀, 우측: 버튼 */
+  align-items: center;
+  margin-right: 20px;
+}
+
+.postSubTitle {
+  font-size: 20px;
+  font-family: 'EB Garamond', serif;
+  background: linear-gradient(to right, #1e130c, #9a8478);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.postCreateButton {
+  padding: 10px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  background-color: #4a90e2;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.searchContainer {
+  display: flex;
+  align-items: center; /* 검색창과 버튼을 나란히 배치 */
+  margin-right: 10px;
+}
+
+.postCreateButton:hover {
+  background-color: #357ab7;
+}
+
+.postList {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 한 줄에 3개의 컬럼 */
+}
+
+.postCard {
+  width: 300px;
+  padding: 15px;
+  margin: 10px;
+  border: 1px solid #ddd;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.postCard h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.postCard p {
+  font-size: 1rem;
+  color: #555;
+}
+
+.postCardImg,
+.postImg {
+  width: 270px;
+  height: 150px;
+}
+
+.goToPostCardLink {
+  color: black; /* 방문 후에도 같은 색 유지 */
+  text-decoration: none;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.goToPostCardLink:visited {
+  color: black; /* 방문 후에도 같은 색 유지 */
+}
+
+.goToPostCardLink:hover {
+  color: black;
+  transform: scale(1.1); /* 약간 확대 */
+}

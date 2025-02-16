@@ -1,0 +1,257 @@
+/* 이벤트 리스트 영역 크기 제한 */
+.fcDaygridDayDvents {
+  max-height: 150px; /* 날짜 칸 내부 이벤트 높이 제한 */
+  overflow: hidden;
+  padding: 10px 20px;
+}
+
+/* 이벤트 요소 크기 제한 */
+.fc-event {
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  max-width: 100% !important;
+}
+
+/* "더보기" 버튼 스타일 */
+.fc-daygrid-more-link {
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* 반응형 - 작은 화면에서 박스 크기 조정 */
+@media (max-width: 768px) {
+  .calendar-day {
+    height: 80px;
+    font-size: 10px;
+    width: calc(100% / 7); /* 너비도 함께 조정 */
+  }
+  .anniversary-item {
+    font-size: 10px;
+  }
+}
+
+.fullCalendarInfo {
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.calendarContainer {
+  height: 900px;
+}
+
+.calendarHeader {
+  display: flex;
+  flex-direction: column; /* 제목과 서브타이틀-버튼 영역을 수직으로 쌓음 */
+  max-width: 1200px; /* 최대 너비 설정 */
+  width: 90%;
+  margin: 0 auto; /* 중앙 정렬 */
+  padding: 10px 40px; /* 좌우 여백 */
+}
+
+.calendarTitle {
+  font-size: 35px;
+  font-weight: 700;
+  font-family: 'Open Sans', serif;
+  margin-bottom: 0px;
+  background: linear-gradient(to right, #30cfd0, #330867);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.calendarSubTitle {
+  font-size: 20px;
+  font-family: 'EB Garamond', serif;
+  background: linear-gradient(to right, #1e130c, #9a8478);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.fullCalendarInfoContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 20px;
+  gap: 20px;
+}
+
+.fullCalendarInfo {
+  width: 800px;
+  background-color: white;
+}
+
+.ddayContainer {
+  width: 300px;
+  height: 420px;
+  max-height: 420px;
+  background-color: white;
+  justify-items: center;
+  align-items: center;
+  border-radius: 10px;
+  overflow-y: auto; /* 세로로 스크롤 가능 */
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.3);
+}
+
+.ddayTitle {
+  text-align: center;
+}
+
+.ddayTitleName {
+  text-align: left; /* 왼쪽 정렬 */
+  flex: 1; /* 유동적인 크기 조정 */
+}
+
+.ddayDate {
+  text-align: right; /* 오른쪽 정렬 */
+}
+
+.ddayItem {
+  display: flex;
+  justify-content: space-between; /* 양쪽 정렬 */
+  align-items: center; /* 세로 정렬 */
+  width: 200px;
+  background-color: white;
+  border-radius: 10px;
+  padding: 10px 15px;
+  text-align: center;
+  margin-top: 15px;
+  box-shadow: 0px -4px 10px rgba(0, 0, 0, 0.1),
+    /* 위쪽 그림자 */ 0px 4px 10px rgba(0, 0, 0, 0.1); /* 아래쪽 그림자 */
+}
+
+.ddayContent {
+  width: 100%; /* 부모 요소가 꽉 차도록 설정 */
+  display: flex;
+  justify-content: space-between; /* 제목 왼쪽, 날짜 오른쪽 정렬 */
+}
+/* 모달 컨테이너 */
+.modalContainer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0); /* 초기 상태: 축소된 상태 */
+  width: 80%;
+  max-width: 600px;
+  height: 70%;
+  background: white;
+  max-height: 500px;
+  z-index: 1050 !important; /* 모달 우선순위 */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  opacity: 0; /* 초기 투명도 */
+  visibility: hidden; /* 모달 숨기기 */
+  transition: transform 0.4s ease-in-out, opacity 0.4s ease-in-out;
+}
+
+/* 모달 활성화 시 */
+.modalContainer.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+  z-index: 10001 !important; /* fc-popover보다 높은 값으로 설정 */
+}
+
+.closeButton {
+  position: absolute;
+  top: 10px; /* 상단으로부터 10px */
+  right: 10px; /* 오른쪽으로부터 10px */
+  background: none;
+  border: none;
+  font-size: 30px;
+  color: #333;
+  cursor: pointer;
+  padding: 5px;
+  transition: transform 0.3s ease, color 0.3s ease; /* 부드러운 변화를 위한 transition */
+}
+
+.closeButton:hover {
+  color: #ff0000; /* 호버 시 빨간색 */
+  transform: scale(1.5); /* 텍스트 크기 확대 */
+}
+/* 공통 버튼 스타일 */
+.btnFloat {
+  position: relative;
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  border: none;
+  background: gray;
+  cursor: pointer;
+  overflow: hidden;
+  border-radius: 5px;
+  transition: all 0.2s ease-in-out;
+}
+
+.btnFloat:before {
+  content: '';
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0px 0px 0px 0px rgba(0, 0, 0, 0.4);
+  z-index: -1; /* 배경을 텍스트 뒤로 */
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.editButton,
+.deleteButton {
+  display: inline-block;
+  width: auto;
+}
+
+.deleteButton:hover {
+  transform: scale(1.1); /* 텍스트 크기 확대 */
+}
+
+.editButton:hover {
+  transform: scale(1.1); /* 텍스트 크기 확대 */
+}
+
+.modalContainer form {
+  display: flex;
+  flex-direction: column; /* 수직 정렬 */
+  gap: 15px; /* 요소 간 간격 추가 */
+}
+
+.anniversaryName,
+.anniversaryDescription {
+  width: 300px;
+  height: 50px;
+  margin-top: 20px;
+  border: none;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 5px;
+  box-shadow: none;
+  -webkit-transition: all 0.1s ease-out;
+  transition: all 0.1s ease-out;
+}
+
+.customEvent {
+  background: linear-gradient(135deg, #ff9a9e 10%, #fad0c4 100%);
+  color: white;
+  padding: 1px;
+  border-radius: 5px;
+  font-size: 0.9em;
+  text-align: center;
+  border: none;
+}
+
+.line {
+  border: 0.1px solid gray;
+}
