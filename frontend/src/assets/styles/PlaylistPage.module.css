@@ -1,5 +1,18 @@
 .playlistContainer {
   display: flex;
+  padding: 30px;
+}
+
+.playlist {
+  width: 250px;
+  height: 600px;
+  max-height: 700px;
+  border: 0.1px;
+  border-radius: 10px;
+
+  padding: 10px;
+  background-color: #3db9e0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
 .spotifyLogin {
@@ -17,20 +30,12 @@
 
 .playlistAdd {
   cursor: pointer;
-
   transition: background-color 0.3s, transform 0.2s;
 }
 
 .playlistAdd:hover {
   transform: scale(1.3);
   color: gray;
-}
-
-.playlist {
-  width: 250px;
-  height: 650px;
-  border: 1px solid;
-  padding: 10px;
 }
 
 .playlistTitle {
@@ -44,9 +49,60 @@
 }
 
 .listName {
-  height: 30px;
-  border-radius: 10px;
+  width: 100%;
+  height: 50px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-size: 15px;
   border: none;
   padding: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.playlists {
+  display: flex;
+  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: space-between; /* X 버튼은 오른쪽으로 */
+  width: 100%;
+  height: 50px;
+  border-bottom: 0.1px solid;
+  margin-bottom: 10px;
+  font-size: 25px;
+  cursor: pointer;
+  padding: 0 10px; /* 좌우 여백 */
+}
+
+.playlistDelete {
+  margin-left: auto; /* X 버튼을 오른쪽 끝으로 이동 */
+}
+
+.playlists:hover {
+  transform: scale(1);
+  background-color: aliceblue;
+  border-radius: 7px;
+  transition: background-color 0.3s, transform 0.2s;
+  color: gray;
+}
+
+ul {
+  list-style: none; /* 점 없애기 */
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  margin: 0; /* 혹시 있을지도 모르는 기본 마진 제거 */
+  padding: 10px; /* 필요하면 조정 */
+}
+
+.playlistDelete {
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.playlistDelete:hover {
+  transform: scale(1.3);
+  color: gray;
 }

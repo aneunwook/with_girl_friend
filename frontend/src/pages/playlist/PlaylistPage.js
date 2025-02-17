@@ -76,39 +76,43 @@ const PlaylistPage = ({ handleLogin }) => {
         </div>
 
         <ul>
-          {playlists.map((playlist) => (
-            <PlaylistItem
-              key={playlist.id}
-              playlist={playlist}
-              onDelete={handleDeletePlaylist}
-              onClick={() => setSelectedPlaylist(playlist.id)}
-            />
-          ))}
           {showCreateBox && (
             <div>
               <input
                 ref={inputRef}
                 type="text"
-                className={styles.listName}
+                className={`${styles.listName} ${
+                  showCreateBox ? styles.show : ''
+                }`}
                 placeholder="새 플레이리스트 이름"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleAddPlayList()} // ✅ 엔터 누르면 추가
-                onBlur={handleAddPlayList} // ✅ 다른 곳 클릭하면 추가
-                autoFocus // ✅ 자동 포커스
+                onKeyDown={(e) => e.key === 'Enter' && handleAddPlayList()}
+                onBlur={handleAddPlayList}
+                autoFocus
               />
-
-              <button
-                onClick={() => {
-                  handleCreatePlaylist();
-                  setShowCreateBox(false);
-                }}
-                className={styles.listAddButton}
-              >
-                추가
-              </button>
             </div>
           )}
+
+          {playlists.slice().map((playlist, index) => (
+            <PlaylistItem
+              key={playlist.id}
+              playlist={{
+                ...playlist,
+                name: (
+                  <>
+                    <i
+                      className="fa-solid fa-headphones-simple"
+                      style={{ marginRight: '8px', color: '#ff4081' }}
+                    ></i>
+                    {playlist.name}{' '}
+                  </>
+                ),
+              }}
+              onDelete={handleDeletePlaylist}
+              onClick={() => setSelectedPlaylist(playlist.id)}
+            />
+          ))}
         </ul>
       </div>
 

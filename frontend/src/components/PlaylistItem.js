@@ -1,12 +1,21 @@
-import React from "react";
+import React from 'react';
+import styles from '../assets/styles/PlaylistPage.module.css';
 
-const PlaylistItem = ({ playlist, onDelete, onClick}) => {
-    return (
-        <li onClick={onClick} style={{ cursor: "pointer", padding: "10px", borderBottom: "1px solid #ddd" }}>
-            {playlist.name}{" "}
-            <button onClick={(e) => { e.stopPropagation(); onDelete(playlist.id); }}>삭제</button>
-        </li>       
-    )
-}
+const PlaylistItem = ({ playlist, onDelete, onClick }) => {
+  return (
+    <li onClick={onClick} className={styles.playlists}>
+      {playlist.name}{' '}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete(playlist.id);
+        }}
+        className={styles.playlistDelete}
+      >
+        <i className={`fa-solid fa-x ${styles.customIcon}`}></i>
+      </button>
+    </li>
+  );
+};
 
 export default PlaylistItem;
