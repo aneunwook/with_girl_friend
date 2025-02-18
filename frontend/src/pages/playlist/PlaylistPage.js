@@ -94,7 +94,7 @@ const PlaylistPage = ({ handleLogin }) => {
             </div>
           )}
 
-          {playlists.slice().map((playlist, index) => (
+          {playlists.slice().map((playlist) => (
             <PlaylistItem
               key={playlist.id}
               playlist={{
@@ -102,7 +102,7 @@ const PlaylistPage = ({ handleLogin }) => {
                 name: (
                   <>
                     <i
-                      className="fa-solid fa-headphones-simple"
+                      className={`fa-solid fa-headphones-simple ${styles.customIcon}`}
                       style={{ marginRight: '8px', color: '#ff4081' }}
                     ></i>
                     {playlist.name}{' '}
@@ -116,11 +116,13 @@ const PlaylistPage = ({ handleLogin }) => {
         </ul>
       </div>
 
-      <div>
+      <div className={styles.playlistSongContainer}>
         {selectedPlaylist ? (
           <PlaylistSongPage playlistId={selectedPlaylist} />
         ) : (
-          <p>🎵 플레이리스트를 선택해주세요</p>
+          <p className={styles.plsSelectPlaylist}>
+            🎵 플레이리스트를 선택해주세요
+          </p>
         )}
       </div>
     </div>

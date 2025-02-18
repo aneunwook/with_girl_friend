@@ -8,7 +8,7 @@ import {
 } from '../../service/playlist/playlistService.js';
 import SpotifyPlayer from './SpotifyPlayer.js';
 import axios from 'axios';
-import PlaylistPage from './PlaylistPage.js';
+import styles from '../../assets/styles/PlaylistPage.module.css';
 
 const PlaylistSongsPage = ({ playPlaylist, playlistId }) => {
   console.log('✅ PlaylistSongsPage 렌더링됨!');
@@ -25,6 +25,7 @@ const PlaylistSongsPage = ({ playPlaylist, playlistId }) => {
   const [playPause, setPlayPause] = useState(null);
   const [prevTrack, setPrevTrack] = useState(null);
   const [nextTrack, setNextTrack] = useState(null);
+  const [showResults, setShowResults] = useState(false);
 
   useEffect(() => {
     loadSongs();
@@ -35,7 +36,7 @@ const PlaylistSongsPage = ({ playPlaylist, playlistId }) => {
   }, [playPlaylist]);
 
   useEffect(() => {
-    let isMounted = true; // ✅ 추가
+    let isMounted = true;
 
     const checkTokenExpiration = async () => {
       const token = localStorage.getItem('spotify_access_token');
@@ -94,8 +95,8 @@ const PlaylistSongsPage = ({ playPlaylist, playlistId }) => {
         setSearchResults([]); // 만약 배열이 아니면 빈 배열로 설정
         return;
       }
-
       setSearchResults(results);
+      setShowResults(true); // 검색 결과가 있으면 표시
     } catch (error) {
       console.error('곡 검색 실패:', error);
       setSongs([]); // 오류 발생 시 빈 배열로 설정
@@ -121,8 +122,8 @@ const PlaylistSongsPage = ({ playPlaylist, playlistId }) => {
     }
   };
 
-  // ✅ 개별 트랙 재생
-  // ✅ 특정 인덱스부터 플레이리스트 재생 함수
+  //  개별 트랙 재생
+  // 특정 인덱스부터 플레이리스트 재생 함수
   const playFromIndex = async (startIndex) => {
     if (!songs.length) {
       console.warn('🚨 플레이리스트가 비어 있음!');
@@ -186,16 +187,45 @@ const PlaylistSongsPage = ({ playPlaylist, playlistId }) => {
   };
 
   return (
-    <div>
-      <h2>🎵 플레이리스트 곡 목록</h2>
-      <h3>곡 검색</h3>
-      <input
-        type="text"
-        placeholder="곡 이름 검색"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-      />
-      <button onClick={handleSearch}>검색</button>
+    <div className={styles.songAllContainer}>
+      <div className={styles.titleSearchContainer}>
+        <h2>🎵 플레이리스트 곡 목록</h2>
+        <div className={styles.songSearchContainer}>
+          <input
+            type="text"
+            placeholder="곡 이름 검색"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+          <button onClick={handleSearch}>검색</button>
+        </div>
+        {showResults && (
+          <div className={styles.songSearchResults}>
+            <ul>
+              {searchResults.map((track) => (
+                <li key={track.id}>
+                  <img
+                    src={track.album_image}
+                    alt={track.album}
+                    width="50"
+                    height="50"
+                  />
+                  {track.name} - {track.artist} ({track.album}) {''}
+                  <button onClick={() => handleAddSong(track.id)}>추가</button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      <button onClick={handlePlayPlaylist} className={styles.playAll}>
+        <i
+          class={`fa-solid fa-play ${styles.playAllCustom}`}
+          title="전체재생"
+        ></i>
+      </button>
+
       <ul>
         {songs && songs.length > 0 ? (
           songs.map((song) => (
@@ -220,31 +250,8 @@ const PlaylistSongsPage = ({ playPlaylist, playlistId }) => {
         ) : (
           <p>곡이 없습니다.</p>
         )}
-        <button onClick={handlePlayPlaylist}>🎶 전체 재생</button>
       </ul>
 
-      <ul>
-        {searchResults?.map((track) => (
-          <li key={track.id}>
-            <img
-              src={track.album_image}
-              alt={track.album}
-              width="100"
-              height="100"
-            />
-            {track.name} - {track.artist} ({track.album}) {''}
-            {track.preview_url ? ( // preview_url이 있을 경우만 오디오 태그 표시
-              <audio controls>
-                <source src={track.preview_url} type="audio/mpeg" />
-                브라우저가 오디오 태그를 지원하지 않습니다.
-              </audio>
-            ) : (
-              <span>미리 듣기 없음</span> //  preview_url이 없을 경우
-            )}
-            <button onClick={() => handleAddSong(track.id)}>추가</button>
-          </li>
-        ))}
-      </ul>
       <button onClick={() => prevTrack && prevTrack()} disabled={!prevTrack}>
         ⏮ 이전
       </button>
