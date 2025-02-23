@@ -17,8 +17,10 @@ const TripModal = ({ trip, onClose, isLoading }) => {
     );
   }
 
-  const photos = trip.trip_photos || []; // 추가 사진 목록
-  const totalPhotos = photos.length; // 총 사진 개수
+  const photos =
+    trip.trip_photos && trip.trip_photos.length > 0 ? trip.trip_photos : [];
+
+  const totalPhotos = photos.length;
 
   // 다음 사진으로 이동
   const nextPhoto = () => {
@@ -44,7 +46,7 @@ const TripModal = ({ trip, onClose, isLoading }) => {
               <i className="fa-solid fa-chevron-left"></i>
             </button>
             <img
-              src={`http://localhost:5000${photos[currentIndex].photo_url}`}
+              src={`http://localhost:3000${photos[currentIndex].photo_url}`}
               alt={`여행 사진 ${currentIndex + 1}`}
               className="slider-image"
             />
@@ -67,11 +69,7 @@ const TripModal = ({ trip, onClose, isLoading }) => {
           ))}
         </div>
 
-        {trip.memos && trip.memos.length > 0 ? (
-          trip.memos.map((memo) => <p key={memo.id}>{memo.memo}</p>)
-        ) : (
-          <p>메모가 없습니다.</p>
-        )}
+        {trip.memo ? <p>{trip.memo}</p> : <p>메모가 없습니다.</p>}
 
         <button
           onClick={() => navigate(`/editTrip/${trip.id}`)}

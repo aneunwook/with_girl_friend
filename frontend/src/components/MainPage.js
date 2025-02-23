@@ -12,9 +12,6 @@ const images = [main1, main2, main4];
 
 const MainPage = ({}) => {
   const { user } = useContext(AuthContext); // ✅ useContext로 가져오기
-  console.log('MainPage에서 받은 user:', user); // ✅ 확인!
-
-  console.log('🔥 MainPage에서 받은 user:', user);
 
   return (
     <div>

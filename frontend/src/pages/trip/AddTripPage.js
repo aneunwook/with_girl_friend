@@ -40,7 +40,11 @@ const AddTripPage = ({ onTripAdded, existingTrips }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    if (name === 'memo') {
+      setFormData((prev) => ({ ...prev, memo: value }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
   const handlePhotoChange = (e) => {
@@ -64,11 +68,15 @@ const AddTripPage = ({ onTripAdded, existingTrips }) => {
         address: formData.address,
         memo: formData.memo,
         photo_url,
-        additionalPhotos,
-        additionalMemos: formData.additionalMemos,
+        additionalPhotos: additionalPhotos || [], // 추가 사진 배열 (undefined 방지)
+        additionalMemos: [formData.memo, ...formData.additionalMemos], // 기존 memo를 배열에 포함
       };
 
+      console.log('📌 저장할 여행 데이터:', tripData);
+
       const addResponse = await addTrip(tripData);
+      console.log('✅ DB 저장 결과:', addResponse);
+
       if (onTripAdded) {
         onTripAdded(addResponse.trip);
       }
@@ -79,7 +87,7 @@ const AddTripPage = ({ onTripAdded, existingTrips }) => {
         name: '',
         address: '',
         memo: '',
-        additionalMemos: [''],
+        additionalMemos: [],
       });
       setPhotos([]);
       setTempMarker(null);

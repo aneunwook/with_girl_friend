@@ -37,9 +37,6 @@ const PostCard = ({ post }) => {
           <strong>작성일: </strong>{' '}
           {new Date(post.created_at).toLocaleDateString()}
         </p>
-        {/* <button>
-        <Link to={`/photos/${post.id}`}>Go to Post</Link>
-      </button> */}
       </div>
     </Link>
   );

@@ -120,6 +120,9 @@ li {
   background-color: #3db9e0;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
   overflow: auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .plsSelectPlaylist {
@@ -158,10 +161,35 @@ li {
 }
 
 .songSearchContainer {
-  flex: 1; /* 검색창을 가운데 정렬 */
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%); /* 가로 중앙 정렬 */
   display: flex;
-  justify-content: center; /* 검색창을 가운데로 정렬 */
-  margin-right: 10%;
+  justify-content: center;
+}
+
+.songSearchContainer input {
+  width: 250px;
+  height: 35px;
+  border-radius: 10px;
+  padding: 10px 40px 10px 10px; /* 🔹 오른쪽 패딩 추가 (버튼 공간 확보) */
+  border: none;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.songSearchContainer button {
+  position: absolute;
+  right: 5px; /* 🔹 검색창 내부에 버튼 배치 */
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.songSearchContainer button i {
+  font-size: 16px;
+  color: gray;
 }
 
 .songSearchResults {
@@ -179,6 +207,130 @@ li {
   padding: 10px;
 }
 
+.songSearchResults table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.songSearchResults th,
+.songSearchResults td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.songSearchResults th {
+  background-color: #f4f4f4;
+}
+
+.songSearchResults img {
+  display: block;
+  margin: auto;
+  border-radius: 5px;
+}
+
+.songSearchResults button {
+  width: 70px;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.songSearchResults button:hover {
+  transform: scale(1.05);
+  border: 1px solid;
+}
+
+.myPlaylist {
+  margin-top: 20px;
+  overflow-y: scroll;
+}
+
+.myPlaylist table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.myPlaylist th,
+.myPlaylist td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.myPlaylist img {
+  width: 40px;
+  height: 40px;
+}
+
+.artistActions {
+  display: flex;
+  justify-content: space-between; /* 버튼과 텍스트 사이 여백 */
+  align-items: center; /* 수직 정렬 */
+  width: 100%; /* 부모 `td`의 크기를 유지 */
+}
+
+.artistActions span {
+  flex-grow: 1;
+  min-width: 100px;
+}
+
+.playSongButton {
+  width: 30px;
+  height: 30px;
+  background-color: greenyellow;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.songDeleteButton {
+  border: none;
+  background: none;
+  font-size: 17px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.songDeleteButton:hover,
+.playSongButton:hover {
+  transform: scale(1.15);
+}
+
+.myPlaylist,
+.playlist {
+  overflow-y: auto;
+  padding-bottom: 50px;
+}
+
+.controlSongs {
+  display: flex;
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 70px;
+  background: white;
+  padding: 10px 0;
+  text-align: center;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.prevStartNextButton {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* 버튼 간격 조정 */
+  margin-left: auto;
+}
+
+.spotifyPlayer {
+  margin-left: auto; /* SpotifyPlayer를 오른쪽 끝으로 밀어냄 */
+}
+
 .webPlayerContainer {
   font-size: 10px;
   margin-bottom: 0px;
@@ -189,4 +341,24 @@ li {
 .webPlayerloading {
   font-size: 10px;
   margin-bottom: 0px;
+}
+
+.nextButton,
+.prevButton {
+  border: 0;
+  background-color: white;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.nextButton:hover,
+.prevButton:hover {
+  color: #ccc;
+}
+
+.pauseStart {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  cursor: pointer;
 }

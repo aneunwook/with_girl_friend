@@ -74,13 +74,13 @@ const TripEditPage = (existingTrips) => {
 
   // 추가 사진 추가 버튼 클릭 시 호출
   const handleAddPhoto = () => {
-    setAdditionalPhotos([
-      ...additionalPhotos,
-      { id: null, photo_url: '' }, // 새로 추가된 사진은 id가 null
+    setAdditionalPhotos((prevPhotos) => [
+      ...prevPhotos,
+      { id: Date.now(), photo_url: '' }, // 새 사진 추가
     ]);
   };
 
-  const handlePhotoUpload = async (index, event) => {
+  const handlePhotoUpload = async (photoIndex, event) => {
     const file = event.target.files[0];
     if (!file) return;
 
@@ -90,10 +90,11 @@ const TripEditPage = (existingTrips) => {
     try {
       const data = await uploadTripPhoto(formData);
 
-      // 업로드된 사진의 URL을 상태에 반영
-      const newPhotos = [...additionalPhotos];
-      newPhotos[index].photo_url = data.photo_url; // 서버에서 받은 URL 저장
-      setAdditionalPhotos(newPhotos);
+      setAdditionalPhotos((prevPhotos) =>
+        prevPhotos.map((photo, idx) =>
+          idx === photoIndex ? { ...photo, photo_url: data.photo_url } : photo
+        )
+      );
     } catch (error) {
       console.error('업로드 실패:', error);
     }
@@ -108,7 +109,7 @@ const TripEditPage = (existingTrips) => {
 
     try {
       const data = await uploadTripPhoto(formData);
-      setPhotoUrl(file); // 여기에서 File 객체 저장
+      setPhotoUrl(data.photo_url); // 대표사진 업데이트
     } catch (error) {
       console.error('대표 사진 업로드 실패:', error);
     }
@@ -119,25 +120,6 @@ const TripEditPage = (existingTrips) => {
     const updatedPhotos = [...additionalPhotos]; //기존 리스트 복사
     updatedPhotos.splice(index, 1); // 해당 인덱스 삭제
     setAdditionalPhotos(updatedPhotos); // 상태 없데이트
-  };
-
-  // 추가 메모 추가 버튼 클릭 시 호출
-  const handleAddMemo = () => {
-    setAdditionalMemos([...additionalMemos, { id: null, memo: '' }]); // 새로 추가 된 메모는 id가 null
-  };
-
-  // 특정 메모 내용 변경
-  const handleMemoChange = (index, text) => {
-    const updatedMemo = [...additionalMemos];
-    updatedMemo[index].memo = text;
-    setAdditionalMemos(updatedMemo);
-  };
-
-  //특정 메모 삭제
-  const handleDeleteMemo = (index) => {
-    const updatedMemo = [...additionalMemos];
-    updatedMemo.splice(index, 1);
-    setAdditionalMemos(updatedMemo);
   };
 
   // 여행지 수정 API 호출
@@ -206,9 +188,39 @@ const TripEditPage = (existingTrips) => {
           />
           <h3 className="post-text">사진 첨부</h3>
         </div>
-        {/* 추가 사진 영역 */}
+
         <div className="edit-photo-container">
-          {[{ photo_url }, ...additionalPhotos].map((photo, index) => (
+          {/* 대표 사진 영역 */}
+          <div className="edit-photo-item">
+            {photo_url && (
+              <div className="photo-wrapper">
+                <img
+                  src={`http://localhost:3000${photo_url}`}
+                  alt="대표 사진"
+                  className="photo-preview"
+                />
+                <label htmlFor="main-image" className="custom-edit-button">
+                  <i className="fa-regular fa-pen-to-square"></i>
+                </label>
+                <button
+                  type="button"
+                  className="delete-button"
+                  onClick={() => setPhotoUrl('')} // 대표 사진 삭제
+                >
+                  <i className="fa-solid fa-x"></i>
+                </button>
+              </div>
+            )}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleMainPhotoUpload}
+              className="extra-image"
+              id="main-image"
+            />
+          </div>
+          {/* 추가 사진 영역 */}
+          {additionalPhotos.map((photo, index) => (
             <div key={index} className="edit-photo-item">
               {/* 미리보기 */}
               {photo.photo_url && (
@@ -217,26 +229,22 @@ const TripEditPage = (existingTrips) => {
                     src={
                       photo.photo_url instanceof File
                         ? URL.createObjectURL(photo.photo_url)
-                        : `http://localhost:5000${photo.photo_url}`
+                        : `http://localhost:3000${photo.photo_url}`
                     }
-                    alt={`추가 사진 ${index === 0 ? '대표' : index}`}
+                    alt={`추가 사진 ${index}`}
                     className="photo-preview"
                   />
                   <label
                     htmlFor={`extra-image-${index}`}
                     className="custom-edit-button"
                   >
-                    <i class="fa-regular fa-pen-to-square"></i>
+                    <i className="fa-regular fa-pen-to-square"></i>
                   </label>
-                  {/* 대표 사진 삭제는 photo_url 상태를 지우고, 추가 사진은 배열에서 제거 */}
+                  {/* 추가 사진 삭제 */}
                   <button
                     type="button"
                     className="delete-button"
-                    onClick={() =>
-                      index === 0
-                        ? setPhotoUrl('')
-                        : handleDeletePhoto(index - 1)
-                    }
+                    onClick={() => handleDeletePhoto(index)}
                   >
                     <i className="fa-solid fa-x"></i>
                   </button>
@@ -246,16 +254,13 @@ const TripEditPage = (existingTrips) => {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) =>
-                  index === 0
-                    ? handleMainPhotoUpload(e)
-                    : handlePhotoUpload(index - 1, e)
-                }
+                onChange={(e) => handlePhotoUpload(index, e)}
                 className="extra-image"
-                id={`extra-image-${index}`} // 각 input에 고유 id 부여
+                id={`extra-image-${index}`}
               />
             </div>
           ))}
+
           {/* 최대 10개까지만 추가 가능 */}
           {additionalPhotos.length < 10 && (
             <label
