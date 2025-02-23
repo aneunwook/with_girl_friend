@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { deleteTrip } from '../../service/trip/tripService.js';
 import '../../assets/styles/TripModal.css';
 
-const TripModal = ({ trip, onClose, isLoading }) => {
+const TripModal = ({ trip, onClose, onDelete, isLoading }) => {
   const navigate = useNavigate();
   const [currentIndex, setCurrentIndex] = useState(0); // 현재 이미지 인덱스 상태
 
@@ -30,6 +31,18 @@ const TripModal = ({ trip, onClose, isLoading }) => {
   // 이전 사진으로 이동
   const prevPhoto = () => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + totalPhotos) % totalPhotos);
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deleteTrip(trip.id);
+      alert('여행 기록이 삭제되었습니다');
+      onDelete(trip.id); // 삭제된 ID를 부모에게 전달
+      onClose(); // 모달 닫기
+    } catch (error) {
+      console.error('게시물 삭제 중 에러발생', error);
+      alert('여행 기록 삭제 실패');
+    }
   };
 
   return (
@@ -77,6 +90,7 @@ const TripModal = ({ trip, onClose, isLoading }) => {
         >
           수정
         </button>
+        <button onClick={handleDelete}>삭제</button>
       </div>
     </div>
   );

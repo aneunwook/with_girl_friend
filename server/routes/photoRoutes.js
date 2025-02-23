@@ -15,7 +15,7 @@ const router = express.Router();
 
 router.post('/upload', authMiddleware, upload.array('photos'), uploadPhotos);
 router.post('/photo', authMiddleware, createPostWithPhotos);
-router.get('/allPost', getAllPosts);
+router.get('/allPost', authMiddleware, getAllPosts);
 router.get('/:id', authMiddleware, getPostDetails);
 router.put(
   '/:id',
@@ -24,7 +24,7 @@ router.put(
   updatePostWithPhotos
 );
 router.delete('/:id', authMiddleware, deletePostWithPhotos);
-// ✅ API 요청 로그 추가
+// API 요청 로그 추가
 router.get('/whatSearch', searchPostsByTag);
 
 export default router;

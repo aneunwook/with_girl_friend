@@ -1,11 +1,17 @@
 import express from 'express';
-import { createAnniversary, getAnniversariesByDateRange, updateAnniversary,deleteAnniversary } from '../controllers/anniversaryController.js';
+import {
+  createAnniversary,
+  getAnniversariesByDateRange,
+  updateAnniversary,
+  deleteAnniversary,
+} from '../controllers/anniversaryController.js';
+import authMiddleware from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/', createAnniversary);
-router.get('/', getAnniversariesByDateRange);
-router.put('/:id', updateAnniversary);
-router.delete('/:id',deleteAnniversary);
+router.post('/', authMiddleware, createAnniversary);
+router.get('/', authMiddleware, getAnniversariesByDateRange);
+router.put('/:id', authMiddleware, updateAnniversary);
+router.delete('/:id', authMiddleware, deleteAnniversary);
 
 export default router;

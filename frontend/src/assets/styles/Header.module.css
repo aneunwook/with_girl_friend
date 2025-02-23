@@ -71,3 +71,15 @@
   cursor: pointer;
   margin-right: 15px;
 }
+
+.coupleRegisterButton,
+.logout,
+.headerLogin {
+  color: #fff;
+  margin: 0 10px;
+  color: inherit; /* 부모 요소의 글자색 상속 */
+  font-size: inherit; /* 기본 폰트 크기 유지 */
+  background: none;
+  cursor: pointer;
+  border: none;
+}

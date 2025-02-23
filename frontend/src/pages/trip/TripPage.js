@@ -25,12 +25,10 @@ const TripPage = () => {
   }, []);
 
   const handleMarkerClick = async (trip) => {
-    console.log('Clicked trip:', trip); // trip 객체 확인
     setIsLoading(true);
     try {
       const response = await getTripDetails(trip.id);
       setSelectedTrip(response); // 마커 클릭 시 선택된 여행지 설정
-      console.log('게시물 정보:', response); // 데이터 확인
     } catch (error) {
       console.error('Error fetching trips:', error);
     } finally {
@@ -42,13 +40,20 @@ const TripPage = () => {
     setSelectedTrip(null); // 모달 닫기
   };
 
+  const handleDeleteTrip = (deletedId) => {
+    setTrips((prevTrips) => prevTrips.filter((trip) => trip.id !== deletedId));
+    setSelectedTrip(null); // 모달 닫기
+  };
+
   return (
     <div className="map-page-container">
       <div className="map-header">
         <p className="map-title">Our Shared Memories</p>
         <div className="map-subtitle-button">
           <p className="map-subtitle">Let’s Leave Our Moments on the Map</p>
-          <button className="map-button"><Link to={'/add'}>Add Destination</Link></button>
+          <button className="map-button">
+            <Link to={'/add'}>Add Destination</Link>
+          </button>
         </div>
       </div>
       <MapComponent
@@ -61,6 +66,7 @@ const TripPage = () => {
           trip={selectedTrip}
           onClose={handleModalClose}
           isLoading={isLoading}
+          onDelete={handleDeleteTrip}
         />
       )}
     </div>

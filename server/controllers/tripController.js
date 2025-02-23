@@ -62,7 +62,7 @@ export const addTrip = async (req, res) => {
     // 2. Trip 생성
     const newTrip = await Trip.create(
       {
-        user_id: 1,
+        user_id: req.user.id,
         name,
         latitude: lat,
         longitude: lng,
@@ -106,6 +106,7 @@ export const addTrip = async (req, res) => {
 export const getAllTrips = async (req, res) => {
   try {
     const trips = await Trip.findAll({
+      where: { user_id: req.user.id },
       attributes: ['id', 'name', 'latitude', 'longitude', 'photo_url', 'memo'],
     });
     res.status(200).json(trips);
@@ -122,7 +123,7 @@ export const getTripDetails = async (req, res) => {
 
   try {
     const trip = await models.Trip.findOne({
-      where: { id },
+      where: { id, user_id: req.user.id },
       attributes: [
         'id',
         'name',
@@ -172,7 +173,10 @@ export const updateTrip = async (req, res) => {
   const t = await sequelize.transaction();
 
   try {
-    const trip = await Trip.findOne({ where: { id }, transaction: t });
+    const trip = await Trip.findOne({
+      where: { id, user_id: req.user.id },
+      transaction: t,
+    });
 
     if (!trip) {
       return res
@@ -182,7 +186,8 @@ export const updateTrip = async (req, res) => {
 
     // 대표 사진 처리 (새로운 파일이 업로드되었을 경우)
     let photoUrl = trip.photo_url;
-    if (req.files['trip']) { // 파일이 업로드되었는지 확인
+    if (req.files['trip']) {
+      // 파일이 업로드되었는지 확인
       photoUrl = `/trip/${req.files['trip'][0].filename}`; //업로드된 파일의 이름을 가져와서 저장
     } else if (req.body.photo_url) {
       photoUrl = req.body.photo_url;
@@ -280,8 +285,10 @@ export const deleteTrip = async (req, res) => {
 
   try {
     // 1. 여행지 존재 여부 확인
-    const trip = await Trip.findByPk(id, { transaction: t });
-
+    const trip = await Trip.findOne({
+      where: { id, user_id: req.user.id },
+      transaction: t,
+    });
     if (!trip) {
       return res
         .status(404)

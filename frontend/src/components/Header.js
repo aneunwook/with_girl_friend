@@ -4,12 +4,12 @@ import Sidebar from './Sidebar'; // Sidebar 컴포넌트
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext.js';
 import styles from '../assets/styles/Header.module.css'; // 헤더 스타일
-import CoupleRegister from '../pages/couple/CoupleRegister.js'
+import CoupleRegister from '../pages/couple/CoupleRegister.js';
 
 const Header = () => {
   const { user, logout } = useContext(AuthContext);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [showCoupleRegister, setShowCoupleRegister] = useState(false); // 🔥 상태 추가
+  const [showCoupleRegister, setShowCoupleRegister] = useState(false);
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen); // 사이드바 상태 토글
@@ -35,7 +35,7 @@ const Header = () => {
           <nav className={styles.navCategory}>
             <ul className={styles.navLinks}>
               <li>
-                <Link to="/">Post</Link>
+                <Link to="/post">Post</Link>
               </li>
               <li>
                 <Link to="/trips">Trip</Link>
@@ -46,13 +46,13 @@ const Header = () => {
             </ul>
           </nav>
 
-          {/* 🔥 커플 등록 버튼 추가 (로그인한 사용자만 보이게) */}
+          {/* 커플 등록 버튼 추가 (로그인한 사용자만 보이게) */}
           {user && (
-            <button 
-              className={styles.coupleRegisterButton} 
+            <button
+              className={styles.coupleRegisterButton}
               onClick={() => setShowCoupleRegister(!showCoupleRegister)}
             >
-              {showCoupleRegister ? "닫기" : "커플 등록"}
+              {showCoupleRegister ? 'Close' : 'Couple'}
             </button>
           )}
 
@@ -70,10 +70,8 @@ const Header = () => {
           </div>
         </div>
       </header>
-
       {/* 🔥 커플 등록 UI 표시 (버튼 클릭 시 열리고 닫힘) */}
       {showCoupleRegister && <CoupleRegister />}
-
       {/* Sidebar 컴포넌트 */}
       <Sidebar
         isSidebarOpen={isSidebarOpen}

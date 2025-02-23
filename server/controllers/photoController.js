@@ -31,8 +31,9 @@ export const createPostWithPhotos = async (req, res) => {
 
   try {
     // 게시물 저장
-    const { title, description, user_id, tags, photoUrls } = req.body;
-    console.log(req.body);
+    const { title, description, tags, photoUrls } = req.body;
+    const user_id = req.user.id;
+
     const newPost = await Post.create(
       { title, description, user_id, tags },
       { transaction }
@@ -64,12 +65,8 @@ export const createPostWithPhotos = async (req, res) => {
 
 export const searchPostsByTag = async (req, res) => {
   try {
-    console.log('📢 요청 URL:', req.url); // ✅ 서버에서 실제 요청된 URL 확인
-    console.log('📢 검색 요청 도착! query:', req.query.query); // ✅ 서버에서 요청 확인!
-
     const { query } = req.query;
-
-    console.log('📢 검색 요청 도착! query:', query); // ✅ 요청 로그
+    const userId = req.user.id;
 
     if (!query || query.trim() === '') {
       return res.status(400).json({ message: '검색어를 입력해주세요.' });
@@ -77,6 +74,7 @@ export const searchPostsByTag = async (req, res) => {
 
     const postSearch = await Post.findAll({
       where: {
+        user_id: userId,
         [Op.or]: [
           { title: { [Op.like]: `%${query}%` } },
           { tags: { [Op.like]: `%${query}%` } },
@@ -100,8 +98,13 @@ export const searchPostsByTag = async (req, res) => {
 
 export const getAllPosts = async (req, res) => {
   try {
+    if (!req.user) {
+      return res.status(401).json({ message: '로그인이 필요합니다.' });
+    }
+
     // 쿼리 파라미터에서 page와 limit 값을 가져옴, 기본값은 1페이지, 10개씩
     const { page = 1, limit = 12 } = req.query;
+    const userId = req.user.id;
 
     // 페이지 번호와 한 페이지에 보여줄 개수를 정수로 변환
     const pageNum = parseInt(page, 12);
@@ -116,6 +119,7 @@ export const getAllPosts = async (req, res) => {
     //count: 전체 게시물 수를 반환 rows: 해당 페이지에 해당하는 게시물들만 반환
     //데이터베이스 쿼리에서 offset은 몇번째 게시물부터 가져올 것인지를 나타냄
     const { count: totalPosts, rows: posts } = await Post.findAndCountAll({
+      where: { user_id: userId }, //  로그인한 사용자의 게시물만 가져옴
       offset: (pageNum - 1) * limitNum, // 페이지 번호에 맞는 데이터 시작 위치
       limit: limitNum, // 한 페이지에 가져올 데이터 개수
       order: [['created_at', 'DESC']], // 최신 게시물 정렬
@@ -149,10 +153,11 @@ export const getAllPosts = async (req, res) => {
 export const getPostDetails = async (req, res) => {
   try {
     const { id } = req.params;
+    const userId = req.user.id;
 
     // 게시물과 관련된 사진들을 포함하여 조회
     const post = await Post.findOne({
-      where: { id: id },
+      where: { id, user_id: userId },
       include: [
         {
           model: Photo,
@@ -189,12 +194,15 @@ export const updatePostWithPhotos = async (req, res) => {
 
   try {
     const { id } = req.params;
+    const userId = req.user.id;
+
     const { photosToDelete, title, description, tags, is_private } = req.body;
 
     const newFiles = req.files;
 
     // 1. 게시물 수정
-    const post = await Post.findByPk(id, {
+    const post = await Post.findOne({
+      where: { id, user_id: userId }, // 현재 로그인한 사용자의 게시물인지 확인
       include: { model: Photo, as: 'postPhotos' },
     });
 
@@ -265,7 +273,8 @@ export const deletePostWithPhotos = async (req, res) => {
     const userId = req.user.id; // 현재 로그인한 사용자 ID (토큰에서 가져옴)
 
     //1. 게시물 확인
-    const post = await Post.findByPk(id, {
+    const post = await Post.findOne({
+      where: { id, user_id: userId }, // ✅ 현재 로그인한 사용자의 게시물인지 확인
       include: { model: Photo, as: 'postPhotos' },
     });
     if (!post) {

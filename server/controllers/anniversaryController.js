@@ -3,7 +3,8 @@ import Anniversary from '../models/anniversaryModel.js';
 
 export const createAnniversary = async (req, res) => {
   try {
-    const { userId, name, anniversaryDate, description } = req.body;
+    const { name, anniversaryDate, description } = req.body;
+    const userId = req.user.id;
 
     if (!userId || !name || !anniversaryDate) {
       return res.status(400).json({ message: '필수 데이터가 누락되었습니다' });
@@ -32,6 +33,7 @@ export const createAnniversary = async (req, res) => {
 export const getAnniversariesByDateRange = async (req, res) => {
   try {
     const { startDate, endDate } = req.query;
+    const userId = req.user.id; // ✅ 현재 로그인한 사용자 ID 가져오기
 
     if (!startDate || !endDate) {
       return res.status(400).json({ message: '날짜 범위를 입력해 주세요' });
@@ -39,6 +41,8 @@ export const getAnniversariesByDateRange = async (req, res) => {
 
     const anniversaries = await Anniversary.findAll({
       where: {
+        user_id: userId, // 현재 로그인한 사용자의 기념일만 가져오기
+
         anniversary_date: {
           [Op.between]: [startDate, endDate],
         },
@@ -60,13 +64,15 @@ export const getAnniversariesByDateRange = async (req, res) => {
 export const updateAnniversary = async (req, res) => {
   const { id } = req.params;
   const { name, anniversaryDate, description } = req.body;
+  const userId = req.user.id; // 로그인한 사용자 ID 가져오기
 
   try {
-    const anniversary = await Anniversary.findByPk(id);
-
-    if (!anniversary) {
-      return res.status(404).json({ message: '기념일을 찾을 수 없습니다' });
-    }
+    const anniversary = await Anniversary.findOne({
+      where: {
+        id,
+        user_id: userId, // ✅ 로그인한 사용자의 기념일만 수정 가능
+      },
+    });
 
     anniversary.name = name || anniversary.name;
     anniversary.anniversary_date =
@@ -92,14 +98,21 @@ export const updateAnniversary = async (req, res) => {
 
 export const deleteAnniversary = async (req, res) => {
   const { id } = req.params;
-  try {
-    const deleteCount = await Anniversary.findByPk(id);
+  const userId = req.user.id; // ✅ 로그인한 사용자 ID 가져오기
 
-    if (!deleteCount) {
+  try {
+    const anniversary = await Anniversary.findOne({
+      where: {
+        id,
+        user_id: userId, // ✅ 로그인한 사용자의 기념일만 삭제 가능
+      },
+    });
+
+    if (!anniversary) {
       return res.status(404).json({ message: '기념일을 찾을 수 없습니다' });
     }
 
-    await deleteCount.destroy();
+    await anniversary.destroy();
     res.status(200).json({ message: '기념일이 성공적으로 삭제되었습니다.' });
   } catch (err) {
     console.error(err);

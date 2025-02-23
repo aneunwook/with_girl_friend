@@ -1,48 +1,82 @@
-import React, { useState } from 'react';
-import { searchUserByEmail, registerCouple} from '../../service/couple/coupleService.js'
+import React, { useState, useRef, useEffect } from 'react';
+import {
+  searchUserByEmail,
+  registerCouple,
+} from '../../service/couple/coupleService.js';
+import styles from '../../assets/styles/CoupleRegister.module.css';
 
-const CoupleRegister = () => {
-    const [email, setEmail] = useState(''); // 입력한 이메일
-    const [user, setUser] = useState(null); // 검색된 유저 정보
-    const [message, setMessage] = useState('');
+const CoupleRegister = ({ isOpen, onClose }) => {
+  const [email, setEmail] = useState('');
+  const [user, setUser] = useState(null);
+  const [message, setMessage] = useState('');
+  const dropdownRef = useRef(null);
 
-    // 상대방 검색
-    const handleSearch = async () => {
-        setMessage('');
-        const foundUser = await searchUserByEmail(email);
-        if(foundUser){
-            setUser(foundUser);
-        }else{
-            setMessage("사용자를 찾을 수 없습니다");
-            setUser(null);
+  const handleSearch = async () => {
+    setMessage('');
+    const foundUser = await searchUserByEmail(email);
+    if (foundUser) {
+      setUser(foundUser);
+    } else {
+      setMessage('사용자를 찾을 수 없습니다');
+      setUser(null);
+    }
+  };
+
+  const handleRegisterCouple = async () => {
+    if (!user) return;
+
+    try {
+      const response = await registerCouple(user.email);
+
+      setMessage('🎉 우리는 커플입니다! 💕'); // 성공 시 메시지
+    } catch (error) {
+      console.error('커플 등록 오류:', error);
+
+      if (error.response?.status === 400) {
+        const errorMsg = error.response.data.message;
+
+        if (errorMsg.includes('자기 자신')) {
+          setMessage('자기 자신은 커플을 맺을 수 없습니다');
+        } else if (errorMsg.includes('이미 커플')) {
+          setMessage('이미 커플입니다');
+        } else {
+          setMessage('❌ 커플 등록 실패');
         }
+      } else {
+        setMessage('❌ 서버 오류 발생');
+      }
     }
-    
-    // 커플 등록
+  };
 
-    const handleRegisterCouple = async () =>{
-        if(!user) return;
-        const result = await registerCouple(user.email);
-
-        if(result){
-            setMessage("🎉 우리는 커플입니다! 💕");
-        }else {
-            setMessage("❌ 커플 등록 실패");
-          }
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (
+        isOpen &&
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target)
+      ) {
+        onClose();
+      }
     }
 
-    return(
-        <div>
-            <h2>커플 등록</h2>
-            <input
-                type='email'
-                placeholder="상대방 이메일 입력"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-            />
-            <button onClick={handleSearch}>검색</button>
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen, onClose]);
 
-            {user && (
+  return (
+    <div className={styles.dropdown} ref={dropdownRef}>
+      <h3>커플 등록</h3>
+      <input
+        type="email"
+        placeholder="상대방 이메일 입력"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <button onClick={handleSearch}>검색</button>
+
+      {user && (
         <div>
           <p>✨ {user.name}님을 찾았습니다!</p>
           <button onClick={handleRegisterCouple}>친구 추가</button>
@@ -50,8 +84,8 @@ const CoupleRegister = () => {
       )}
 
       {message && <p>{message}</p>}
-        </div>
-    )
-}
+    </div>
+  );
+};
 
 export default CoupleRegister;
