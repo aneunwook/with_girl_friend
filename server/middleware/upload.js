@@ -14,7 +14,6 @@ if (!fs.existsSync(tripDir)) {
   fs.mkdirSync(tripDir, { recursive: true });
 }
 
-
 // 파일 저장 설정
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -29,7 +28,8 @@ const storage = multer.diskStorage({
   },
 
   filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+    const uniqueSuffix =
+      Date.now() + '-' + Math.random().toString(36).substr(2, 9);
     cb(null, `${uniqueSuffix}-${file.originalname}`);
   },
 });
@@ -46,10 +46,11 @@ const fileFilter = (req, file, cb) => {
 
 const upload = multer({
   storage,
-  limits: {
-    fileSize: 50 * 1024 * 1024, // 50MB까지 허용
-  },
   fileFilter,
+  limits: {
+    fieldSize: 50 * 1024 * 1024, // 50MB까지 허용
+    fieldNameSize: 200, // 필드 이름 크기 제한 증가
+  },
 });
 
 export default upload;

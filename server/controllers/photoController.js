@@ -34,8 +34,12 @@ export const createPostWithPhotos = async (req, res) => {
     const { title, description, tags, photoUrls } = req.body;
     const user_id = req.user.id;
 
+    const tagsArray = Array.isArray(tags)
+      ? tags
+      : tags.split(',').map((tag) => tag.trim());
+
     const newPost = await Post.create(
-      { title, description, user_id, tags },
+      { title, description, user_id, tags: tagsArray },
       { transaction }
     );
 
@@ -65,6 +69,8 @@ export const createPostWithPhotos = async (req, res) => {
 
 export const searchPostsByTag = async (req, res) => {
   try {
+    console.log('📡 검색 요청 도착:', req.originalUrl, req.query); // ✅ 요청 URL & 쿼리 확인
+
     const { query } = req.query;
     const userId = req.user.id;
 
@@ -77,17 +83,16 @@ export const searchPostsByTag = async (req, res) => {
         user_id: userId,
         [Op.or]: [
           { title: { [Op.like]: `%${query}%` } },
-          { tags: { [Op.like]: `%${query}%` } },
+          { tags: { [Op.contains]: [query] } }, // 배열 안에 검색어 포함 여부 확인
         ],
       },
     });
 
     if (postSearch.length === 0) {
-      console.log('❌ 검색 결과 없음');
-      return res.status(200).json({ posts: [], totalPages: 1 }); // ✅ 빈 배열 반환
+      return res.status(200).json({ posts: [], totalPages: 1 }); //  빈 배열 반환
     }
 
-    console.log('🔎 검색 결과:', postSearch); // ✅ 검색된 데이터 확인
+    console.log('🔎 검색 결과:', postSearch); // 검색된 데이터 확인
 
     return res.status(200).json(postSearch);
   } catch (err) {
@@ -210,10 +215,14 @@ export const updatePostWithPhotos = async (req, res) => {
       return res.status(404).json({ message: '사진을 찾을 수 없습니다' });
     }
 
+    const tagsArray = Array.isArray(tags)
+      ? tags
+      : tags.split(',').map((tag) => tag.trim());
+
     // 게시물 정보 업데이트
     post.title = title || post.title; // title이 있을 경우 수정, 없으면 기존 값 유지
     post.description = description || post.description;
-    post.tags = tags || post.tags;
+    post.tags = tagsArray;
     post.is_private = is_private !== undefined ? is_private : post.is_private;
 
     await post.save({ transaction: t });

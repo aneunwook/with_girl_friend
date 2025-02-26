@@ -86,16 +86,24 @@ const CreatePostPage = () => {
       .map((tag) => tag.trim()) // 공백 제거
       .map((tag) => tag.replace('#', '')); // # 기호 제거
 
+    const formDataForRequest = new FormData();
+    const newImages = photoUrls.filter((url) => !url.startsWith('http')); // 새로 업로드된 이미지 필터링
+
+    // 새로 업로드된 이미지들을 FormData에 추가
+    newImages.forEach((file, index) => {
+      formDataForRequest.append('photos', file, `new-image-${index}.jpg`);
+    });
+
     const data = {
       title: formData.title,
       description: content.trim(),
       tags: tagsArray,
-      user_id: userId, // 사용자 ID (예시)
-      photoUrls, // 업로드된 이미지 URL 리스트
+      user_id: userId,
+      photoUrls: photoUrls.filter((url) => url.startsWith('http')), // 기존 이미지 URL만 필터링
     };
 
     try {
-      await createPostWithPhotos(data); // createPostWithPhotos 서비스 호출
+      await createPostWithPhotos(formDataForRequest, data); // createPostWithPhotos 서비스 호출
       setMessage('게시글이 등록되었습니다!');
       navigate('/'); // 홈으로 이동
     } catch (error) {

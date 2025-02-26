@@ -24,8 +24,6 @@ export const uploadPosts = async (files) => {
     const response = await axiosInstance.post(`${api_url}/upload`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     });
-    console.log('서버 응답:', response.data); // 응답 확인
-    console.log('서버 응답 데이터:', response.data); // data 속성 확인
 
     if (response.data && response.data.urls) {
       return response.data.urls; // 응답에 urls가 있을 경우 반환
@@ -43,18 +41,13 @@ export const uploadPosts = async (files) => {
 
 export const searchPost = async (query) => {
   try {
-    const fullURL = `${axiosInstance.defaults.baseURL}${api_url}/whatSearch`;
-    console.log(
-      '🔍 최종 요청 URL:',
-      `http://localhost:3000/api/photos/whatSearch?query=${query}`
-    );
-    console.log('🔍 최종 요청 URL:', fullURL); // ✅ baseURL과 api_url이 올바르게 조합되는지 확인
-    console.log('📡 searchPost 함수 호출됨, query:', query);
+    const url = `/photos/whatSearch`; //  URL 명확하게 지정
+    console.log('🔍 검색 요청 URL:', url, 'query:', query);
 
     const response = await axiosInstance.get(`${api_url}/whatSearch`, {
       params: { query },
     });
-    console.log('🔍 검색 결과:', response.data); // ✅ 서버에서 받은 데이터 확인
+    console.log('🔍 검색 결과:', response.data); // 서버에서 받은 데이터 확인
     return response.data;
   } catch (err) {
     console.error('요청 실패:', err);
@@ -62,10 +55,14 @@ export const searchPost = async (query) => {
   }
 };
 
-export const createPostWithPhotos = async (data) => {
+export const createPostWithPhotos = async (data, formData) => {
   try {
-    const response = await axiosInstance.post(`${api_url}/photo`, data, {
+    const response = await axiosInstance.post(`${api_url}/photo`, formData, {
       headers: { 'Content-Type': 'application/json' },
+
+      params: {
+        data: JSON.stringify(data), // 기존 데이터는 JSON으로 처리
+      },
     });
     return response.data;
   } catch (error) {

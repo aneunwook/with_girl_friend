@@ -9,7 +9,6 @@ import path from 'path';
 import defineAssociations from './config/associations.js';
 import sequelize from './config/db.js'; // sequelize import
 import userRoutes from './routes/userRoutes.js';
-import postRoutes from './routes/postRoutes.js';
 import anniversaryRoutes from './routes/anniversaryRoutes.js';
 import photoRoutes from './routes/photoRoutes.js';
 import tripRoutes from './routes/tripRoutes.js';
@@ -35,12 +34,10 @@ app.options('*', cors()); // OPTIONS 요청 허용
 app.use(bodyParser.json());
 app.use(express.json());
 
-app.use('/api/posts', postRoutes); // 여기에 CRUD 관련 라우트를 설정할 수 있습니다.
 app.use('/api/auth', userRoutes);
 app.use('/api/anniversaries', anniversaryRoutes);
 
 app.use('/api/photos', photoRoutes);
-console.log('🚀 photoRoutes 라우터 등록됨!', photoRoutes);
 app.use('/api/trips', tripRoutes);
 app.use('/api/couples', coupleRoutes);
 app.use('/api/playlists', playlistRoutes);
