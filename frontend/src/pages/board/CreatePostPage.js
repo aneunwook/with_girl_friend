@@ -104,8 +104,8 @@ const CreatePostPage = () => {
 
     try {
       await createPostWithPhotos(formDataForRequest, data); // createPostWithPhotos 서비스 호출
-      setMessage('게시글이 등록되었습니다!');
-      navigate('/'); // 홈으로 이동
+      alert('게시글이 등록되었습니다!');
+      navigate('/post'); // 홈으로 이동
     } catch (error) {
       console.error('게시글 등록 실패:', error);
       setMessage('게시글 등록 중 문제가 발생했습니다.');

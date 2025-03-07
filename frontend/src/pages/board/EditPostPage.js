@@ -3,7 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import axiosInstance from '../../service/axiosInstance'; // Axios 인스턴스
-import { updatePostWithPhotos, getPostDetails } from '../../service/photo/photoService'; // 서비스 함수
+import {
+  updatePostWithPhotos,
+  getPostDetails,
+} from '../../service/photo/photoService'; // 서비스 함수
 import '../../assets/styles/EditPost.css';
 
 const EditPostPage = () => {
@@ -62,19 +65,30 @@ const EditPostPage = () => {
     };
   };
 
-  const modules = useMemo(() => ({
-    toolbar: {
-      container: [
-        [{ header: [1, 2, false] }],
-        ['bold', 'italic', 'underline'],
-        [{ list: 'ordered' }, { list: 'bullet' }],
-        ['image'],
-      ],
-      handlers: { image: imageHandler },
-    },
-  }), []);
+  const modules = useMemo(
+    () => ({
+      toolbar: {
+        container: [
+          [{ header: [1, 2, false] }],
+          ['bold', 'italic', 'underline'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          ['image'],
+        ],
+        handlers: { image: imageHandler },
+      },
+    }),
+    []
+  );
 
-  const formats = ['header', 'bold', 'italic', 'underline', 'list', 'bullet', 'image'];
+  const formats = [
+    'header',
+    'bold',
+    'italic',
+    'underline',
+    'list',
+    'bullet',
+    'image',
+  ];
 
   // 폼 제출 핸들러
   const handleSubmit = async (e) => {
@@ -94,10 +108,13 @@ const EditPostPage = () => {
 
     try {
       await updatePostWithPhotos(id, updatedData); // 게시글 수정 API 호출
-      setMessage('게시글이 성공적으로 수정되었습니다!');
-      navigate('/'); // 홈으로 이동
+      alert('게시글이 성공적으로 수정되었습니다!');
+      navigate('/post'); // 홈으로 이동
     } catch (err) {
-      console.error('Failed to update post:', err.response?.data || err.message);
+      console.error(
+        'Failed to update post:',
+        err.response?.data || err.message
+      );
       setMessage('게시글 수정 중 오류가 발생했습니다.');
     }
   };
@@ -138,9 +155,7 @@ const EditPostPage = () => {
             type="text"
             name="tags"
             value={formData.tags}
-            onChange={(e) =>
-              setFormData({ ...formData, tags: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
             placeholder="태그를 입력해주세요"
           />
         </div>

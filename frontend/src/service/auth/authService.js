@@ -60,10 +60,6 @@ export const signIn = async (userData) => {
   try {
     const response = await axiosInstance.post('/auth/signIn', userData);
     console.log('응답 전체:', response);
-
-    // 로그인 성공 시 JWT 저장
-    //localStorage.setItem('token', response.data.token);
-
     return response.data;
   } catch (err) {
     if (err.response) {

@@ -36,7 +36,7 @@ const PostDetailPage = () => {
     try {
       await deletePostWithPhotos(id);
       alert('게시글이 삭제 되었습니다');
-      navigator('/');
+      navigator('/post');
     } catch (error) {
       console.error('게시물 삭제 중 에러발생', error);
       alert('게시글 삭제 실패');

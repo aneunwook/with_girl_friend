@@ -23,7 +23,12 @@ defineAssociations();
 
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'],
+    origin: [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'http://3.147.66.146:3000',
+      'http://localhost:8080',
+    ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // OPTIONS 포함
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true, // 쿠키 포함 요청을 허용
@@ -46,6 +51,10 @@ app.use('/api/playlists', playlistRoutes);
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // 정적 파일 제공: `/trip` 요청에 대해 처리
 app.use('/trip', express.static(path.join(__dirname, '../trip')));
+
+app.get('/', (req, res) => {
+  res.send('Hello! The server is running.');
+});
 
 // 로그용 미들웨어
 app.use((req, res, next) => {

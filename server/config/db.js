@@ -1,14 +1,19 @@
+import dotenv from 'dotenv';
 import { Sequelize } from 'sequelize';
-import { config } from './config.js';
+import mysql2 from 'mysql2';
+
+dotenv.config(); // .env 파일 로드
 
 // Sequelize 설정
 const sequelize = new Sequelize(
-  config.development.database, // DB 이름
-  config.development.username, // 사용자명
-  config.development.password, // 비밀번호
+  process.env.DB_NAME, // 데이터베이스 이름
+  process.env.DB_USER, // 사용자명
+  process.env.DB_PASSWORD, // 비밀번호
   {
-    host: config.development.host, // 호스트
-    dialect: config.development.dialect, // MySQL 사용
+    host: process.env.DB_HOST, // 호스트
+    dialect: 'mysql', // MySQL 사용
+    port: process.env.DB_PORT || 3306, // MySQL 포트 (필요하면 .env에 추가)
+    logging: false, // SQL 쿼리 로그 비활성화
   }
 );
 
@@ -16,10 +21,10 @@ const sequelize = new Sequelize(
 sequelize
   .authenticate()
   .then(() => {
-    console.log('Database connected successfully!');
+    console.log('✅ Database connected successfully!');
   })
   .catch((error) => {
-    console.error('Unable to connect to the database:', error);
+    console.error('❌ Unable to connect to the database:', error);
   });
 
 export default sequelize;

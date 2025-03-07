@@ -3581,3 +3581,11 @@ trip/1740228818805-oyu0rmr3z-main4.jpg
 trip/1740228818809-yhh4bueaf-main1.jpg
 trip/1740228818818-jampbl6ac-KakaoTalk_Photo_2025-02-08-12-16-21.png
 trip/1740228818819-yv1nugbpf-frank-mckenna-OD9EOzfSOh0-unsplash.jpg
+frontend/nginx/default.conf
+frontend/Dockerfile
+Dockerfile
+docker-compose.yml
+.dockerignore
+server/.env
+server/.env
+server/.env
